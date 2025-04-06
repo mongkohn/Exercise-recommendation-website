@@ -1,3 +1,4 @@
+
 import './globals.css';
 import { Prompt } from 'next/font/google';
 import { ThemeProvider } from "@/components/theme-provider";
@@ -37,7 +38,7 @@ export default function RootLayout({
               {/* Menu */}
               <nav className="flex gap-6 items-center text-blue-900 font-medium">
                 <div className="relative group">
-                  <button className="flex items-center gap-1 hover:text-orange-400">
+                  <button className="flex items-center gap-1 hover:text-blue-400">
                     การเผาผลาญต่อวัน
                     <ChevronDown className="w-4 h-4" />
                   </button>
@@ -51,16 +52,16 @@ export default function RootLayout({
                     </Link>
                   </div>
                 </div>
-                <Link href="/workouts" className="hover:text-orange-400" >ท่าการออกกำลังกาย</Link>
-                <Link href="/programs" className="hover:text-orange-400">โปรแกรมออกกำลังกาย</Link>
-                <Link href="/contact"  className="hover:text-orange-400">ช่องทางติดต่อ</Link>
-                <Link href="/articles" className="hover:text-orange-400">บทความ</Link>
-                <Link href="/history"  className="hover:text-orange-400">ประวัติ</Link>
+                <Link href="/workouts" className="hover:text-blue-400" >ท่าการออกกำลังกาย</Link>
+                <Link href="/programs" className="hover:text-blue-400">โปรแกรมออกกำลังกาย</Link>
+                <Link href="/contact"  className="hover:text-blue-400">ช่องทางติดต่อ</Link>
+                <Link href="/articles" className="hover:text-blue-400">บทความ</Link>
+                <Link href="/history"  className="hover:text-blue-400">ประวัติ</Link>
               </nav>
 
               {/* User Icon */}
               <Link href="#">
-                <User2 className="w-6 h-6 text-black hover:text-orange-400  "  />
+                <User2 className="w-6 h-6 text-black hover:text-blue-400  "  />
               </Link>
             </div>
           </header>

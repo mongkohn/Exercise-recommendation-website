@@ -18,7 +18,7 @@ export default function Navbar() {
         </div>
 
         {/* Menu */}
-        <nav className="flex gap-6 items-center text-blue-900 font-medium {styles.tital}">
+        <nav className="flex gap-6 items-center text-blue-900 font-medium ">
           <div className="relative group">
             <button className="flex items-center gap-1">
               การเผาผลาญต่อวัน
