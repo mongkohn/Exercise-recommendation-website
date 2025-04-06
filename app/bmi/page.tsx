@@ -101,10 +101,10 @@ export default function BMICalculator() {
 
   return (
     <div className="min-h-screen  p-6">
-      <h1 className="text-center text-xl font-bold mb-4">
+      <h1 className="text-center text-lg font-bold mb-4">
           เครื่องคำนวณหาค่าดัชนีมวลกาย (BMI)
         </h1>
-        <p className="text-sm text-center text-black mb-4">
+        <p className="text-md text-center text-black mb-4">
         ค่า BMI คือค่าดัชนีที่ใช้ชี้วัดความสมดุลของน้ำหนักตัว (กิโลกรัม) และส่วนสูง (เซนติเมตร) ซึ่งสามารถระบุได้ว่า ตอนนี้รูปร่างของคนคนนั้นอยู่ในระดับใด ตั้งแต่อ้วนมากไปจนถึงผอมเกินไป
         </p>
   
