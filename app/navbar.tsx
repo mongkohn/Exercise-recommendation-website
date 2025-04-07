@@ -29,7 +29,7 @@ export default function Navbar() {
                       คำนวณ BMI
                     </Link>
                   </div>
-                </div>
+                </div >
                 <Link href="/workouts" className="hover:text-blue-400" >ท่าการออกกำลังกาย</Link>
                 <Link href="/programs" className="hover:text-blue-400">โปรแกรมออกกำลังกาย</Link>
                 <Link href="/contact"  className="hover:text-blue-400">ช่องทางติดต่อ</Link>

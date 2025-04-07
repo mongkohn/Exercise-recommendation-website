@@ -31,13 +31,11 @@ export default function RootLayout({
         >
           {/* Header */}
           <Navbar/>
-
           {/* Page content */}
           {children}
         </ThemeProvider>
       </body>
           <Footer/>
-
     </html>
   );
 }
