@@ -100,7 +100,7 @@ export default function BMICalculator() {
 
 
   return (
-    <div className="min-h-screen  p-20">
+    <div className="min-h-screen  p-10">
       <h1 className="text-center text-lg font-bold mb-4">
           เครื่องคำนวณหาค่าดัชนีมวลกาย (BMI)
         </h1>
