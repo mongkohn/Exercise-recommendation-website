@@ -16,7 +16,6 @@ export default function BMICalculator() {
     const bmiValue = isNaN(result) ? 0 : parseFloat(result.toFixed(2));
     setBmi(bmiValue);
   
-    // คำแนะนำตามช่วง BMI
     if (bmiValue < 18.5) {
       setAdvice(`BMI น้อยกว่า 18.50
   
@@ -101,7 +100,7 @@ export default function BMICalculator() {
 
   return (
     <div className="min-h-screen  p-10">
-      <h1 className="text-center text-lg font-bold mb-4">
+      <h1 className="text-center text-2xl font-bold m-4">
           เครื่องคำนวณหาค่าดัชนีมวลกาย (BMI)
         </h1>
         <p className="text-md text-center text-black mb-10">

@@ -40,7 +40,7 @@ export default function BmrCalculator() {
 
   return (
     <div className="min-h-screen p-6">
-      <h1 className="text-center text-lg font-bold mb-4">
+      <h1 className="text-center text-2xl font-bold m-4">
         เครื่องคำนวณการเผาผลาญพลังงาน (BMR)
       </h1>
       <p className="text-md text-center max-w-3xl mx-auto mb-4">

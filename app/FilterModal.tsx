@@ -12,7 +12,7 @@ export default function FilterModal() {
 
   return (
     <div className="text-center">
-      <Button className="bg-blue-500 hover:bg-blue-600" onClick={toggleDialog}>
+      <Button className="bg-blue-500 hover:bg-blue-600 text-white" onClick={toggleDialog}>
         ตัวกรองการค้นหา
       </Button>
 

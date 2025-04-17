@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+
 import { ChevronRight } from "lucide-react";
 import FilterModal from "../FilterModal";
 
@@ -20,7 +20,7 @@ const workouts = [
 export default function WorkoutsPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-10 text-center">
-      <h1 className="text-3xl font-semibold mb-4">ท่าออกกำลังกาย</h1>
+      <h1 className="text-3xl text-gray-800 font-semibold mb-4">ท่าออกกำลังกาย</h1>
       <FilterModal />
       {workouts.map((w, i) => (
   <div key={i} className="mb-10">

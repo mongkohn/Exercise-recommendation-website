@@ -29,14 +29,16 @@ export default function ArticlesPage() {
     <div className="max-w-7xl mx-auto px-4 py-20">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
         {articles.map((article, idx) => (
-          <div key={idx} className="bg-white shadow-md rounded-lg overflow-hidden">
+          <div key={idx} className="bg-white shadow-md hover:shadow-lg rounded-lg overflow-hidden">
             <div className="relative h-56 w-full">
+              <Link href={article.link}>
               <Image
                 src={article.image}
                 alt={article.title}
                 layout="fill"
                 objectFit="cover"
               />
+              </Link>
             </div>
             <div className="p-4">
               <h3 className="font-semibold mb-1">{article.title}</h3>
