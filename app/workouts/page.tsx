@@ -1,6 +1,6 @@
 
 import { ChevronRight } from "lucide-react";
-import FilterModal from "../FilterModal";
+import FilterModal from "@/components/FilterModal";
 
 const workouts = [
   {

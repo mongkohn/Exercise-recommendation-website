@@ -95,10 +95,7 @@ export default function BmrCalculator() {
             onChange={(e) => setAge(e.target.value)}
             className="w-full border rounded px-3 py-2 bg-white"/>
           </div>
-
-        
         </div>
-
         <button
           onClick={calculateBMR}
           className="w-full bg-blue-800 text-white py-2 rounded hover:bg-blue-700"
