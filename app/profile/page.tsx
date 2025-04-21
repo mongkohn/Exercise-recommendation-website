@@ -1,5 +1,5 @@
-import Editbutton from "@/components/Editbutton";
-import { Button } from "@/components/ui/button";
+import EditProfileModal from "@/components/EditProfileModal";
+
 
 export default function Profile() {
   return (
@@ -13,9 +13,8 @@ export default function Profile() {
         
         <h2 className="text-lg font-semibold">NATH NONKLANG</h2>
         <p className="text-gray-500 text-sm">xxx.xxxx@bumail.net</p>
-
         <div className="flex gap-2 mt-4">
-        <Editbutton/>
+        <EditProfileModal />
           <button className="px-4 py-1 bg-red-500 text-white rounded hover:bg-red-800 text-sm">
             ออกจากระบบ
           </button>

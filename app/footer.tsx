@@ -28,7 +28,6 @@ export default function Footer() {
             <img src="/Line.png" alt="Line" className="w-10 h-10" />
           </a>
         </div>
-
         {/* คอลัมน์ 2 */}
         <div>
           <h3 className="text-2xl font-semibold mb-4">Quick Links</h3>

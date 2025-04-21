@@ -32,15 +32,45 @@ export default function RegisterPage() {
               <input
                 type="text"
                 placeholder="ไอดี"
-                className="w-full px-4 py-2 border rounded-md placeholder-gray-400 bg-white  focus:ring-2 focus:ring-blue-300"
+                className="w-full px-4 py-2 border rounded-md placeholder-gray-400 bg-white  focus:ring-2 focus:ring-blue-600"
               />
+             <div>
+              <label className="block mb-1 font-medium">Email</label>
+              <input
+                type="email"
+                placeholder="อีเมล"
+                className="w-full px-4 py-2 border  rounded-md placeholder-gray-400 bg-white focus:ring-2 focus:ring-blue-600"
+              />
+            </div>
+            <div>
+              <label className='block mb-1 font-medium'>ชื่อ</label>
+              <input 
+              type="text"
+              placeholder='ชื่อ-นามสกุล'
+              className='w-full px-4 py-2 border  rounded-md placeholder-gray-400 bg-white focus:ring-2 focus:ring-blue-600'
+              />
+            </div>
+            <div>
+              <label className='block mb-1 font-medium'>เพศ</label>
+              <input 
+              type="text"
+              placeholder='เพศ'
+              className='w-full px-4 py-2 border  rounded-md placeholder-gray-400 bg-white focus:ring-2 focus:ring-blue-600' />
+            </div>
+            <div>
+              <label className='block mb-1 font-medium'>วันเกิด</label>
+              <input 
+              type="date"
+              className='w-full px-4 py-2 border  rounded-md placeholder-gray-400 bg-white focus:ring-2 focus:ring-blue-600' /> 
+              
+            </div>
             </div>
             <div>
               <label className="block mb-1 font-medium">Password</label>
               <input
                 type="password"
                 placeholder="รหัสผ่าน"
-                className="w-full px-4 py-2 border rounded-md placeholder-gray-400 bg-white focus:ring-2 focus:ring-blue-300"
+                className="w-full px-4 py-2 border rounded-md placeholder-gray-400 bg-white focus:ring-2 focus:ring-blue-600"
               />
             </div>
             <div>
@@ -48,17 +78,10 @@ export default function RegisterPage() {
               <input
                 type="password"
                 placeholder="ยืนยันรหัสผ่าน"
-                className="w-full px-4 py-2 border rounded-md placeholder-gray-400 bg-white focus:ring-2 focus:ring-blue-300" 
+                className="w-full px-4 py-2 border rounded-md placeholder-gray-400 bg-white focus:ring-2 focus:ring-blue-600" 
               />
             </div>
-            <div>
-              <label className="block mb-1 font-medium">Email</label>
-              <input
-                type="email"
-                placeholder="อีเมล"
-                className="w-full px-4 py-2 border  rounded-md placeholder-gray-400 bg-white focus:ring-2 focus:ring-blue-300"
-              />
-            </div>
+           
             <button
               type="submit"
               className="w-full bg-blue-800 text-white py-2 rounded-md hover:bg-blue-500 transition"
