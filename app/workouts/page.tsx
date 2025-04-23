@@ -1,19 +1,22 @@
 
 import { ChevronRight } from "lucide-react";
 import FilterModal from "@/components/FilterModal";
+import Link from "next/link";
 
 const workouts = [
   {
     title: "Bent Over Rows",
     muscles: ["หลัง","หน้าแขน"],
     equipment: " บาร์เบล",
-    video: "https://drive.google.com/file/d/1uniMG91kgmaJfp8omHg5puteH3fu-WZV/preview",
+    image: "img-workout-1.png",
+    link:"/workouts/Bent-Over-Rows"
   },
   {
     title: "Dumbbell One Arm Press",
     muscles: ["หลัง","หน้าแขน"],
     equipment: "ดัมเบล",
-    video: "https://drive.google.com/file/d/1in4KYaCJ51cy-ogFG0yshgXT5SDSGZYL/view?usp=sharing",
+    image: "img-workout-2.png",
+    link:"/workouts/Dumbbell-One-Arm-Press"
   },
 ];
 
@@ -25,17 +28,12 @@ export default function WorkoutsPage() {
       {workouts.map((w, i) => (
   <div key={i} className="mb-10">
     <div className="max-w-2xl mx-auto my-6">
-      <iframe
-        src={w.video.includes("preview") 
-              ? w.video 
-              : w.video.replace("/view?usp=sharing", "/preview")
-        }
-        width="100%"
-        height="360"
-        allow="autoplay"
-        allowFullScreen
+      <Link href={w.link}>
+      <img
+        src={w.image}
         className="rounded-xl shadow-lg"
       />
+      </Link>
     </div>
     <h2 className="font-semibold text-lg">{w.title}</h2>
 
