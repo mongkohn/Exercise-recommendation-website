@@ -3,9 +3,7 @@
 @tailwind utilities;
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&display=swap');
 
-footer{
-  font-family: "Noto Sans Thai", sans-serif;
-}
+
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -85,6 +83,9 @@ footer{
     @apply bg-background text-foreground;
     background-color: white;
     color: black;
+    font-family: "Noto Sans Thai", sans-serif;
+    
+
   }
 }
 

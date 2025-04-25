@@ -8,7 +8,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="bg-white shadow-md rounded-xl">
+    <nav className="bg-white shadow-md round">
       <div className="container mx-auto flex items-center justify-between px-4 py-1 ">
         {/* Logo */}
         <Link href="/" className="">
@@ -66,7 +66,7 @@ export default function Navbar() {
             <Link href="/contact" className="block hover:text-blue-400">ช่องทางติดต่อ</Link>
             <Link href="/articles" className="block hover:text-blue-400">บทความ</Link>
             <Link href="/history" className="block hover:text-blue-400">ประวัติ</Link>
-            <Link href="/profile" className="block hover:text-blue-400 flex items-center gap-2">
+            <Link href="/profile" className=" hover:text-blue-400 flex items-center gap-2">
               <User2 className="w-5 h-5" /> โปรไฟล์
             </Link>
           </div>
