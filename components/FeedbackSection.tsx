@@ -1,6 +1,6 @@
 // components/FeedbackSection.tsx
 import React from 'react';
-import { Button } from './ui/button';
+
 
 const FeedbackSection = () => {
   return (
@@ -15,9 +15,7 @@ const FeedbackSection = () => {
         type="text"
         placeholder='Comment as Nath Nonklang' 
         className='bg-white flex-1 border border-gray-400 rounded-md px-3 py-2' />
-        <Button className='bg-blue-500 hover:bg-blue-700 '>ส่ง</Button>
       </div>
-      
 
       {/* Comments */}
       <div className="space-y-4">
