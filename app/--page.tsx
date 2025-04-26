@@ -1,5 +1,5 @@
 "use client";
-import Articlesbox from "../components/articlesbox";
+import Articlesbox from "@/components/articlesbox";
 
 export default function Home() {
   return(
@@ -11,10 +11,8 @@ export default function Home() {
         บทความ
       </h1>
       <Articlesbox/>
-
     </>
-    
-    
+
   )
 }
   
