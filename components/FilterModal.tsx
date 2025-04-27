@@ -52,11 +52,11 @@ export default function FilterModal() {
           <div className="text-left mt-4">
             <h3 className="font-medium">อุปกรณ์ที่ใช้</h3>
             <div className="space-y-1 mt-1">
-              <label><Checkbox />Bodyweight</label><br />
-              <label><Checkbox />เก้าอี้</label><br />
-              <label><Checkbox />ดัมเบล</label><br />
-              <label><Checkbox />บาร์เบล</label><br />
-              <label><Checkbox />เสื่อ</label>
+              <label><Checkbox /> Bodyweight</label><br />
+              <label><Checkbox /> เก้าอี้</label><br />
+              <label><Checkbox /> ดัมเบล</label><br />
+              <label><Checkbox /> บาร์เบล</label><br />
+              <label><Checkbox /> เสื่อ</label>
             </div>
           </div>
 
