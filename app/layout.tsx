@@ -1,14 +1,14 @@
 // (admin)/layout.tsx
 
 export const metadata = {
-  title: 'Admin Page',
+  title: 'ERD WebSite',
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <div style={{ padding: '20px', backgroundColor: '#f0f0f0' }}>
+        <div>
           {children}
         </div>
       </body>

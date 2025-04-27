@@ -14,7 +14,7 @@ const articles = [
     title: "การออกกำลังกายเพื่อสุขภาพ",
     description: "บทความโดย ศาสตราจารย์แพทย์หญิงชุติมา ศิริกุลชยานนท์ ภาควิชาโภชนวิทยา คณะสาธารณสุขศาสตร์ มหาวิทยาลัยมหิดล",
     image: "https://upload.wikimedia.org/wikipedia/commons/e/ed/Seal_of_the_Department_of_Health.svg",
-    link : "/https://hpc11.anamai.moph.go.th/th/sa-suk-11/200024#"
+    link : "https://hpc11.anamai.moph.go.th/th/sa-suk-11/200024#"
   },
   {
     title: "SAVE YOUR HEALTH",
@@ -29,21 +29,27 @@ export default function ArticlesPage() {
     <div className="max-w-7xl mx-auto px-4 py-20">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
         {articles.map((article, idx) => (
-          <div key={idx} className="bg-white shadow-md hover:shadow-lg rounded-lg overflow-hidden">
+          <div key={idx} className="bg-white shadow-md hover:shadow-xl rounded-lg overflow-hidden hover:scale-105 transition">
             <div className="relative h-56 w-full">
-              <Link href={article.link}>
-              <Image
-                src={article.image}
-                alt={article.title}
-                layout="fill"
-                objectFit="cover"
-              />
+              <Link href={article.link} passHref legacyBehavior>
+                <a target="_blank" rel="noopener noreferrer">
+                  <Image
+                    src={article.image}
+                    alt={article.title}
+                    layout="fill"
+                    objectFit="cover"
+                  />
+                </a>
               </Link>
             </div>
             <div className="p-4">
               <h3 className="font-semibold mb-1">{article.title}</h3>
               <p className="text-sm text-gray-700 mb-2">{article.description}</p>
-              <Link href={article.link} className="text-blue-600 text-sm hover:underline">อ่านต่อ...</Link>
+              <Link href={article.link} passHref legacyBehavior>
+                <a target="_blank" rel="noopener noreferrer" className="text-blue-600 text-sm hover:underline">
+                  อ่านต่อ...
+                </a>
+              </Link>
             </div>
           </div>
         ))}
