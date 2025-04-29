@@ -1,5 +1,6 @@
 "use client";
 import Articlesbox from "@/components/articlesbox";
+import ChatAdmin from "@/components/ChatAdmin";
 
 const HERO_CONTENT = {
   title: "เปลี่ยนชีวิตด้วยการออกกำลังกาย",
@@ -247,6 +248,7 @@ export default function Home() {
   return (
     <>
       <HeroSection />
+      <ChatAdmin/>
       <AboutSection />
       <FeaturesSection />
       {/* <CoursesSection /> */}
