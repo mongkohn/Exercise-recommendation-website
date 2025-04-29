@@ -14,7 +14,7 @@ const articles = [
     title: "การออกกำลังกายเพื่อสุขภาพ",
     description: "บทความโดย ศาสตราจารย์แพทย์หญิงชุติมา ศิริกุลชยานนท์ ภาควิชาโภชนวิทยา คณะสาธารณสุขศาสตร์ มหาวิทยาลัยมหิดล",
     image: "https://upload.wikimedia.org/wikipedia/commons/e/ed/Seal_of_the_Department_of_Health.svg",
-    link : "/https://hpc11.anamai.moph.go.th/th/sa-suk-11/200024#"
+    link : "https://hpc11.anamai.moph.go.th/th/sa-suk-11/200024#"
   },
   {
     title: "SAVE YOUR HEALTH",
