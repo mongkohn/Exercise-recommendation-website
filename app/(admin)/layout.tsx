@@ -4,7 +4,9 @@ import { Prompt } from 'next/font/google';
 import { ThemeProvider } from "@/components/theme-provider";
 
 
-
+export const metadata = {
+  title: 'Admin Page',
+};
 const prompt = Prompt({
   subsets: ['thai'],
   weight: ['400', '500', '600', '700'],
@@ -28,10 +30,12 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {/* Header */}
+
           {/* Page content */}
           {children}
         </ThemeProvider>
       </body>
+
     </html>
   );
 }

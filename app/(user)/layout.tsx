@@ -2,8 +2,6 @@
 import '@/app/globals.css';
 import { Prompt } from 'next/font/google';
 import { ThemeProvider } from "@/components/theme-provider";
-import Link from 'next/link';
-import { ChevronDown, User2 } from "lucide-react";
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
 

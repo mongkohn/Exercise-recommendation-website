@@ -33,9 +33,8 @@ export default function Profile() {
         <div>รหัสผ่าน : <span>***********</span></div>
         <div>เข้าใช้งานล่าสุด : <span>dd:mm:yy 00:00</span></div>
 
-        <div>BMR : <span>-</span></div>
-        <div>BMI : <span>-</span></div>
-        <div>TDEE : <span>-</span></div>
+        <div>น้ำหนัก : <span>-</span></div>
+        <div>ส่วนสูง : <span>-</span></div>
       </div>
     </div>
   );
