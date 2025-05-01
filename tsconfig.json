@@ -34,7 +34,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "dist/types/**/*.ts"
-  ],
+, "server/schema/UserSchema.js", "server/server.js"  ],
   "exclude": [
     "node_modules"
   ]

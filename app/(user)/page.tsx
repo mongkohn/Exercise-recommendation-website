@@ -1,6 +1,7 @@
 "use client";
 import Articlesbox from "@/components/articlesbox";
 import ChatAdmin from "@/components/ChatAdmin";
+import Image from "next/image";
 
 const HERO_CONTENT = {
   title: "เปลี่ยนชีวิตด้วยการออกกำลังกาย",
@@ -75,19 +76,19 @@ const TESTIMONIALS = [
   },
   {
     img: "/user.png",
-    name: "เจนจิรา ฟิตเต็มที่",
+    name: "เจนจิรา ฟิตเต็มที่2",
     quote:
       '"ไม่เคยคิดเลยว่าการออกกำลังกายจะสนุกขนาดนี้! ตอนนี้ติดออกกำลังกายไปแล้วค่ะ"',
   },
   {
     img: "/user.png",
-    name: "เจนจิรา ฟิตเต็มที่",
+    name: "เจนจิรา ฟิตเต็มที่3",
     quote:
       '"ไม่เคยคิดเลยว่าการออกกำลังกายจะสนุกขนาดนี้! ตอนนี้ติดออกกำลังกายไปแล้วค่ะ"',
   },
   {
     img: "/user.png",
-    name: "เจนจิรา ฟิตเต็มที่",
+    name: "เจนจิรา ฟิตเต็มที่4",
     quote:
       '"ไม่เคยคิดเลยว่าการออกกำลังกายจะสนุกขนาดนี้! ตอนนี้ติดออกกำลังกายไปแล้วค่ะ"',
   },
@@ -99,7 +100,7 @@ function HeroSection() {
       className="w-full h-screen bg-cover bg-center flex flex-col justify-center items-center relative"
       style={{ backgroundImage: `url('${HERO_CONTENT.bgImage}')` }}
     >
-      <div className="absolute inset-0 bg-black opacity-50"></div>
+      <div className="absolute inset-0 bg-black opacity-50"/>
       <div className="relative z-10 text-center text-white px-4">
         <h1 className="text-5xl md:text-6xl font-bold mb-6 drop-shadow-lg">
           {HERO_CONTENT.title}
@@ -107,7 +108,10 @@ function HeroSection() {
         <p className="text-lg md:text-2xl mb-8 drop-shadow-md">
           {HERO_CONTENT.subtitle}
         </p>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full transition">
+        <button
+          type="button"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full transition"
+        >
           {HERO_CONTENT.button}
         </button>
       </div>
@@ -143,9 +147,11 @@ function FeaturesSection() {
               key={f.title}
               className="bg-white shadow-md rounded-lg p-8 text-center hover:shadow-xl transition"
             >
-              <img
+              <Image
                 src={f.img}
                 alt={f.alt}
+                width={64}
+                height={64}
                 className="w-16 h-16 mx-auto mb-6"
               />
               <h3 className="text-2xl font-semibold mb-2 text-blue-500">
@@ -196,10 +202,11 @@ function TestimonialsSection() {
               key={t.name}
               className="bg-gray-100 p-8 rounded-xl shadow-md hover:shadow-lg transition"
             >
-              <div className="flex flex-col items-center">
-                <img
+                <Image
                   src={t.img}
                   alt={t.name}
+                  width={80}
+                  height={80}
                   className="w-20 h-20 rounded-full object-cover mb-4"
                 />
                 <h3 className="text-xl font-semibold text-blue-500 mb-2">
@@ -207,7 +214,6 @@ function TestimonialsSection() {
                 </h3>
                 <p className="text-gray-600 text-center">{t.quote}</p>
               </div>
-            </div>
           ))}
         </div>
       </div>
@@ -227,22 +233,32 @@ function ArticlesSection() {
     </section>
   );
 }
-
 function CallToActionSection() {
   return (
     <section className="bg-blue-600 text-white py-20">
       <div className="max-w-6xl mx-auto px-6 text-center">
-        <h2 className="text-4xl font-bold mb-4">พร้อมเปลี่ยนชีวิตแล้วหรือยัง?</h2>
+        <h2 className="text-4xl font-bold mb-4">
+          {CTA_CONTENT.title}
+        </h2>
         <p className="mb-8 text-lg">
-          เข้าร่วมกับเราวันนี้เพื่อประสบการณ์ใหม่ที่ดีกว่า!
+          {CTA_CONTENT.description}
         </p>
-        <button className="bg-white text-blue-600 font-bold py-3 px-8 rounded-full hover:bg-blue-100 transition">
-          สมัครสมาชิกฟรี
+        <button
+          type="button"
+          className="bg-white text-blue-600 font-bold py-3 px-8 rounded-full hover:bg-blue-100 transition"
+        >
+          {CTA_CONTENT.button}
         </button>
       </div>
     </section>
   );
 }
+
+const CTA_CONTENT = {
+  title: "พร้อมเปลี่ยนชีวิตแล้วหรือยัง?",
+  description: "เข้าร่วมกับเราวันนี้เพื่อประสบการณ์ใหม่ที่ดีกว่า!",
+  button: "สมัครสมาชิกฟรี",
+};
 
 export default function Home() {
   return (

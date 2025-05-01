@@ -1,6 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
+/server/node_modules
 /node_modules
 /.pnp
 .pnp.js
@@ -33,3 +34,37 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# logs
+logs
+*.log
+logs/**/*.log
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+*.stackdump
+*.swp
+
+# IDEs and editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.orig
+*.save
+*.~*
+
+# build artifacts
+dist/
+tmp/
+temp/
