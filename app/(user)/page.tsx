@@ -1,11 +1,13 @@
 "use client";
 import Articlesbox from "@/components/articlesbox";
 import ChatAdmin from "@/components/ChatAdmin";
+import { Link } from "lucide-react";
 
 const HERO_CONTENT = {
   title: "เปลี่ยนชีวิตด้วยการออกกำลังกาย",
   subtitle: "เสริมสร้างสุขภาพที่แข็งแรง และเป้าหมายที่คุณต้องการ",
   button: "เริ่มต้นตอนนี้",
+  link: "/bmi",
   bgImage: "/welcome.jpeg",
 };
 
@@ -17,19 +19,19 @@ const ABOUT_CONTENT = {
 
 const FEATURES = [
   {
-    img: "/feature1.png",
+    img: "/User-Single-Neutral-Male--Streamline-Core.png",
     alt: "โปรแกรมเฉพาะบุคคล",
     title: "โปรแกรมเฉพาะบุคคล",
     desc: "ออกแบบแผนการซ้อมที่ตรงกับเป้าหมายส่วนตัวของคุณ",
   },
   {
-    img: "/feature2.png",
+    img: "/Lightbulb--Streamline-Core.png",
     alt: "เข้าใจได้ง่าย",
     title: "เข้าใจได้ง่าย",
     desc: "มีคำอธิบายของท่าออกกำลังกายที่ชัดเจนเข้าใจได้ง่าย ",
   },
   {
-    img: "/feature3.png",
+    img: "/Book-Reading--Streamline-Core.png",
     alt: "เหมาะสำหรับผู้เริ่มต้น",
     title: "เหมาะสำหรับผู้เริ่มต้น",
     desc: "ท่าทางการออกกำลังกายจะเป็นท่าเริ่มต้นที่ง่ายโฟกัสได้ง่าย และป้องกันการบาดเจ็บ",
@@ -56,37 +58,37 @@ const COURSES = [
 
 const TESTIMONIALS = [
   {
-    img: "/user.png",
+    img: "/User-Circle-Single--Streamline-Core.png",
     name: "สมชาย ใจดี",
     quote:
       '"เข้าร่วมกับที่นี่แค่ 3 เดือน น้ำหนักลดไป 10 กิโล! เทรนเนอร์และโปรแกรมดีมากๆครับ!"',
   },
   {
-    img: "/user.png",
+    img: "/User-Circle-Single--Streamline-Core.png",
     name: "พรทิพย์ รักสุขภาพ",
     quote:
       '"บรรยากาศเป็นกันเอง โปรแกรมเทรนนิ่งก็เข้าใจง่าย สนุกและได้ผลลัพธ์จริง!"',
   },
   {
-    img: "/user.png",
+    img: "/User-Circle-Single--Streamline-Core.png",
     name: "เจนจิรา ฟิตเต็มที่",
     quote:
       '"ไม่เคยคิดเลยว่าการออกกำลังกายจะสนุกขนาดนี้! ตอนนี้ติดออกกำลังกายไปแล้วค่ะ"',
   },
   {
-    img: "/user.png",
+    img: "/User-Circle-Single--Streamline-Core.png",
     name: "เจนจิรา ฟิตเต็มที่",
     quote:
       '"ไม่เคยคิดเลยว่าการออกกำลังกายจะสนุกขนาดนี้! ตอนนี้ติดออกกำลังกายไปแล้วค่ะ"',
   },
   {
-    img: "/user.png",
+    img: "/User-Circle-Single--Streamline-Core.png",
     name: "เจนจิรา ฟิตเต็มที่",
     quote:
       '"ไม่เคยคิดเลยว่าการออกกำลังกายจะสนุกขนาดนี้! ตอนนี้ติดออกกำลังกายไปแล้วค่ะ"',
   },
   {
-    img: "/user.png",
+    img: "/User-Circle-Single--Streamline-Core.png",
     name: "เจนจิรา ฟิตเต็มที่",
     quote:
       '"ไม่เคยคิดเลยว่าการออกกำลังกายจะสนุกขนาดนี้! ตอนนี้ติดออกกำลังกายไปแล้วค่ะ"',
@@ -107,9 +109,11 @@ function HeroSection() {
         <p className="text-lg md:text-2xl mb-8 drop-shadow-md">
           {HERO_CONTENT.subtitle}
         </p>
+        <a href={HERO_CONTENT.link}>
         <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full transition">
           {HERO_CONTENT.button}
         </button>
+        </a>
       </div>
     </section>
   );

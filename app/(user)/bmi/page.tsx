@@ -190,6 +190,14 @@ export default function BMICalculator() {
         {advice}
       </div>
     )}
+    <div className="flex justify-center mt-10">
+      <a href="/bmr&tdee">
+      <button className=" bg-blue-800 text-white py-2  mb-4 hover:bg-blue-600 px-6 rounded-full transition">
+      
+      คำนวณ BMR & TDEE ต่อ
+      </button>
+      </a>
+    </div>
         </div>
     </div>
   );

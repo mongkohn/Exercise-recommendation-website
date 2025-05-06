@@ -145,6 +145,14 @@ export default function BmrCalculator() {
           <div className="text-2xl font-bold text-blue-800">{tdee}</div>
         </div>
       </div>
+      <div className="flex justify-center mt-10">
+    <a href="/workouts">
+    <button className=" bg-blue-800 text-white py-2  mb-4 hover:bg-blue-600 px-6 rounded-full transition">
+    เลือกท่าการออกกำลังกาย
+    </button>
+    </a>
     </div>
+    </div>
+
   );
 }
