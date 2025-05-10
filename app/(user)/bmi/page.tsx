@@ -10,6 +10,10 @@ export default function BMICalculator() {
   const [bgColor, setBgColor] = useState('');
 
   const calculateBMI = () => {
+     if (!weight || !height) {
+      alert('กรุณากรอกข้อมูลให้ครบถ้วนก่อนคำนวณ!');
+      return;
+    }
     const w = parseFloat(weight);
     const h = parseFloat(height) / 100;
     const result = w / (h * h);

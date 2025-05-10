@@ -9,7 +9,7 @@ const workoutPrograms = [
     difficulty: "ปานกลาง",
     category: "Strength For Runners",
     image: "https://www.hss.edu/images/socialmedia/running-knee-1200x630.jpg",
-    link :"/", 
+    link :"/programs/program_1", 
     levelIcons: "🔵🔵⚪️", 
   },
 ];

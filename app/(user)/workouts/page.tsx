@@ -25,6 +25,14 @@ export default function WorkoutsPage() {
     <div className="max-w-3xl mx-auto px-4 py-10 text-center">
       <h1 className="text-3xl text-gray-800 font-semibold mb-4">ท่าออกกำลังกาย</h1>
       <FilterModal />
+    <div className="flex justify-center items-center gap-1 mt-8">
+        <button className="text-xs px-3 py-1 border rounded bg-blue-500 text-white hover:bg-blue-600">1-7</button>
+        <button className="text-xs px-3 py-1 border rounded">8-14</button>
+        <button className="text-xs px-3 py-1 border rounded">15-21</button>
+        <button className="text-xs px-3 py-1 border rounded flex items-center gap-1">
+          Last <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
       {workouts.map((w, i) => (
   <div key={i} className="mb-10">
     <div className="max-w-2xl mx-auto my-6">
@@ -60,9 +68,9 @@ export default function WorkoutsPage() {
 ))}
   {/* Pagination */}
   <div className="flex justify-center items-center gap-1 mt-8">
-        <button className="text-xs px-3 py-1 border rounded bg-blue-500 text-white hover:bg-blue-600">1</button>
-        <button className="text-xs px-3 py-1 border rounded">2</button>
-        <button className="text-xs px-3 py-1 border rounded">3</button>
+        <button className="text-xs px-3 py-1 border rounded bg-blue-500 text-white hover:bg-blue-600">1-7</button>
+        <button className="text-xs px-3 py-1 border rounded">8-14</button>
+        <button className="text-xs px-3 py-1 border rounded">15-21</button>
         <button className="text-xs px-3 py-1 border rounded flex items-center gap-1">
           Last <ChevronRight className="w-4 h-4" />
         </button>
