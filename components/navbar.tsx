@@ -31,8 +31,8 @@ export default function Navbar() {
             </button>
             {/* Dropdown */}
             <div className="absolute top-full left-0 z-10 mt-2 w-48 bg-white border rounded shadow-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-              <Link href="/bmr" className="block px-4 py-2 hover:bg-blue-50">
-                คำนวณ BMR
+              <Link href="/bmr&tdee" className="block px-4 py-2 hover:bg-blue-50">
+                คำนวณ BMR & TDEE
               </Link>
               <Link href="/bmi" className="block px-4 py-2 hover:bg-blue-50">
                 คำนวณ BMI
@@ -57,7 +57,7 @@ export default function Navbar() {
             <div>
               <p className="font-semibold">การเผาผลาญต่อวัน</p>
               <div className="ml-4 space-y-1">
-                <Link href="/bmr" className="block hover:text-blue-400">คำนวณ BMR</Link>
+                <Link href="/bmr&tdee" className="block hover:text-blue-400">คำนวณ BMR & TDEE</Link>
                 <Link href="/bmi" className="block hover:text-blue-400">คำนวณ BMI</Link>
               </div>
             </div>
