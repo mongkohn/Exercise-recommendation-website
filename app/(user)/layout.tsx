@@ -1,4 +1,4 @@
-
+import type React from 'react';
 import '@/app/globals.css';
 import { Prompt } from 'next/font/google';
 import { ThemeProvider } from "@/components/theme-provider";
@@ -10,7 +10,6 @@ const prompt = Prompt({
   weight: ['400', '500', '600', '700'],
   variable: '--font-prompt',
   display: 'swap',
-  
 });
 
 export default function RootLayout({
@@ -20,20 +19,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={prompt.className } bg-white min-h-screen>
+      <body className={`${prompt.className} bg-white min-h-screen`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          {/* Header */}
-          <Navbar/>
-          {/* Page content */}
+          <Navbar />
           {children}
+          <Footer />
         </ThemeProvider>
       </body>
-          <Footer/>
     </html>
   );
 }

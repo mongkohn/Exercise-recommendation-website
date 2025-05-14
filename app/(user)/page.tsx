@@ -2,6 +2,7 @@
 import Articlesbox from "@/components/articlesbox";
 import ChatAdmin from "@/components/ChatAdmin";
 import { Link } from "lucide-react";
+import Image from "next/image";
 
 const HERO_CONTENT = {
   title: "เปลี่ยนชีวิตด้วยการออกกำลังกาย",
@@ -101,7 +102,7 @@ function HeroSection() {
       className="w-full h-screen bg-cover bg-center flex flex-col justify-center items-center relative"
       style={{ backgroundImage: `url('${HERO_CONTENT.bgImage}')` }}
     >
-      <div className="absolute inset-0 bg-black opacity-50"></div>
+      <div className="absolute inset-0 bg-black opacity-50" />
       <div className="relative z-10 text-center text-white px-4">
         <h1 className="text-5xl md:text-6xl font-bold mb-6 drop-shadow-lg">
           {HERO_CONTENT.title}
@@ -110,7 +111,7 @@ function HeroSection() {
           {HERO_CONTENT.subtitle}
         </p>
         <a href={HERO_CONTENT.link}>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full transition">
+        <button type="button" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full transition">
           {HERO_CONTENT.button}
         </button>
         </a>
@@ -134,6 +135,16 @@ function AboutSection() {
   );
 }
 
+function FeatureCard({ img, alt, title, desc }: { img: string; alt: string; title: string; desc: string }) {
+  return (
+    <div>
+      <Image src={img} alt={alt} width={64} height={64} className="w-16 h-16 mx-auto mb-6" />
+      <h3 className="text-2xl font-semibold mb-2 text-blue-500">{title}</h3>
+      <p className="text-gray-600">{desc}</p>
+    </div>
+  );
+}
+
 function FeaturesSection() {
   return (
     <section className="bg-blue-50 py-20">
@@ -143,20 +154,7 @@ function FeaturesSection() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {FEATURES.map((f) => (
-            <div
-              key={f.title}
-              className="bg-white shadow-md rounded-lg p-8 text-center hover:shadow-xl transition"
-            >
-              <img
-                src={f.img}
-                alt={f.alt}
-                className="w-16 h-16 mx-auto mb-6"
-              />
-              <h3 className="text-2xl font-semibold mb-2 text-blue-500">
-                {f.title}
-              </h3>
-              <p className="text-gray-600">{f.desc}</p>
-            </div>
+            <FeatureCard key={f.title} {...f} />
           ))}
         </div>
       </div>
@@ -201,9 +199,11 @@ function TestimonialsSection() {
               className="bg-gray-100 p-8 rounded-xl shadow-md hover:shadow-lg transition"
             >
               <div className="flex flex-col items-center">
-                <img
+                <Image
                   src={t.img}
                   alt={t.name}
+                  width={80}
+                  height={80}
                   className="w-20 h-20 rounded-full object-cover mb-4"
                 />
                 <h3 className="text-xl font-semibold text-blue-500 mb-2">
@@ -240,7 +240,7 @@ function CallToActionSection() {
         <p className="mb-8 text-lg">
           เข้าร่วมกับเราวันนี้เพื่อประสบการณ์ใหม่ที่ดีกว่า!
         </p>
-        <button className="bg-white text-blue-600 font-bold py-3 px-8 rounded-full hover:bg-blue-100 transition">
+        <button type="button" className="bg-white text-blue-600 font-bold py-3 px-8 rounded-full hover:bg-blue-100 transition">
           สมัครสมาชิกฟรี
         </button>
       </div>

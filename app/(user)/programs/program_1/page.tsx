@@ -20,8 +20,8 @@ export default function WorkoutView() {
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* หัวข้อ */}
       <h1 className="text-3xl font-bold mb-8">{workoutData.name}</h1>
-    <div>
-    </div>
+      <div>
+      </div>
       {/* วิดีโอและคำอธิบาย */}
       <div className="flex flex-col md:flex-row gap-8 mb-8">
         <div className=" w-full aspect-video">
@@ -37,8 +37,8 @@ export default function WorkoutView() {
       <div className="mb-6">
         <h2 className="font-semibold text-lg mb-2">อุปกรณ์ที่ใช้</h2>
         <div className="flex flex-wrap gap-2">
-          {workoutData.equipment.map((item, index) => (
-            <span key={index} className="bg-gray-100 px-3 py-1 rounded-full text-sm">{item}</span>
+          {workoutData.equipment.map((item) => (
+            <span key={item} className="bg-gray-100 px-3 py-1 rounded-full text-sm">{item}</span>
           ))}
         </div>
       </div>
@@ -47,8 +47,8 @@ export default function WorkoutView() {
       <div>
         <h2 className="font-semibold text-lg mb-2">กล้ามเนื้อ</h2>
         <div className="flex flex-wrap gap-2">
-          {workoutData.muscles.map((muscle, index) => (
-            <span key={index} className="bg-gray-100 px-3 py-1 rounded-full text-sm">{muscle}</span>
+          {workoutData.muscles.map((muscle) => (
+            <span key={muscle} className="bg-gray-100 px-3 py-1 rounded-full text-sm">{muscle}</span>
           ))}
         </div>
       </div>
