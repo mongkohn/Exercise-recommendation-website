@@ -12,25 +12,23 @@ const prompt = Prompt({
   display: 'swap',
 });
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export const metadata = {
+  title: 'ERD WebSite',
+};
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={`${prompt.className} bg-white min-h-screen`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Navbar />
-          {children}
-          <Footer />
-        </ThemeProvider>
-      </body>
-    </html>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <Navbar />
+      <div className={`${prompt.className} bg-white min-h-screen`}>
+        {children}
+      </div>
+      <Footer />
+    </ThemeProvider>
   );
 }
