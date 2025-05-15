@@ -2,7 +2,73 @@
 
 import { useState } from "react";
 import Image from "next/image"; // ต้องใช้ import สำหรับ Image หากใช้ next/image
+const exerciseList = [
+  {
+    name: "Bent Over Rows",
+    image: "img-workout-1.png",
+    description:
+      "ท่านี้จะเป็นการออกแรงในส่วนของกล้ามเนื้อ หลังส่วนล่าง (Lower Back) และ หลังส่วนกลาง (Middle Back)",
+  },
+  {
+    name: "Dumbbell One Arm Press",
+    image: "img-workout-2.png",
+    description:
+      "ช่วยเสริมสร้างความแข็งแรงให้กับกล้ามเนื้อหลังส่วนบน โดยเฉพาะกล้ามเนื้อ latissimus dorsi และ rhomboids",
+  },
+];
 
+const programList = [
+  {
+    name: "Bodyweight Strength For Runners",
+    image: "https://www.hss.edu/images/socialmedia/running-knee-1200x630.jpg",
+    description:
+      "โปรแกรมฝึกด้วยน้ำหนักตัวที่เหมาะสำหรับนักวิ่ง เพิ่มความแข็งแรงในส่วนต่าง ๆ ของร่างกาย",
+  },
+];
+
+const articles = [
+  {
+    title: "วิ่งอย่างไร ไม่ให้เจ็บ",
+    description: "วิ่งอย่างไร ไม่ให้เจ็บ การเลือกรองเท้าวิ่งก็เป็นสิ่งสำคัญ เริ่มจากการเดินเร็วหรือวิ่งเหยาะๆ ไม่ควรวิ่งแบบก้าวเท้ายาว ไม่ควรวิ่งขึ้น-ลงเนิน",
+    image: "https://multimedia.anamai.moph.go.th/oawoocha/2023/12/info620_run_4_1-1024x1018.jpg",
+    link: "https://multimedia.anamai.moph.go.th/infographics/info620_run_4/"
+  },
+  {
+    title: "การออกกำลังกายเพื่อสุขภาพ",
+    description: "บทความโดย ศาสตราจารย์แพทย์หญิงชุติมา ศิริกุลชยานนท์ ภาควิชาโภชนวิทยา คณะสาธารณสุขศาสตร์ มหาวิทยาลัยมหิดล",
+    image: "https://upload.wikimedia.org/wikipedia/commons/e/ed/Seal_of_the_Department_of_Health.svg",
+    link: "https://hpc11.anamai.moph.go.th/th/sa-suk-11/200024#"
+  },
+  {
+    title: "SAVE YOUR HEALTH",
+    description: "“Fitness” หรือสถานประกอบกิจการเพื่อสุขภาพ ในปัจจุบันมีผู้ใช้บริการเป็นจำนวนมาก โดยเฉพาะคนวัยทำงาน เพราะการมีสุขภาพที่ดี คือ การออกกำลังกายอย่างน้อย สัปดาห์ละ 3 วันๆ ละ 30 นาที",
+    image: "https://files.gqthailand.com/uploads/running.jpg",
+    link: "https://multimedia.anamai.moph.go.th/help-knowledgs/save-your-health/"
+  },
+  {
+    title: "ผักผลไม้ที่ช่วยทดแทนน้ำในร่างกาย และทำให้ร่างกายสดชื่น",
+    description: "ช่วยทดแทนน้ำในร่างกายที่สูญเสียไปเรื่องจากอากาศร้อนได้ แถมยังมีสารต้านอนุมูลอิสระที่เกิดขึ้นตามธรรมชาติ ช่วยลดการอักเสบจากการเผาไหม้ของแสงแดดในหน้าร้อน",
+    image: "https://multimedia.anamai.moph.go.th/oawoocha/2024/05/heath_me_43_fruit_1_0-768x768.jpg",
+    link: "https://multimedia.anamai.moph.go.th/help-knowledgs/heath_me_43_fruit_1/"
+  },
+  {
+    title: "อาหารทะเลช่วงหน้าร้อนต้องระวังและเลือกเป็นพิเศษ",
+    description: "การกินอาหารทะเลช่วงหน้าร้อนต้องระวังและเลือกเป็นพิเศษ เพราะ ในช่วงหน้าร้อน อาหารทะเลจะเน่าเสียง่าย อาจทำให้ร้านค้าบางรายใช้วิธีการไม่ถูกต้อง",
+    image: "https://multimedia.anamai.moph.go.th/oawoocha/2024/05/heath_me_42_seafood_1-768x768.jpg",
+    link: "https://multimedia.anamai.moph.go.th/help-knowledgs/heath_me_42_seafood_1/"
+  },
+  {
+    title: "ทุกวัย นอน ดี สุขภาพดี",
+    description: "จากความเดิมคราวที่แล้ว ในเรื่อง “ต่างวัย (นอน) แตกต่าง” วัยแรกเกิด จนถึงอายุ 2 ปี มาคราวนี้ กรมอนามัย ขอแนะนำต่อ กับ ระยะการนอนหลับแต่ละช่วงวัย ตาม National Sleep Foundation ในช่วง “วัยเรียนวัยุร่น”",
+    image: "https://multimedia.anamai.moph.go.th/oawoocha/2024/04/heath_me_34_sleep_2-768x767.jpg",
+    link: "https://multimedia.anamai.moph.go.th/help-knowledgs/heath_me_34_sleep_2/"
+  },
+];
+
+const userList = [
+  { username: "Mod", email: "mongkohn.kubpom@gmail.com", status: "active" },
+  { username: "Nack", email: "okm6344@gmail.com", status: "inactive" },
+];
 export default function HomePage() {
   const [activeMenu, setActiveMenu] = useState("home");
 
@@ -95,13 +161,13 @@ function Content({ activeMenu }: { activeMenu: string }) {
       return (
         <section className="p-8 max-w-6xl mx-auto">
           <div className="w-full flex justify-start mb-4">
-        <button
-          onClick={() => setSelectedExercise(null)}
-          className="text-blue-600 hover:underline"
-          >
-          ← ย้อนกลับ
-        </button>
-        </div>
+            <button
+              onClick={() => setSelectedExercise(null)}
+              className="text-blue-600 hover:underline"
+            >
+              ← ย้อนกลับ
+            </button>
+          </div>
 
           <h1 className="text-3xl font-bold mb-8">{selectedExercise.name}</h1>
 
@@ -157,9 +223,11 @@ function Content({ activeMenu }: { activeMenu: string }) {
               onClick={() => setSelectedExercise(exercise)}
               className="bg-white shadow rounded-xl overflow-hidden text-left"
             >
-              <img
+              <Image
                 src={exercise.image}
                 alt={exercise.name}
+                width={400}
+                height={192}
                 className="w-full h-48 object-cover"
               />
               <div className="p-4">
@@ -191,9 +259,11 @@ function Content({ activeMenu }: { activeMenu: string }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {programList.map((program, index) => (
             <div key={index} className="bg-white shadow rounded-xl overflow-hidden">
-              <img
+              <Image
                 src={program.image}
                 alt={program.name}
+                width={400}
+                height={192}
                 className="w-full h-48 object-cover"
               />
               <div className="p-4">
@@ -223,7 +293,7 @@ function Content({ activeMenu }: { activeMenu: string }) {
             </button>
           </div>
         </div>
-  
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {articles.map((article, idx) => (
             <div
@@ -232,9 +302,11 @@ function Content({ activeMenu }: { activeMenu: string }) {
             >
               <div className="relative h-56 w-full">
                 <a href={article.link} target="_blank" rel="noopener noreferrer">
-                  <img
+                  <Image
                     src={article.image}
                     alt={article.title}
+                    width={400}
+                    height={224}
                     className="w-full h-full object-cover"
                   />
                 </a>
@@ -321,70 +393,3 @@ function Content({ activeMenu }: { activeMenu: string }) {
   );
 }
 
-const exerciseList = [
-  {
-    name: "Bent Over Rows",
-    image: "img-workout-1.png",
-    description:
-      "ท่านี้จะเป็นการออกแรงในส่วนของกล้ามเนื้อ หลังส่วนล่าง (Lower Back) และ หลังส่วนกลาง (Middle Back)",
-  },
-  {
-    name: "Dumbbell One Arm Press",
-    image: "img-workout-2.png",
-    description:
-      "ช่วยเสริมสร้างความแข็งแรงให้กับกล้ามเนื้อหลังส่วนบน โดยเฉพาะกล้ามเนื้อ latissimus dorsi และ rhomboids",
-  },
-];
-
-const programList = [
-  {
-    name: "Bodyweight Strength For Runners",
-    image: "https://www.hss.edu/images/socialmedia/running-knee-1200x630.jpg",
-    description:
-      "โปรแกรมฝึกด้วยน้ำหนักตัวที่เหมาะสำหรับนักวิ่ง เพิ่มความแข็งแรงในส่วนต่าง ๆ ของร่างกาย",
-  },
-];
-
-const articles = [
-  {
-    title: "วิ่งอย่างไร ไม่ให้เจ็บ",
-    description: "วิ่งอย่างไร ไม่ให้เจ็บ การเลือกรองเท้าวิ่งก็เป็นสิ่งสำคัญ เริ่มจากการเดินเร็วหรือวิ่งเหยาะๆ ไม่ควรวิ่งแบบก้าวเท้ายาว ไม่ควรวิ่งขึ้น-ลงเนิน",
-    image: "https://multimedia.anamai.moph.go.th/oawoocha/2023/12/info620_run_4_1-1024x1018.jpg",
-    link: "https://multimedia.anamai.moph.go.th/infographics/info620_run_4/"
-  },
-  {
-    title: "การออกกำลังกายเพื่อสุขภาพ",
-    description: "บทความโดย ศาสตราจารย์แพทย์หญิงชุติมา ศิริกุลชยานนท์ ภาควิชาโภชนวิทยา คณะสาธารณสุขศาสตร์ มหาวิทยาลัยมหิดล",
-    image: "https://upload.wikimedia.org/wikipedia/commons/e/ed/Seal_of_the_Department_of_Health.svg",
-    link: "https://hpc11.anamai.moph.go.th/th/sa-suk-11/200024#"
-  },
-  {
-    title: "SAVE YOUR HEALTH",
-    description: "“Fitness” หรือสถานประกอบกิจการเพื่อสุขภาพ ในปัจจุบันมีผู้ใช้บริการเป็นจำนวนมาก โดยเฉพาะคนวัยทำงาน เพราะการมีสุขภาพที่ดี คือ การออกกำลังกายอย่างน้อย สัปดาห์ละ 3 วันๆ ละ 30 นาที",
-    image: "https://files.gqthailand.com/uploads/running.jpg",
-    link: "https://multimedia.anamai.moph.go.th/help-knowledgs/save-your-health/"
-  },
-  {
-    title: "ผักผลไม้ที่ช่วยทดแทนน้ำในร่างกาย และทำให้ร่างกายสดชื่น",
-    description: "ช่วยทดแทนน้ำในร่างกายที่สูญเสียไปเรื่องจากอากาศร้อนได้ แถมยังมีสารต้านอนุมูลอิสระที่เกิดขึ้นตามธรรมชาติ ช่วยลดการอักเสบจากการเผาไหม้ของแสงแดดในหน้าร้อน",
-    image: "https://multimedia.anamai.moph.go.th/oawoocha/2024/05/heath_me_43_fruit_1_0-768x768.jpg",
-    link: "https://multimedia.anamai.moph.go.th/help-knowledgs/heath_me_43_fruit_1/"
-  },
-  {
-    title: "อาหารทะเลช่วงหน้าร้อนต้องระวังและเลือกเป็นพิเศษ",
-    description: "การกินอาหารทะเลช่วงหน้าร้อนต้องระวังและเลือกเป็นพิเศษ เพราะ ในช่วงหน้าร้อน อาหารทะเลจะเน่าเสียง่าย อาจทำให้ร้านค้าบางรายใช้วิธีการไม่ถูกต้อง",
-    image: "https://multimedia.anamai.moph.go.th/oawoocha/2024/05/heath_me_42_seafood_1-768x768.jpg",
-    link: "https://multimedia.anamai.moph.go.th/help-knowledgs/heath_me_42_seafood_1/"
-  },
-  {
-    title: "ทุกวัย นอน ดี สุขภาพดี",
-    description: "จากความเดิมคราวที่แล้ว ในเรื่อง “ต่างวัย (นอน) แตกต่าง” วัยแรกเกิด จนถึงอายุ 2 ปี มาคราวนี้ กรมอนามัย ขอแนะนำต่อ กับ ระยะการนอนหลับแต่ละช่วงวัย ตาม National Sleep Foundation ในช่วง “วัยเรียนวัยุร่น”",
-    image: "https://multimedia.anamai.moph.go.th/oawoocha/2024/04/heath_me_34_sleep_2-768x767.jpg",
-    link: "https://multimedia.anamai.moph.go.th/help-knowledgs/heath_me_34_sleep_2/"
-  },
-];
-
-const userList = [
-  { username: "Mod", email: "mongkohn.kubpom@gmail.com", status: "active" },
-  { username: "Nack", email: "okm6344@gmail.com", status: "inactive" },
-];

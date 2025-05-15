@@ -15,6 +15,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Import user routes
+const userRoute = require('./routes/userRoute');
+
 // Connect to MongoDB
 const connectDB = async () => {
   try {
@@ -32,6 +35,9 @@ connectDB();
 app.get('/', (req, res) => {
   res.send('Exercise Recommendation API is running');
 });
+
+// Use user routes
+app.use('/api/user', userRoute);
 
 // Start server
 app.listen(PORT, () => {

@@ -27,10 +27,19 @@ router.get('/:id', async (req, res) => {
 // Register a new user
 router.post('/register', async (req, res) => {
   try {
+    const { username, email, fullname, gender, birthday, password } = req.body;
+    // Check required fields
+    if (!username || !email || !fullname || !gender || !birthday || !password) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
     // Hash the password before saving
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
-      ...req.body,
+      username,
+      email,
+      fullname,
+      gender,
+      birthday,
       password: hashedPassword
     });
     const savedUser = await user.save();
@@ -40,6 +49,27 @@ router.post('/register', async (req, res) => {
     });
   } catch (err) {
     res.status(400).json({ message: err.message });
+  }
+});
+
+// Login user
+router.post('/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Username and password are required' });
+    }
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid username or password' });
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid username or password' });
+    }
+    res.json({ message: 'Login successful', username: user.username });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 

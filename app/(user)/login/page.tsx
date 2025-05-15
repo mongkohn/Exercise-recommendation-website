@@ -6,9 +6,25 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: handle login logic
+    try {
+      const res = await fetch('/api/user/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem('username', data.username);
+        // Optionally redirect or show success
+        window.location.href = '/'; // Uncomment to redirect
+      } else {
+        alert(data.message || 'Login failed');
+      }
+    } catch (err) {
+      alert('An error occurred during login');
+    }
   };
 
   return (
