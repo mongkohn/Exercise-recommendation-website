@@ -4,6 +4,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Calendar } from "@/components/ui/calendar"
+import { format } from "date-fns"
+import { th } from 'date-fns/locale'
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Button } from "@/components/ui/button"
+import { CalendarIcon } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
@@ -15,6 +22,7 @@ export default function RegisterPage() {
     password: '',
     confirmPassword: ''
   });
+  const [date, setDate] = useState<Date>()
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -28,13 +36,12 @@ export default function RegisterPage() {
     e.preventDefault();
     setError(null);
 
-    // Basic validation
     if (
       !form.username ||
       !form.email ||
       !form.fullname ||
       !form.gender ||
-      !form.birthday ||
+      !date ||
       !form.password ||
       !form.confirmPassword
     ) {
@@ -56,7 +63,7 @@ export default function RegisterPage() {
           email: form.email,
           fullname: form.fullname,
           gender: form.gender,
-          birthday: form.birthday,
+          birthday: date?.toISOString(),
           password: form.password
         })
       });
@@ -136,36 +143,42 @@ export default function RegisterPage() {
             </div>
             <div>
               <label htmlFor="gender" className='block mb-1 font-medium'>เพศ</label>
-              <input
+              <select
                 id="gender"
-                type="text"
-                placeholder='เพศ'
-                className='w-full px-4 py-2 border  rounded-md placeholder-gray-400 bg-white focus:ring-2 focus:ring-blue-600'
+                className='w-full px-4 py-2 border rounded-md bg-white focus:ring-2 focus:ring-blue-600'
                 value={form.gender}
                 onChange={handleChange}
-              />
+              >
+                <option value="">เลือกเพศ</option>
+                <option value="male">ชาย</option>
+                <option value="female">หญิง</option>
+                <option value="other">อื่นๆ</option>
+              </select>
             </div>
             <div>
-              <label htmlFor="birthday" className="block mb-1 font-medium">ปีเกิด</label>
-              <input
-                id="birthday"
-                type="date"
-                className="w-full px-4 py-2 border rounded-md bg-white focus:ring-2 focus:ring-blue-600"
-                value={form.birthday}
-                onChange={handleChange}
-                max={new Date().toISOString().split('T')[0]}
-                onFocus={(e) => {
-                  try {
-                    // แสดง date picker ถ้า browser รองรับ
-                    if (typeof e.target.showPicker === 'function') {
-                      e.target.showPicker();
-                    }
-                  } catch (err) {
-                    // fallback: ไม่ต้องทำอะไร
-                  }
-                }}
-              />
-
+              <label className="block mb-1 font-medium">วันเกิด</label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {date ? format(date, "PPP", { locale: th }) : <span>เลือกวันเกิด</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
             <div>
               <label htmlFor="password" className="block mb-1 font-medium">Password</label>
