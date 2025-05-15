@@ -44,7 +44,7 @@ export default function Navbar() {
           <Link href="/contact" className="hover:text-blue-400">ช่องทางติดต่อ</Link>
           <Link href="/articles" className="hover:text-blue-400">บทความ</Link>
           <Link href="/history" className="hover:text-blue-400">ประวัติ</Link>
-          <Link href="/profile">
+          <Link href="/login">
             <User2 className="w-6 h-6 text-black hover:text-blue-400" />
           </Link>
         </div>
@@ -66,8 +66,8 @@ export default function Navbar() {
             <Link href="/contact" className="block hover:text-blue-400">ช่องทางติดต่อ</Link>
             <Link href="/articles" className="block hover:text-blue-400">บทความ</Link>
             <Link href="/history" className="block hover:text-blue-400">ประวัติ</Link>
-            <Link href="/profile" className="hover:text-blue-400 flex items-center gap-2">
-              <User2 className="w-5 h-5" /> โปรไฟล์
+            <Link href="/login" className="hover:text-blue-400 flex items-center gap-2">
+              <User2 className="w-5 h-5" /> เข้าสู่ระบบ
             </Link>
           </div>
         </div>
