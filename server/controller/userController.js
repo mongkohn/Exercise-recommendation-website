@@ -4,17 +4,17 @@ const User = require('../models/userSchema');
 const bcrypt = require('bcryptjs'); // Add bcrypt for password hashing
 
 // Get all users
-router.get('/', async (req, res) => {
+const getAllUsers = async (req, res) => {
   try {
     const users = await User.find().select('-password');
     res.json(users);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-});
+};
 
 // Get user by ID
-router.get('/:id', async (req, res) => {
+const getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select('-password');
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -22,10 +22,10 @@ router.get('/:id', async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-});
+};
 
 // Register a new user
-router.post('/register', async (req, res) => {
+const createUser = async (req, res) => {
   try {
     const { username, email, fullname, gender, birthday, password } = req.body;
     // Check required fields
@@ -50,10 +50,10 @@ router.post('/register', async (req, res) => {
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
-});
+};
 
 // Login user
-router.post('/login', async (req, res) => {
+const loginUser = async (req, res) => {
   try {
     const { username, password } = req.body;
     if (!username || !password) {
@@ -71,10 +71,10 @@ router.post('/login', async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-});
+};
 
 // Update user by ID
-router.put('/:id', async (req, res) => {
+const updateUser = async (req, res) => {
   try {
     const updateData = { ...req.body };
     // If password is being updated, hash it
@@ -94,10 +94,10 @@ router.put('/:id', async (req, res) => {
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
-});
+};
 
 // Delete user by ID
-router.delete('/:id', async (req, res) => {
+const deleteUser = async (req, res) => {
   try {
     const deletedUser = await User.findByIdAndDelete(req.params.id);
     if (!deletedUser) return res.status(404).json({ message: 'User not found' });
@@ -105,6 +105,39 @@ router.delete('/:id', async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-});
+};
 
-module.exports = router;
+// Check duplicate username/email
+const checkDuplicateUser = async (req, res) => {
+  try {
+    const { username, email } = req.body;
+    const [usernameExists, emailExists] = await Promise.all([
+      User.exists({ username }),
+      User.exists({ email })
+    ]);
+    res.status(200).json({
+      usernameExists: !!usernameExists,
+      emailExists: !!emailExists
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+router.get('/', getAllUsers);
+router.get('/:id', getUserById);
+router.post('/register', createUser);
+router.post('/login', loginUser);
+router.post('/check', checkDuplicateUser);
+router.put('/:id', updateUser);
+router.delete('/:id', deleteUser);
+
+module.exports = {
+  getAllUsers,
+  getUserById,
+  createUser,
+  loginUser,
+  updateUser,
+  deleteUser,
+  checkDuplicateUser
+};

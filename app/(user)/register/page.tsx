@@ -36,6 +36,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setError(null);
 
+    // Validation checks
     if (
       !form.username ||
       !form.email ||
@@ -52,10 +53,45 @@ export default function RegisterPage() {
       setError('รหัสผ่านไม่ตรงกัน');
       return;
     }
+    // Username: at least 3 chars, only letters/numbers/underscore
+    if (!/^[a-zA-Z0-9_]{3,}$/.test(form.username)) {
+      setError('Username ต้องมีอย่างน้อย 3 ตัวอักษร และใช้ได้เฉพาะ a-z, 0-9, _');
+      return;
+    }
+    // Email format
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      setError('รูปแบบอีเมลไม่ถูกต้อง');
+      return;
+    }
+    // Password: at least 6 chars
+    if (form.password.length < 6) {
+      setError('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร');
+      return;
+    }
 
     setLoading(true);
     try {
-      const res = await fetch('/api/user/register', {
+      // Check duplicate username/email
+      const checkRes = await fetch('http://localhost:5000/api/user/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: form.username, email: form.email }),
+      });
+      if (!checkRes.ok) throw new Error('Error checking duplicates');
+      const { usernameExists, emailExists } = await checkRes.json();
+      if (usernameExists) {
+        setError('Username นี้ถูกใช้แล้ว');
+        setLoading(false);
+        return;
+      }
+      if (emailExists) {
+        setError('Email นี้ถูกใช้แล้ว');
+        setLoading(false);
+        return;
+      }
+
+      // Register user
+      const res = await fetch('http://localhost:5000/api/user/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -63,7 +99,7 @@ export default function RegisterPage() {
           email: form.email,
           fullname: form.fullname,
           gender: form.gender,
-          birthday: date?.toISOString(),
+          birthday: date ? date.toISOString().split('T')[0] : '', // "YYYY-MM-DD"
           password: form.password
         })
       });
@@ -71,10 +107,11 @@ export default function RegisterPage() {
       if (res.ok) {
         router.push('/login');
       } else {
-        setError(data.message || 'สมัครสมาชิกไม่สำเร็จ');
+        setError(data.message || 'เกิดข้อผิดพลาดในการสมัครสมาชิก');
       }
-    } catch {
+    } catch (err) {
       setError('เกิดข้อผิดพลาดในการสมัครสมาชิก');
+      console.log(err);
     }
     setLoading(false);
   };
@@ -156,7 +193,7 @@ export default function RegisterPage() {
               </select>
             </div>
             <div>
-              <label className="block mb-1 font-medium">วันเกิด</label>
+              <h1 className="block mb-1 font-medium">วันเกิด</h1>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
