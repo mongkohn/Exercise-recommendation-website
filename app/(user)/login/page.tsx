@@ -2,15 +2,24 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const router = useRouter();
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && localStorage.getItem('isLogin') === 'true') {
+      router.push('/');
+    }
+  }, [router]);
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/user/login', {
+      const res = await fetch('http://localhost:5000/api/user/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -18,7 +27,7 @@ export default function Login() {
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem('username', data.username);
-        // Optionally redirect or show success
+        localStorage.setItem('isLogin', 'true');
         window.location.href = '/'; // Uncomment to redirect
       } else {
         alert(data.message || 'Login failed');

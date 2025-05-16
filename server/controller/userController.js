@@ -67,7 +67,7 @@ const loginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid username or password' });
     }
-    res.json({ message: 'Login successful', username: user.username });
+    res.json({ message: 'Login successful', username: user.username, setIsLogin: true });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

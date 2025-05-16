@@ -44,9 +44,48 @@ export default function Navbar() {
           <Link href="/contact" className="hover:text-blue-400">ช่องทางติดต่อ</Link>
           <Link href="/articles" className="hover:text-blue-400">บทความ</Link>
           <Link href="/history" className="hover:text-blue-400">ประวัติ</Link>
-          <Link href="/login">
-            <User2 className="w-6 h-6 text-black hover:text-blue-400" />
-          </Link>
+            {typeof window !== "undefined" && (() => {
+              const isLogin = localStorage.getItem("isLogin") === "true";
+              const username = localStorage.getItem("username");
+              const [dropdownOpen, setDropdownOpen] = useState(false);
+
+              if (!isLogin) {
+              return (
+                <Link href="/login" className="hover:text-blue-400 flex items-center gap-2">
+                <User2 className="w-6 h-6 text-black" />
+                เข้าสู่ระบบ
+                </Link>
+              );
+              }
+              return (
+              <div className="relative">
+                <button
+                type="button"
+                className="hover:text-blue-400 flex items-center gap-2"
+                onClick={() => setDropdownOpen((open) => !open)}
+                >
+                <User2 className="w-6 h-6 text-black" />
+                {username}
+                <ChevronDown className="w-4 h-4" />
+                </button>
+                {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-md z-20">
+                  <button
+                  type="button"
+                  className="block w-full text-left px-4 py-2 hover:bg-blue-50"
+                  onClick={() => {
+                    localStorage.removeItem("isLogin");
+                    localStorage.removeItem("username");
+                    window.location.reload();
+                  }}
+                  >
+                  ออกจากระบบ
+                  </button>
+                </div>
+                )}
+              </div>
+              );
+            })()}
         </div>
       </div>
 
@@ -67,7 +106,12 @@ export default function Navbar() {
             <Link href="/articles" className="block hover:text-blue-400">บทความ</Link>
             <Link href="/history" className="block hover:text-blue-400">ประวัติ</Link>
             <Link href="/login" className="hover:text-blue-400 flex items-center gap-2">
-              <User2 className="w-5 h-5" /> เข้าสู่ระบบ
+              <User2 className="w-5 h-5" /> 
+              {typeof window !== "undefined" && (() => {
+                const isLogin = localStorage.getItem("isLogin") === "true";
+                const username = localStorage.getItem("username");
+                return isLogin ? username : "เข้าสู่ระบบ";
+              })()}
             </Link>
           </div>
         </div>
