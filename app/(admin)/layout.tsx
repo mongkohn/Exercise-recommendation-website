@@ -15,15 +15,12 @@ export const metadata = {
 };
 
 
-
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-
       <div className={`${prompt.className} bg-white min-h-screen`}>
         {children}
       </div>
-
     </ThemeProvider>
   );
 }

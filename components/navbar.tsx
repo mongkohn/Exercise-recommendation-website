@@ -2,11 +2,69 @@
 
 import { ChevronDown, User2, Menu, X } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
+  const [username, setUsername] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsLogin(localStorage.getItem("isLogin") === "true");
+      setUsername(localStorage.getItem("username"));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLogin");
+    localStorage.removeItem("username");
+    window.location.reload();
+  };
+
+  const renderUserMenu = () => {
+    if (!isLogin) {
+      return (
+        <Link href="/login" className="hover:text-blue-400 flex items-center gap-2">
+          <User2 className="w-6 h-6 text-black" />
+          เข้าสู่ระบบ
+        </Link>
+      );
+    }
+    return (
+      <div className="relative">
+        <button
+          type="button"
+          className="hover:text-blue-400 flex items-center gap-2"
+          onClick={() => setDropdownOpen((open) => !open)}
+        >
+          <User2 className="w-6 h-6 text-black" />
+          {username}
+          <ChevronDown className="w-4 h-4" />
+        </button>
+        {dropdownOpen && (
+          <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-md z-20">
+            {username === "Admin" && (
+              <Link
+                href="/dashboard"
+                className="block w-full text-left px-4 py-2 hover:bg-blue-50"
+              >
+                Dashboard
+              </Link>
+            )}
+            <button
+              type="button"
+              className="block w-full text-left px-4 py-2 hover:bg-blue-50"
+              onClick={handleLogout}
+            >
+              ออกจากระบบ
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <nav className="bg-white shadow-md rounded-xl">
@@ -33,10 +91,10 @@ export default function Navbar() {
             {/* Dropdown */}
             <div className="absolute top-full left-0 z-10 mt-2 w-48 bg-white border rounded shadow-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
               <Link href="/bmr&tdee" className="block px-4 py-2 hover:bg-blue-50">
-          คำนวณ BMR & TDEE
+                คำนวณ BMR & TDEE
               </Link>
               <Link href="/bmi" className="block px-4 py-2 hover:bg-blue-50">
-          คำนวณ BMI
+                คำนวณ BMI
               </Link>
             </div>
           </div>
@@ -44,55 +102,7 @@ export default function Navbar() {
           <Link href="/programs" className="hover:text-blue-400">โปรแกรมออกกำลังกาย</Link>
           <Link href="/contact" className="hover:text-blue-400">ช่องทางติดต่อ</Link>
           <Link href="/articles" className="hover:text-blue-400">บทความ</Link>
-          {typeof window !== "undefined" && (() => {
-            const isLogin = localStorage.getItem("isLogin") === "true";
-            const username = localStorage.getItem("username");
-
-            if (!isLogin) {
-              return (
-          <Link href="/login" className="hover:text-blue-400 flex items-center gap-2">
-            <User2 className="w-6 h-6 text-black" />
-            เข้าสู่ระบบ
-          </Link>
-              );
-            }
-            return (
-              <div className="relative">
-          <button
-            type="button"
-            className="hover:text-blue-400 flex items-center gap-2"
-            onClick={() => setDropdownOpen((open) => !open)}
-          >
-            <User2 className="w-6 h-6 text-black" />
-            {username}
-            <ChevronDown className="w-4 h-4" />
-          </button>
-          {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-md z-20">
-              {username === "Admin" && (
-                <Link
-            href="/dashboard"
-            className="block w-full text-left px-4 py-2 hover:bg-blue-50"
-                >
-            Dashboard
-                </Link>
-              )}
-              <button
-                type="button"
-                className="block w-full text-left px-4 py-2 hover:bg-blue-50"
-                onClick={() => {
-            localStorage.removeItem("isLogin");
-            localStorage.removeItem("username");
-            window.location.reload();
-                }}
-              >
-                ออกจากระบบ
-              </button>
-            </div>
-          )}
-              </div>
-            );
-          })()}
+          {renderUserMenu()}
         </div>
       </div>
 
@@ -113,12 +123,8 @@ export default function Navbar() {
             <Link href="/articles" className="block hover:text-blue-400">บทความ</Link>
             <Link href="/history" className="block hover:text-blue-400">ประวัติ</Link>
             <Link href="/login" className="hover:text-blue-400 flex items-center gap-2">
-              <User2 className="w-5 h-5" /> 
-              {typeof window !== "undefined" && (() => {
-                const isLogin = localStorage.getItem("isLogin") === "true";
-                const username = localStorage.getItem("username");
-                return isLogin ? username : "เข้าสู่ระบบ";
-              })()}
+              <User2 className="w-5 h-5" />
+              {isLogin ? username : "เข้าสู่ระบบ"}
             </Link>
           </div>
         </div>

@@ -5,7 +5,6 @@ import Image from "next/image"; // ต้องใช้ import สำหรั�
 import AdminSidebar from "@/components/AdminSidebar"; // <-- add this import
 import exerciseList from "@/data/exerciseList.json";
 import programList from "@/data/programList.json";
-import articles from "@/data/articles.json";
 import React from "react";
 
 export default function HomePage() {
@@ -59,6 +58,10 @@ function Content({ activeMenu }: { activeMenu: string }) {
   // Article state
   const [articlesData, setArticlesData] = useState<any[]>([]);
   const [loadingArticles, setLoadingArticles] = useState(false);
+  const [editArticle, setEditArticle] = useState<any | null>(null);
+  const [showDeleteArticle, setShowDeleteArticle] = useState<{ open: boolean; article: any | null }>({ open: false, article: null });
+  const [addArticle, setAddArticle] = useState(false);
+  const [newArticle, setNewArticle] = useState({ title: "", description: "", image: "", link: "" });
 
   // Fetch users when activeMenu is "users"
   React.useEffect(() => {
@@ -116,6 +119,53 @@ function Content({ activeMenu }: { activeMenu: string }) {
     fetch("http://localhost:5000/api/user/")
       .then((res) => res.json())
       .then((data) => setUsers(Array.isArray(data) ? data : []));
+  };
+
+  // Handler for updating article
+  const handleUpdateArticle = async (article: any) => {
+    setSaving(true);
+    await fetch(`http://localhost:5000/api/article/${article._id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(article),
+    });
+    setEditArticle(null);
+    setSaving(false);
+    // Refresh articles
+    fetch("http://localhost:5000/api/article/")
+      .then((res) => res.json())
+      .then((data) => setArticlesData(Array.isArray(data) ? data : []));
+  };
+
+  // Handler for deleting article
+  const handleDeleteArticle = async (articleId: string) => {
+    setSaving(true);
+    await fetch(`http://localhost:5000/api/article/${articleId}`, {
+      method: "DELETE",
+    });
+    setShowDeleteArticle({ open: false, article: null });
+    setSaving(false);
+    // Refresh articles
+    fetch("http://localhost:5000/api/article/")
+      .then((res) => res.json())
+      .then((data) => setArticlesData(Array.isArray(data) ? data : []));
+  };
+
+  // Handler for adding article
+  const handleAddArticle = async () => {
+    setSaving(true);
+    await fetch("http://localhost:5000/api/article/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newArticle),
+    });
+    setAddArticle(false);
+    setNewArticle({ title: "", description: "", image: "", link: "" });
+    setSaving(false);
+    // Refresh articles
+    fetch("http://localhost:5000/api/article/")
+      .then((res) => res.json())
+      .then((data) => setArticlesData(Array.isArray(data) ? data : []));
   };
 
   if (activeMenu === "exercise") {
@@ -221,8 +271,8 @@ function Content({ activeMenu }: { activeMenu: string }) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {programList.map((program) => (
-            <div key={program.name} className="bg-white shadow rounded-xl overflow-hidden">
+          {programList.map((program, idx) => (
+            <div key={program.name || idx} className="bg-white shadow rounded-xl overflow-hidden">
               <Image
                 src={program.image}
                 alt={program.name}
@@ -249,11 +299,12 @@ function Content({ activeMenu }: { activeMenu: string }) {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-gray-800">จัดการบทความ</h2>
           <div className="flex gap-2">
-            <button type="button" className="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition">
+            <button
+              type="button"
+              className="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition"
+              onClick={() => setAddArticle(true)}
+            >
               ➕ เพิ่มบทความ
-            </button>
-            <button type="button" className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition">
-              🗑️ ลบบทความ
             </button>
           </div>
         </div>
@@ -297,10 +348,17 @@ function Content({ activeMenu }: { activeMenu: string }) {
                       </a>
                     </td>
                     <td className="px-6 py-3">
-                      <button className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition">
+                      <button
+                        className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
+                        onClick={() => setEditArticle(article)}
+                      >
                         ✏️ แก้ไข
                       </button>
-                      <button type="button" className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition ml-2">
+                      <button
+                        type="button"
+                        className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition ml-2"
+                        onClick={() => setShowDeleteArticle({ open: true, article })}
+                      >
                         🗑️ ลบ
                       </button>
                     </td>
@@ -310,6 +368,186 @@ function Content({ activeMenu }: { activeMenu: string }) {
             </table>
           )}
         </div>
+
+        {/* Add Article Modal */}
+        { addArticle && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+              <button
+                type="button"
+                className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+                onClick={() => setAddArticle(false)}
+              >
+                ✕
+              </button>
+              <h3 className="text-xl font-bold mb-4">เพิ่มบทความใหม่</h3>
+              <form
+                onSubmit={e => {
+                  e.preventDefault();
+                  handleAddArticle();
+                }}
+                className="space-y-4"
+              >
+                <div>
+                  <label htmlFor="add-article-title" className="block text-sm font-medium mb-1">ชื่อบทความ</label>
+                  <input
+                    id="add-article-title"
+                    className="w-full border px-3 bg-gray-300 py-2 rounded"
+                    value={newArticle.title}
+                    onChange={e => setNewArticle({ ...newArticle, title: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="add-article-description" className="block text-sm font-medium mb-1">รายละเอียด</label>
+                  <textarea
+                    id="add-article-description"
+                    className="w-full border px-3 bg-gray-300 py-2 rounded"
+                    value={newArticle.description}
+                    onChange={e => setNewArticle({ ...newArticle, description: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="add-article-image" className="block text-sm font-medium mb-1">รูปภาพ (URL)</label>
+                  <input
+                    id="add-article-image"
+                    className="w-full border px-3 bg-gray-300 py-2 rounded"
+                    value={newArticle.image}
+                    onChange={e => setNewArticle({ ...newArticle, image: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="add-article-link" className="block text-sm font-medium mb-1">ลิงก์</label>
+                  <input
+                    id="add-article-link"
+                    className="w-full border px-3 bg-gray-300 py-2 rounded"
+                    value={newArticle.link}
+                    onChange={e => setNewArticle({ ...newArticle, link: e.target.value })}
+                  />
+                </div>
+                <div className="flex justify-end gap-2 mt-4">
+                  <button
+                    type="button"
+                    className="px-4 py-2 rounded bg-gray-200 text-gray-700"
+                    onClick={() => setAddArticle(false)}
+                  >
+                    ยกเลิก
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 rounded bg-green-600 text-white"
+                    disabled={saving}
+                  >
+                    {saving ? "กำลังบันทึก..." : "บันทึก"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Article Modal */}
+        {editArticle && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+              <button
+                type="button"
+                className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+                onClick={() => setEditArticle(null)}
+              >
+                ✕
+              </button>
+              <h3 className="text-xl font-bold mb-4">แก้ไขบทความ</h3>
+              <form
+                onSubmit={e => {
+                  e.preventDefault();
+                  handleUpdateArticle(editArticle);
+                }}
+                className="space-y-4"
+              >
+                <div>
+                  <label htmlFor="edit-article-title" className="block text-sm font-medium mb-1">ชื่อบทความ</label>
+                  <input
+                    id="edit-article-title"
+                    className="w-full border bg-gray-300 px-3 py-2 rounded"
+                    value={editArticle.title}
+                    onChange={e => setEditArticle({ ...editArticle, title: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="edit-article-description" className="block text-sm font-medium mb-1">รายละเอียด</label>
+                  <textarea
+                    id="edit-article-description"
+                    className="w-full border px-3 bg-gray-300 py-2 rounded h-32"
+                    value={editArticle.description}
+                    onChange={e => setEditArticle({ ...editArticle, description: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="edit-article-image" className="block text-sm  font-medium mb-1">รูปภาพ (URL)</label>
+                  <input
+                    id="edit-article-image"
+                    className="w-full border px-3 py-2 bg-gray-300 rounded"
+                    value={editArticle.image}
+                    onChange={e => setEditArticle({ ...editArticle, image: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="edit-article-link" className="block text-sm font-medium mb-1">ลิงก์</label>
+                  <input
+                    id="edit-article-link"
+                    className="w-full border px-3 py-2 bg-gray-300 rounded"
+                    value={editArticle.link}
+                    onChange={e => setEditArticle({ ...editArticle, link: e.target.value })}
+                  />
+                </div>
+                <div className="flex justify-end gap-2 mt-4">
+                  <button
+                    type="button"
+                    className="px-4 py-2 rounded bg-gray-200 text-gray-700"
+                    onClick={() => setEditArticle(null)}
+                  >
+                    ยกเลิก
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 rounded bg-blue-600 text-white"
+                    disabled={saving}
+                  >
+                    {saving ? "กำลังบันทึก..." : "บันทึก"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Article Confirm Modal */}
+        {showDeleteArticle.open && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-sm relative">
+              <h3 className="text-lg font-bold mb-4">ยืนยันการลบบทความ</h3>
+              <p className="mb-6">คุณต้องการลบบทความ <span className="font-semibold">{showDeleteArticle.article?.title}</span> หรือไม่?</p>
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded bg-gray-200 text-gray-700"
+                  onClick={() => setShowDeleteArticle({ open: false, article: null })}
+                  disabled={saving}
+                >
+                  ยกเลิก
+                </button>
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded bg-red-600 text-white"
+                  onClick={() => handleDeleteArticle(showDeleteArticle.article._id)}
+                  disabled={saving}
+                >
+                  {saving ? "กำลังลบ..." : "ลบ"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </section>
     );
   }
