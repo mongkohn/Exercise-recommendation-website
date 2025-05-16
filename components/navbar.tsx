@@ -6,6 +6,7 @@ import { useState } from "react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
     <nav className="bg-white shadow-md rounded-xl">
@@ -17,7 +18,7 @@ export default function Navbar() {
 
         {/* Hamburger icon for mobile */}
         <div className="lg:hidden">
-          <button onClick={() => setIsOpen(!isOpen)}>
+          <button type="button" onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
@@ -25,17 +26,17 @@ export default function Navbar() {
         {/* Full menu on desktop */}
         <div className="hidden lg:flex gap-6 items-center text-blue-900 font-medium">
           <div className="relative group">
-            <button className="flex items-center gap-1 hover:text-blue-400">
+            <button type="button" className="flex items-center gap-1 hover:text-blue-400">
               การเผาผลาญต่อวัน
               <ChevronDown className="w-4 h-4" />
             </button>
             {/* Dropdown */}
             <div className="absolute top-full left-0 z-10 mt-2 w-48 bg-white border rounded shadow-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
               <Link href="/bmr&tdee" className="block px-4 py-2 hover:bg-blue-50">
-                คำนวณ BMR & TDEE
+          คำนวณ BMR & TDEE
               </Link>
               <Link href="/bmi" className="block px-4 py-2 hover:bg-blue-50">
-                คำนวณ BMI
+          คำนวณ BMI
               </Link>
             </div>
           </div>
@@ -43,49 +44,55 @@ export default function Navbar() {
           <Link href="/programs" className="hover:text-blue-400">โปรแกรมออกกำลังกาย</Link>
           <Link href="/contact" className="hover:text-blue-400">ช่องทางติดต่อ</Link>
           <Link href="/articles" className="hover:text-blue-400">บทความ</Link>
-          <Link href="/history" className="hover:text-blue-400">ประวัติ</Link>
-            {typeof window !== "undefined" && (() => {
-              const isLogin = localStorage.getItem("isLogin") === "true";
-              const username = localStorage.getItem("username");
-              const [dropdownOpen, setDropdownOpen] = useState(false);
+          {typeof window !== "undefined" && (() => {
+            const isLogin = localStorage.getItem("isLogin") === "true";
+            const username = localStorage.getItem("username");
 
-              if (!isLogin) {
+            if (!isLogin) {
               return (
-                <Link href="/login" className="hover:text-blue-400 flex items-center gap-2">
-                <User2 className="w-6 h-6 text-black" />
-                เข้าสู่ระบบ
-                </Link>
+          <Link href="/login" className="hover:text-blue-400 flex items-center gap-2">
+            <User2 className="w-6 h-6 text-black" />
+            เข้าสู่ระบบ
+          </Link>
               );
-              }
-              return (
+            }
+            return (
               <div className="relative">
-                <button
-                type="button"
-                className="hover:text-blue-400 flex items-center gap-2"
-                onClick={() => setDropdownOpen((open) => !open)}
+          <button
+            type="button"
+            className="hover:text-blue-400 flex items-center gap-2"
+            onClick={() => setDropdownOpen((open) => !open)}
+          >
+            <User2 className="w-6 h-6 text-black" />
+            {username}
+            <ChevronDown className="w-4 h-4" />
+          </button>
+          {dropdownOpen && (
+            <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-md z-20">
+              {username === "Admin" && (
+                <Link
+            href="/dashboard"
+            className="block w-full text-left px-4 py-2 hover:bg-blue-50"
                 >
-                <User2 className="w-6 h-6 text-black" />
-                {username}
-                <ChevronDown className="w-4 h-4" />
-                </button>
-                {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-md z-20">
-                  <button
-                  type="button"
-                  className="block w-full text-left px-4 py-2 hover:bg-blue-50"
-                  onClick={() => {
-                    localStorage.removeItem("isLogin");
-                    localStorage.removeItem("username");
-                    window.location.reload();
-                  }}
-                  >
-                  ออกจากระบบ
-                  </button>
-                </div>
-                )}
+            Dashboard
+                </Link>
+              )}
+              <button
+                type="button"
+                className="block w-full text-left px-4 py-2 hover:bg-blue-50"
+                onClick={() => {
+            localStorage.removeItem("isLogin");
+            localStorage.removeItem("username");
+            window.location.reload();
+                }}
+              >
+                ออกจากระบบ
+              </button>
+            </div>
+          )}
               </div>
-              );
-            })()}
+            );
+          })()}
         </div>
       </div>
 

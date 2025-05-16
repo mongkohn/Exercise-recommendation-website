@@ -17,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Import user routes
 const userRoute = require('./routes/userRoute');
+const articleRoute = require('./routes/articleRoute');
 
 // Connect to MongoDB
 const connectDB = async () => {
@@ -38,7 +39,7 @@ app.get('/', (req, res) => {
 
 // Use user routes
 app.use('/api/user', userRoute);
-
+app.use("/api/article", articleRoute);
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

@@ -2,137 +2,23 @@
 
 import { useState } from "react";
 import Image from "next/image"; // ต้องใช้ import สำหรับ Image หากใช้ next/image
-const exerciseList = [
-  {
-    name: "Bent Over Rows",
-    image: "img-workout-1.png",
-    description:
-      "ท่านี้จะเป็นการออกแรงในส่วนของกล้ามเนื้อ หลังส่วนล่าง (Lower Back) และ หลังส่วนกลาง (Middle Back)",
-  },
-  {
-    name: "Dumbbell One Arm Press",
-    image: "img-workout-2.png",
-    description:
-      "ช่วยเสริมสร้างความแข็งแรงให้กับกล้ามเนื้อหลังส่วนบน โดยเฉพาะกล้ามเนื้อ latissimus dorsi และ rhomboids",
-  },
-];
+import AdminSidebar from "@/components/AdminSidebar"; // <-- add this import
+import exerciseList from "@/data/exerciseList.json";
+import programList from "@/data/programList.json";
+import articles from "@/data/articles.json";
+import React from "react";
 
-const programList = [
-  {
-    name: "Bodyweight Strength For Runners",
-    image: "https://www.hss.edu/images/socialmedia/running-knee-1200x630.jpg",
-    description:
-      "โปรแกรมฝึกด้วยน้ำหนักตัวที่เหมาะสำหรับนักวิ่ง เพิ่มความแข็งแรงในส่วนต่าง ๆ ของร่างกาย",
-  },
-];
-
-const articles = [
-  {
-    title: "วิ่งอย่างไร ไม่ให้เจ็บ",
-    description: "วิ่งอย่างไร ไม่ให้เจ็บ การเลือกรองเท้าวิ่งก็เป็นสิ่งสำคัญ เริ่มจากการเดินเร็วหรือวิ่งเหยาะๆ ไม่ควรวิ่งแบบก้าวเท้ายาว ไม่ควรวิ่งขึ้น-ลงเนิน",
-    image: "https://multimedia.anamai.moph.go.th/oawoocha/2023/12/info620_run_4_1-1024x1018.jpg",
-    link: "https://multimedia.anamai.moph.go.th/infographics/info620_run_4/"
-  },
-  {
-    title: "การออกกำลังกายเพื่อสุขภาพ",
-    description: "บทความโดย ศาสตราจารย์แพทย์หญิงชุติมา ศิริกุลชยานนท์ ภาควิชาโภชนวิทยา คณะสาธารณสุขศาสตร์ มหาวิทยาลัยมหิดล",
-    image: "https://upload.wikimedia.org/wikipedia/commons/e/ed/Seal_of_the_Department_of_Health.svg",
-    link: "https://hpc11.anamai.moph.go.th/th/sa-suk-11/200024#"
-  },
-  {
-    title: "SAVE YOUR HEALTH",
-    description: "“Fitness” หรือสถานประกอบกิจการเพื่อสุขภาพ ในปัจจุบันมีผู้ใช้บริการเป็นจำนวนมาก โดยเฉพาะคนวัยทำงาน เพราะการมีสุขภาพที่ดี คือ การออกกำลังกายอย่างน้อย สัปดาห์ละ 3 วันๆ ละ 30 นาที",
-    image: "https://files.gqthailand.com/uploads/running.jpg",
-    link: "https://multimedia.anamai.moph.go.th/help-knowledgs/save-your-health/"
-  },
-  {
-    title: "ผักผลไม้ที่ช่วยทดแทนน้ำในร่างกาย และทำให้ร่างกายสดชื่น",
-    description: "ช่วยทดแทนน้ำในร่างกายที่สูญเสียไปเรื่องจากอากาศร้อนได้ แถมยังมีสารต้านอนุมูลอิสระที่เกิดขึ้นตามธรรมชาติ ช่วยลดการอักเสบจากการเผาไหม้ของแสงแดดในหน้าร้อน",
-    image: "https://multimedia.anamai.moph.go.th/oawoocha/2024/05/heath_me_43_fruit_1_0-768x768.jpg",
-    link: "https://multimedia.anamai.moph.go.th/help-knowledgs/heath_me_43_fruit_1/"
-  },
-  {
-    title: "อาหารทะเลช่วงหน้าร้อนต้องระวังและเลือกเป็นพิเศษ",
-    description: "การกินอาหารทะเลช่วงหน้าร้อนต้องระวังและเลือกเป็นพิเศษ เพราะ ในช่วงหน้าร้อน อาหารทะเลจะเน่าเสียง่าย อาจทำให้ร้านค้าบางรายใช้วิธีการไม่ถูกต้อง",
-    image: "https://multimedia.anamai.moph.go.th/oawoocha/2024/05/heath_me_42_seafood_1-768x768.jpg",
-    link: "https://multimedia.anamai.moph.go.th/help-knowledgs/heath_me_42_seafood_1/"
-  },
-  {
-    title: "ทุกวัย นอน ดี สุขภาพดี",
-    description: "จากความเดิมคราวที่แล้ว ในเรื่อง “ต่างวัย (นอน) แตกต่าง” วัยแรกเกิด จนถึงอายุ 2 ปี มาคราวนี้ กรมอนามัย ขอแนะนำต่อ กับ ระยะการนอนหลับแต่ละช่วงวัย ตาม National Sleep Foundation ในช่วง “วัยเรียนวัยุร่น”",
-    image: "https://multimedia.anamai.moph.go.th/oawoocha/2024/04/heath_me_34_sleep_2-768x767.jpg",
-    link: "https://multimedia.anamai.moph.go.th/help-knowledgs/heath_me_34_sleep_2/"
-  },
-];
-
-const userList = [
-  { username: "Mod", email: "mongkohn.kubpom@gmail.com", status: "active" },
-  { username: "Nack", email: "okm6344@gmail.com", status: "inactive" },
-];
 export default function HomePage() {
   const [activeMenu, setActiveMenu] = useState("home");
 
   return (
     <div className="flex min-h-screen bg-gray-50 text-gray-800 font-sans">
-      <Sidebar onSelect={setActiveMenu} />
+      <AdminSidebar onSelect={setActiveMenu} /> {/* use AdminSidebar */}
       <main className="flex-1 flex flex-col">
         <Header />
         <Content activeMenu={activeMenu} />
       </main>
     </div>
-  );
-}
-
-function Sidebar({ onSelect }: { onSelect: (menu: string) => void }) {
-  return (
-    <aside className="w-72 bg-white border-r flex flex-col justify-between shadow-md">
-      <div>
-        <div className="flex items-center justify-center h-24 border-b bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md">
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-2 mb-1">
-              <div className="text-3xl">💪</div>
-              <h1 className="text-3xl font-extrabold tracking-wider">ERD</h1>
-            </div>
-            <p className="text-sm font-medium tracking-wide text-blue-100">
-              Website Dashboard
-            </p>
-          </div>
-        </div>
-
-        <nav className="px-6 py-6 space-y-2">
-          <SidebarItem icon="🏋️‍♀️" label="จัดการท่าออกกำลังกาย" onClick={() => onSelect("exercise")} />
-          <SidebarItem icon="📆" label="จัดการโปรแกรม" onClick={() => onSelect("program")} />
-          <SidebarItem icon="📰" label="จัดการบทความ" onClick={() => onSelect("articles")} />
-          <SidebarItem icon="👥" label="จัดการบัญชีผู้ใช้" onClick={() => onSelect("users")} />
-        </nav>
-      </div>
-
-      <div className="px-6 py-4 border-t">
-        <button className="w-full flex items-center justify-center gap-2 px-4 py-2 text-red-600 hover:bg-red-100 rounded-lg transition-all font-semibold">
-          🚪 <span>ออกจากระบบ</span>
-        </button>
-      </div>
-    </aside>
-  );
-}
-
-function SidebarItem({
-  icon,
-  label,
-  onClick,
-}: {
-  icon: string;
-  label: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="w-full text-left flex items-center gap-3 px-4 py-3 rounded-md hover:bg-blue-100 text-gray-700 hover:text-blue-700 transition-all font-medium"
-    >
-      <span className="text-xl">{icon}</span>
-      <span>{label}</span>
-    </button>
   );
 }
 
@@ -155,6 +41,82 @@ type Exercise = {
 
 function Content({ activeMenu }: { activeMenu: string }) {
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
+  type User = {
+    _id: string;
+    username: string;
+    email: string;
+    fullname: string;
+    gender: string;
+    birthday?: string;
+  };
+
+  const [users, setUsers] = useState<User[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [editUser, setEditUser] = useState<any | null>(null);
+  const [showDelete, setShowDelete] = useState<{ open: boolean; user: any | null }>({ open: false, user: null });
+  const [saving, setSaving] = useState(false);
+
+  // Article state
+  const [articlesData, setArticlesData] = useState<any[]>([]);
+  const [loadingArticles, setLoadingArticles] = useState(false);
+
+  // Fetch users when activeMenu is "users"
+  React.useEffect(() => {
+    if (activeMenu === "users") {
+      setLoadingUsers(true);
+      fetch("http://localhost:5000/api/user/")
+        .then((res) => res.json())
+        .then((data) => {
+          setUsers(Array.isArray(data) ? data : []);
+          setLoadingUsers(false);
+        })
+        .catch(() => setLoadingUsers(false));
+    }
+  }, [activeMenu]);
+
+  // Fetch articles when activeMenu is "articles"
+  React.useEffect(() => {
+    if (activeMenu === "articles") {
+      setLoadingArticles(true);
+      fetch("http://localhost:5000/api/article/")
+        .then((res) => res.json())
+        .then((data) => {
+          setArticlesData(Array.isArray(data) ? data : []);
+          setLoadingArticles(false);
+        })
+        .catch(() => setLoadingArticles(false));
+    }
+  }, [activeMenu]);
+
+  // Handler for updating user
+  const handleUpdateUser = async (user: any) => {
+    setSaving(true);
+    await fetch(`http://localhost:5000/api/user/${user._id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(user),
+    });
+    setEditUser(null);
+    setSaving(false);
+    // Refresh users
+    fetch("http://localhost:5000/api/user/")
+      .then((res) => res.json())
+      .then((data) => setUsers(Array.isArray(data) ? data : []));
+  };
+
+  // Handler for deleting user
+  const handleDeleteUser = async (userId: string) => {
+    setSaving(true);
+    await fetch(`http://localhost:5000/api/user/${userId}`, {
+      method: "DELETE",
+    });
+    setShowDelete({ open: false, user: null });
+    setSaving(false);
+    // Refresh users
+    fetch("http://localhost:5000/api/user/")
+      .then((res) => res.json())
+      .then((data) => setUsers(Array.isArray(data) ? data : []));
+  };
 
   if (activeMenu === "exercise") {
     if (selectedExercise) {
@@ -162,6 +124,7 @@ function Content({ activeMenu }: { activeMenu: string }) {
         <section className="p-8 max-w-6xl mx-auto">
           <div className="w-full flex justify-start mb-4">
             <button
+              type="button"
               onClick={() => setSelectedExercise(null)}
               className="text-blue-600 hover:underline"
             >
@@ -219,6 +182,7 @@ function Content({ activeMenu }: { activeMenu: string }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {exerciseList.map((exercise, index) => (
             <button
+              type="button"
               key={index}
               onClick={() => setSelectedExercise(exercise)}
               className="bg-white shadow rounded-xl overflow-hidden text-left"
@@ -247,18 +211,18 @@ function Content({ activeMenu }: { activeMenu: string }) {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-gray-800">จัดการโปรแกรม</h2>
           <div className="flex gap-2">
-            <button className="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition">
+            <button type="button" className="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition">
               ➕ เพิ่มโปรแกรม
             </button>
-            <button className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition">
+            <button type="button" className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition">
               🗑️ ลบโปรแกรม
             </button>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {programList.map((program, index) => (
-            <div key={index} className="bg-white shadow rounded-xl overflow-hidden">
+          {programList.map((program) => (
+            <div key={program.name} className="bg-white shadow rounded-xl overflow-hidden">
               <Image
                 src={program.image}
                 alt={program.name}
@@ -285,46 +249,66 @@ function Content({ activeMenu }: { activeMenu: string }) {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-gray-800">จัดการบทความ</h2>
           <div className="flex gap-2">
-            <button className="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition">
+            <button type="button" className="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition">
               ➕ เพิ่มบทความ
             </button>
-            <button className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition">
+            <button type="button" className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition">
               🗑️ ลบบทความ
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          {articles.map((article, idx) => (
-            <div
-              key={idx}
-              className="bg-white shadow-md hover:shadow-xl rounded-lg overflow-hidden hover:scale-105 transition"
-            >
-              <div className="relative h-56 w-full">
-                <a href={article.link} target="_blank" rel="noopener noreferrer">
-                  <Image
-                    src={article.image}
-                    alt={article.title}
-                    width={400}
-                    height={224}
-                    className="w-full h-full object-cover"
-                  />
-                </a>
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold mb-1">{article.title}</h3>
-                <p className="text-sm text-gray-700 mb-2">{article.description}</p>
-                <a
-                  href={article.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 text-sm hover:underline"
-                >
-                  อ่านต่อ...
-                </a>
-              </div>
-            </div>
-          ))}
+        <div className="overflow-x-auto bg-white shadow-md rounded-lg">
+          {loadingArticles ? (
+            <div className="p-8 text-center text-gray-500">กำลังโหลดข้อมูลบทความ...</div>
+          ) : (
+            <table className="min-w-full text-left table-auto">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="px-6 py-3 text-gray-700 font-semibold">รูปภาพ</th>
+                  <th className="px-6 py-3 text-gray-700 font-semibold">ชื่อบทความ</th>
+                  <th className="px-6 py-3 text-gray-700 font-semibold">รายละเอียด</th>
+                  <th className="px-6 py-3 text-gray-700 font-semibold">ลิงก์</th>
+                  <th className="px-6 py-3 text-gray-700 font-semibold">การกระทำ</th>
+                </tr>
+              </thead>
+              <tbody>
+                {articlesData.map((article) => (
+                  <tr key={article._id} className="border-t hover:bg-gray-50">
+                    <td className="px-6 py-3">
+                      <Image
+                        src={article.image}
+                        alt={article.title}
+                        width={80}
+                        height={48}
+                        className="object-cover rounded"
+                      />
+                    </td>
+                    <td className="px-6 py-3 text-gray-800">{article.title}</td>
+                    <td className="px-6 py-3 text-gray-700">{article.description}</td>
+                    <td className="px-6 py-3">
+                      <a
+                        href={article.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline"
+                      >
+                        ดูบทความ
+                      </a>
+                    </td>
+                    <td className="px-6 py-3">
+                      <button className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition">
+                        ✏️ แก้ไข
+                      </button>
+                      <button type="button" className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition ml-2">
+                        🗑️ ลบ
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </section>
     );
@@ -338,40 +322,169 @@ function Content({ activeMenu }: { activeMenu: string }) {
         </div>
 
         <div className="overflow-x-auto bg-white shadow-md rounded-lg">
-          <table className="min-w-full text-left table-auto">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="px-6 py-3 text-gray-700 font-semibold">ชื่อผู้ใช้</th>
-                <th className="px-6 py-3 text-gray-700 font-semibold">อีเมล</th>
-                <th className="px-6 py-3 text-gray-700 font-semibold">สถานะ</th>
-                <th className="px-6 py-3 text-gray-700 font-semibold">การกระทำ</th>
-              </tr>
-            </thead>
-            <tbody>
-              {userList.map((user, index) => (
-                <tr key={index} className="border-t hover:bg-gray-50">
-                  <td className="px-6 py-3 text-gray-700">{user.username}</td>
-                  <td className="px-6 py-3 text-gray-700">{user.email}</td>
-                  <td className="px-6 py-3 text-gray-700">
-                    {user.status === "active" ? (
-                      <span className="text-green-600">Active</span>
-                    ) : (
-                      <span className="text-red-600">Inactive</span>
-                    )}
-                  </td>
-                  <td className="px-6 py-3">
-                    <button className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition">
-                      ✏️ แก้ไข
-                    </button>
-                    <button className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition ml-2">
-                      🗑️ ลบ
-                    </button>
-                  </td>
+          {loadingUsers ? (
+            <div className="p-8 text-center text-gray-500">กำลังโหลดข้อมูลผู้ใช้...</div>
+          ) : (
+            <table className="min-w-full text-left table-auto">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="px-6 py-3 text-gray-700 font-semibold">ชื่อผู้ใช้</th>
+                  <th className="px-6 py-3 text-gray-700 font-semibold">อีเมล</th>
+                  <th className="px-6 py-3 text-gray-700 font-semibold">ชื่อเต็ม</th>
+                  <th className="px-6 py-3 text-gray-700 font-semibold">เพศ</th>
+                  <th className="px-6 py-3 text-gray-700 font-semibold">วันเกิด</th>
+                  <th className="px-6 py-3 text-gray-700 font-semibold">การกระทำ</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user._id} className="border-t hover:bg-gray-50">
+                    <td className="px-6 py-3 text-gray-700">{user.username}</td>
+                    <td className="px-6 py-3 text-gray-700">{user.email}</td>
+                    <td className="px-6 py-3 text-gray-700">{user.fullname}</td>
+                    <td className="px-6 py-3 text-gray-700">{user.gender}</td>
+                    <td className="px-6 py-3 text-gray-700">
+                      {user.birthday ? new Date(user.birthday).toLocaleDateString() : "-"}
+                    </td>
+                    <td className="px-6 py-3">
+                      <button
+                        className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition"
+                        onClick={() => setEditUser(user)}
+                      >
+                        ✏️ แก้ไข
+                      </button>
+                      <button
+                        type="button"
+                        className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition ml-2"
+                        onClick={() => setShowDelete({ open: true, user })}
+                      >
+                        🗑️ ลบ
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
+
+        {/* Edit Modal */}
+        {editUser && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+              <button
+                type="button"
+                className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+                onClick={() => setEditUser(null)}
+              >
+                ✕
+              </button>
+              <h3 className="text-xl font-bold mb-4">แก้ไขบัญชีผู้ใช้</h3>
+              <form
+                onSubmit={e => {
+                  e.preventDefault();
+                  handleUpdateUser(editUser);
+                }}
+                className="space-y-4"
+              >
+                <div>
+                  <label htmlFor="edit-username" className="block text-sm font-medium mb-1">ชื่อผู้ใช้</label>
+                  <input
+                    id="edit-username"
+                    className="w-full border px-3 bg-gray-300 py-2 rounded"
+                    value={editUser.username}
+                    onChange={e => setEditUser({ ...editUser, username: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="edit-email" className="block text-sm font-medium mb-1">อีเมล</label>
+                  <input
+                    id="edit-email"
+                    className="w-full border px-3 bg-gray-300 py-2 rounded"
+                    value={editUser.email}
+                    onChange={e => setEditUser({ ...editUser, email: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="edit-fullname" className="block text-sm font-medium mb-1">ชื่อเต็ม</label>
+                  <input
+                    id="edit-fullname"
+                    className="w-full border px-3 bg-gray-300 py-2 rounded"
+                    value={editUser.fullname}
+                    onChange={e => setEditUser({ ...editUser, fullname: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="edit-gender" className="block text-sm font-medium mb-1">เพศ</label>
+                  <select
+                    id="edit-gender"
+                    className="w-full border px-3 bg-gray-300 py-2 rounded"
+                    value={editUser.gender}
+                    onChange={e => setEditUser({ ...editUser, gender: e.target.value })}
+                  >
+                    <option value="">เลือกเพศ</option>
+                    <option value="male">ชาย</option>
+                    <option value="female">หญิง</option>
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="edit-birthday" className="block text-sm font-medium mb-1">วันเกิด</label>
+                  <input
+                    id="edit-birthday"
+                    type="date"
+                    className="w-full border px-3 py-2 bg-gray-300 rounded"
+                    value={editUser.birthday ? new Date(editUser.birthday).toISOString().split("T")[0] : ""}
+                    onChange={e => setEditUser({ ...editUser, birthday: e.target.value })}
+                  />
+                </div>
+                <div className="flex justify-end gap-2 mt-4">
+                  <button
+                    type="button"
+                    className="px-4 py-2 rounded bg-gray-200 text-gray-700"
+                    onClick={() => setEditUser(null)}
+                  >
+                    ยกเลิก
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 rounded bg-blue-600 text-white"
+                    disabled={saving}
+                  >
+                    {saving ? "กำลังบันทึก..." : "บันทึก"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Delete Confirm Modal */}
+        {showDelete.open && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-sm relative">
+              <h3 className="text-lg font-bold mb-4">ยืนยันการลบผู้ใช้</h3>
+              <p className="mb-6">คุณต้องการลบผู้ใช้ <span className="font-semibold">{showDelete.user?.username}</span> หรือไม่?</p>
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded bg-gray-200 text-gray-700"
+                  onClick={() => setShowDelete({ open: false, user: null })}
+                  disabled={saving}
+                >
+                  ยกเลิก
+                </button>
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded bg-red-600 text-white"
+                  onClick={() => handleDeleteUser(showDelete.user._id)}
+                  disabled={saving}
+                >
+                  {saving ? "กำลังลบ..." : "ลบ"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </section>
     );
   }
