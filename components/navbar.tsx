@@ -12,14 +12,15 @@ export default function Navbar() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setIsLogin(localStorage.getItem("isLogin") === "true");
-      setUsername(localStorage.getItem("username"));
+      setIsLogin(sessionStorage.getItem("isLogin") === "true");
+      setUsername(sessionStorage.getItem("username"));
     }
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("isLogin");
-    localStorage.removeItem("username");
+    sessionStorage.removeItem("isLogin");
+    sessionStorage.removeItem("username");
+    sessionStorage.removeItem("userId");
     window.location.reload();
   };
 
