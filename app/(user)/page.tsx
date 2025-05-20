@@ -9,7 +9,7 @@ const HERO_CONTENT = {
   subtitle: "เสริมสร้างสุขภาพที่แข็งแรง และเป้าหมายที่คุณต้องการ",
   button: "เริ่มต้นตอนนี้",
   link: "/bmi",
-  bgImage: "/welcome.jpeg",
+  bgImage: "/wel.jpg",
 };
 
 const ABOUT_CONTENT = {

@@ -17,7 +17,7 @@ export default function Footer() {
       style={{ backgroundImage: "url('/gym.jpg')" }}
     >
       {/* ✅ เลเยอร์โปร่งใสแบบเต็มพื้นที่ */}
-      <div className="absolute inset-0 bg-white/40 backdrop-blur-sm z-0" />
+      <div className="absolute inset-0 bg-white/50 backdrop-blur-sm z-0" />
 
       {/* ✅ เนื้อหาด้านใน - อยู่เหนือเลเยอร์ */}
       <div className="relative z-10 max-w-7xl m-auto px-4 py-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-black">
