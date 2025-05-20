@@ -5,8 +5,8 @@ import Image from "next/image";
 
 const workoutPrograms = [
   {
-    title: "Bodyweight Strength For Runners",
-    duration: "20 นาที",
+    title: "โปรแกรมออกกำลังกายใน 1 สัปดาห์",
+    duration: "10 นาที",
     difficulty: "ปานกลาง",
     category: "Strength For Runners",
     image: "https://www.hss.edu/images/socialmedia/running-knee-1200x630.jpg",
