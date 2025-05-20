@@ -11,7 +11,7 @@ export default function Login() {
   const router = useRouter();
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && localStorage.getItem('isLogin') === 'true') {
+    if (typeof window !== 'undefined' && sessionStorage.getItem('isLogin') === 'true') {
       router.push('/');
     }
   }, [router]);
@@ -26,8 +26,9 @@ export default function Login() {
       });
       const data = await res.json();
       if (res.ok) {
-        localStorage.setItem('username', data.username);
-        localStorage.setItem('isLogin', 'true');
+        sessionStorage.setItem('username', data.username);
+        sessionStorage.setItem('isLogin', 'true');
+        sessionStorage.setItem('userId', data._id); // Set userId from MongoDB
         window.location.href = '/'; // Uncomment to redirect
       } else {
         alert(data.message || 'Login failed');
