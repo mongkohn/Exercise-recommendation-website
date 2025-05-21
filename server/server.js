@@ -4,7 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 
 // Load environment variables
-dotenv.config({ path: 'config/config.env' });
+require('dotenv').config();
 
 // Initialize Express app
 const app = express();
@@ -19,6 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 const userRoute = require('./routes/userRoute');
 const articleRoute = require('./routes/articleRoute');
 const videoRoute = require('./routes/videoRoute');
+const commentRoute = require('./routes/commentRoute');
 
 // Connect to MongoDB
 const connectDB = async () => {
@@ -42,6 +43,7 @@ app.get('/', (req, res) => {
 app.use('/api/user', userRoute);
 app.use("/api/article", articleRoute);
 app.use("/api/video", videoRoute);
+app.use('/api/comments', commentRoute);
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

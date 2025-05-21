@@ -11,7 +11,7 @@ function ArticleCard({ article }: { article: any }) {
   return (
     <div className={`bg-white shadow-md rounded-lg overflow-hidden ${getHoverClasses()}`}>
       <div className="relative h-56 w-full">
-        <Link href={article.link} passHref legacyBehavior>
+        <Link href={`/articles/${article._id}`} passHref legacyBehavior>
           <a href={article.link} target="_blank" rel="noopener noreferrer">
             <Image
               src={article.image}
@@ -28,7 +28,7 @@ function ArticleCard({ article }: { article: any }) {
         {article.refer && (
           <p className="text-sm text-gray-500 mb-2">{article.refer}</p>
         )}
-        <Link href={article.link} passHref legacyBehavior>
+        <Link href={`/articles/${article._id}`} passHref legacyBehavior>
           <a href={article.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 text-sm hover:underline">
             อ่านต่อ...
           </a>
@@ -43,7 +43,7 @@ export default function ArticlesPage() {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    fetch("http://localhost:5000/api/article/")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/article/`)
       .then((res) => res.json())
       .then((data) => {
         setArticles(Array.isArray(data) ? data : []);

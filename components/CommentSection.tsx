@@ -1,0 +1,146 @@
+"use client";
+
+import { useState, useEffect, FormEvent } from 'react';
+
+interface Comment {
+    _id: string;
+    articleId: string;
+    userId: string;
+    username: string; // Username or fullname of the commenter
+    text: string;
+    createdAt: string;
+}
+
+interface CommentSectionProps {
+    articleId: string;
+}
+
+const CommentSection = ({ articleId }: CommentSectionProps) => {
+    const [comments, setComments] = useState<Comment[]>([]);
+    const [newCommentText, setNewCommentText] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+    const [userId, setUserId] = useState<string | null>(null);
+    const [username, setUsername] = useState<string | null>(null);
+
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setIsUserLoggedIn(sessionStorage.getItem('isLogin') === 'true');
+            setUserId(sessionStorage.getItem('userId'));
+            setUsername(sessionStorage.getItem('username'));
+        }
+    }, []);
+
+    const fetchComments = async () => {
+        if (!articleId) return;
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await fetch(\`\${apiBaseUrl}/comments/\${articleId}\`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch comments');
+            }
+            const data = await response.json();
+            setComments(data);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'An unknown error occurred');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchComments();
+    }, [articleId, apiBaseUrl]); // Added apiBaseUrl as dependency
+
+    const handleCommentSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        if (!newCommentText.trim() || !userId || !username) {
+            setError('Comment text cannot be empty and user must be logged in.');
+            return;
+        }
+        setIsLoading(true);
+        setError(null);
+        try {
+            const response = await fetch(\`\${apiBaseUrl}/comments\`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    articleId,
+                    userId,
+                    username, // Send username from session
+                    text: newCommentText,
+                }),
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to post comment');
+            }
+            setNewCommentText(''); // Clear input field
+            fetchComments(); // Refresh comments list
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'An unknown error occurred while posting');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="mt-8 p-4 border-t border-gray-200">
+            <h2 className="text-2xl font-semibold mb-4">Comments</h2>
+            {isUserLoggedIn && userId && username && (
+                <form onSubmit={handleCommentSubmit} className="mb-6">
+                    <textarea
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
+                        rows={3}
+                        placeholder="Write a comment..."
+                        value={newCommentText}
+                        onChange={(e) => setNewCommentText(e.target.value)}
+                        required
+                    />
+                    <button
+                        type="submit"
+                        className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-150"
+                        disabled={isLoading}
+                    >
+                        {isLoading ? 'Posting...' : 'Post Comment'}
+                    </button>
+                </form>
+            )}
+            {!isUserLoggedIn && (
+                <p className="mb-4 text-gray-600">
+                    Please <a href="/login" className="text-blue-600 hover:underline">login</a> to post a comment.
+                </p>
+            )}
+
+            {error && <p className="text-red-500 mb-4">Error: {error}</p>}
+
+            {isLoading && comments.length === 0 && <p>Loading comments...</p>}
+
+            {comments.length === 0 && !isLoading && !error && (
+                <p>No comments yet. Be the first to comment!</p>
+            )}
+
+            <div className="space-y-4">
+                {comments.map((comment) => (
+                    <div key={comment._id} className="p-3 bg-gray-50 rounded-lg shadow">
+                        <div className="flex items-center mb-1">
+                            <strong className="text-gray-800 mr-2">{comment.username}</strong>
+                            <span className="text-xs text-gray-500">
+                                {new Date(comment.createdAt).toLocaleString()}
+                            </span>
+                        </div>
+                        <p className="text-gray-700 whitespace-pre-wrap">{comment.text}</p>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+export default CommentSection;

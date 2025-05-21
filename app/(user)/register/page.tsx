@@ -72,7 +72,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       // Check duplicate username/email
-      const checkRes = await fetch('http://localhost:5000/api/user/check', {
+      const checkRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/check`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: form.username, email: form.email }),
@@ -91,7 +91,7 @@ export default function RegisterPage() {
       }
 
       // Register user
-      const res = await fetch('http://localhost:5000/api/user/register', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
