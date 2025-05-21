@@ -25,7 +25,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       disableTransitionOnChange
     >
       <Navbar />
-      <div className={`${prompt.className} bg-white min-h-screen`}>
+      <div className={`${prompt.className}  min-h-screen`}>
         {children}
       </div>
       <Footer />
