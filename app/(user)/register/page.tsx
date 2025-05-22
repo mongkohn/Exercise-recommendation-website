@@ -174,19 +174,19 @@ export default function RegisterPage() {
               <label className="block mb-1 font-medium">วันเกิด</label>
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className={cn("w-full justify-start text-left rounded-md border px-4 py-2 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600", !date && "text-muted-foreground")}> <CalendarIcon className="mr-2 h-4 w-4 text-gray-600" />{date && isValid(date) ? format(date, "d MMMM yyyy", { locale: th }) : <span>เลือกวันเกิด</span>} </Button>
+                  <Button variant="outline" className={cn("w-full justify-start text-left rounded-md border px-4 py-2 bg-white hover:bg-blue-200 hover:text-black focus:outline-none focus:ring-2 focus:ring-blue-600", !date && "text-muted-foreground")}> <CalendarIcon className="mr-2 h-4 w-4 text-gray-600" />{date && isValid(date) ? format(date, "d MMMM yyyy", { locale: th }) : <span>เลือกวันเกิด</span>} </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0 bg-white rounded-md shadow-lg border" align="start">
                   <Calendar
                     mode="single" selected={date} onSelect={(d) => { setDate(d); if (isValid(d)) setDisplayMonth(d); }}
                     fromYear={1900} toYear={new Date().getFullYear()} locale={th} month={displayMonth} year={getYear(displayMonth)}
-                    components={{ Caption: (props) => <CustomCaption {...props} onChange={handleDisplayMonthChange} /> }}
-                    captionLayout="dropdown" initialFocus className="rounded-md p-3"
+                    components={{ Caption: (props) => <CustomCaption  {...props} onChange={handleDisplayMonthChange} /> }}
+                    captionLayout="dropdown" initialFocus 
+                    className="rounded-md p-3 bg-white text-black"
                   />
                 </PopoverContent>
               </Popover>
             </div>
-
             {[{ id: 'password', label: 'Password', placeholder: 'รหัสผ่าน' }, { id: 'confirmPassword', label: 'Confirm-Password', placeholder: 'ยืนยันรหัสผ่าน' }].map(({ id, label, placeholder }) => (
               <div key={id}>
                 <label htmlFor={id} className="block mb-1 font-medium">{label}</label>
