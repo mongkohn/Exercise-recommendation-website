@@ -9,7 +9,11 @@ const HERO_CONTENT = {
   subtitle: "เสริมสร้างสุขภาพที่แข็งแรง และเป้าหมายที่คุณต้องการ",
   button: "เริ่มต้นตอนนี้",
   link: "/bmi",
+<<<<<<< HEAD
   bgImage: "/wel.jpg",
+=======
+  bgImage: "/welcome.png",
+>>>>>>> NACK-V2
 };
 
 const ABOUT_CONTENT = {
@@ -152,9 +156,11 @@ function FeaturesSection() {
         <h2 className="text-4xl font-bold text-center text-blue-600 mb-12">
           จุดเด่นของเรา
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 ">
           {FEATURES.map((f) => (
-            <FeatureCard key={f.title} {...f} />
+           <div className="bg-blue-100 p-8 rounded-xl shadow-md hover:shadow-lg transition text-center">
+              <FeatureCard key={f.title} {...f} />
+             </div>
           ))}
         </div>
       </div>
