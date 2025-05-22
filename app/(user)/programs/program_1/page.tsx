@@ -4,7 +4,7 @@ import FeedbackSection from "@/components/FeedbackSection";
 
 const workoutData = {
   id: 1,
-  name: "โปรแกรมออกกำลังกายใน 1 สัปดาห์",
+  name: "โปรแกรมออกกำลังกายใน 1 อาทิตย์",
   videoUrl: "https://drive.google.com/file/d/1U7vJJu-JsjaD0t_NBo-wdsz1Zeb-X-oZ/preview",
   description: [
     "1. โน้มตัวไปข้างหน้า 45 องศา",
@@ -54,12 +54,12 @@ export default function WorkoutView() {
       </div>
 
       <div>
-        <h2 className="font-semibold text-lg mt-2">คำอธิบาย</h2>
+        {/* <h2 className="font-semibold text-lg mt-2">คำอธิบาย</h2>
         <div>
           {workoutData.description.map((item) => (
             <span key={item}>{item}</span>
           ))}
-        </div>
+        </div> */}
       </div>
       <hr className="w-full mt-10 border border-gray-300" />
       <FeedbackSection />

@@ -5,7 +5,7 @@ import Image from "next/image";
 
 const workoutPrograms = [
   {
-    title: "โปรแกรมออกกำลังกายใน 1 สัปดาห์",
+    title: "โปรแกรมออกกำลังกายใน 1 อาทิตย์",
     duration: "10 นาที",
     difficulty: "ปานกลาง",
     category: "Strength For Body",

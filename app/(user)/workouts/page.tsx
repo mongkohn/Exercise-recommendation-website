@@ -102,7 +102,7 @@ export default function WorkoutsPage() {
             <input
               type="text"
               placeholder="ค้นหาท่าออกกำลังกายหรือกล้ามเนื้อ..."
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
@@ -400,7 +400,7 @@ export default function WorkoutsPage() {
               <div className="mb-6">
                 <h4 className="font-medium text-gray-800 mb-3">อุปกรณ์</h4>
                 <select
-                  className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 border border-gray-200 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={filters.equipment}
                   onChange={e => setFilters(prev => ({ ...prev, equipment: e.target.value }))}
                 >
