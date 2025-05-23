@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, FormEvent } from 'react';
+import { useAuth } from '@/context/AuthContext'; // Import useAuth
 
 interface Comment {
     _id: string;
@@ -18,21 +19,15 @@ interface CommentSectionProps {
 const CommentSection = ({ articleId }: CommentSectionProps) => {
     const [comments, setComments] = useState<Comment[]>([]);
     const [newCommentText, setNewCommentText] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false); // This is for comment posting/fetching, not auth
     const [error, setError] = useState<string | null>(null);
-    const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
-    const [userId, setUserId] = useState<string | null>(null);
-    const [username, setUsername] = useState<string | null>(null);
+    // Removed useState for isUserLoggedIn, userId, username
+
+    const { isLoggedIn, user, isLoading: isAuthLoading } = useAuth(); // Use AuthContext
 
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            setIsUserLoggedIn(sessionStorage.getItem('isLogin') === 'true');
-            setUserId(sessionStorage.getItem('userId'));
-            setUsername(sessionStorage.getItem('username'));
-        }
-    }, []);
+    // Removed useEffect that used sessionStorage
 
     const fetchComments = async () => {
         if (!articleId) return;
@@ -58,22 +53,22 @@ const CommentSection = ({ articleId }: CommentSectionProps) => {
 
     const handleCommentSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        if (!newCommentText.trim() || !userId || !username) {
-            setError('Comment text cannot be empty and user must be logged in.');
+        if (!isLoggedIn || !user?.userId || !user?.username || !newCommentText.trim()) {
+            setError('You must be logged in to comment, and comment text cannot be empty.');
             return;
         }
-        setIsLoading(true);
+        setIsLoading(true); // This is the component's own loading state for submission
         setError(null);
         try {
-            const response = await fetch(\`\${apiBaseUrl}/comments\`, {
+            const response = await fetch(\`\${apiBaseUrl}/comments\`, { // This is the generic /api/comments endpoint
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    articleId,
-                    userId,
-                    username, // Send username from session
+                    articleId, // This prop remains
+                    userId: user.userId,
+                    username: user.username, // Send username from context's user object
                     text: newCommentText,
                 }),
             });
@@ -93,7 +88,10 @@ const CommentSection = ({ articleId }: CommentSectionProps) => {
     return (
         <div className="mt-8 p-4 border-t border-gray-200">
             <h2 className="text-2xl font-semibold mb-4">Comments</h2>
-            {isUserLoggedIn && userId && username && (
+            
+            {isAuthLoading && <p>Loading comments section...</p>}
+
+            {!isAuthLoading && isLoggedIn && ( // No need to check userId/username here as isLoggedIn implies user object is likely populated
                 <form onSubmit={handleCommentSubmit} className="mb-6">
                     <textarea
                         className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
@@ -112,7 +110,7 @@ const CommentSection = ({ articleId }: CommentSectionProps) => {
                     </button>
                 </form>
             )}
-            {!isUserLoggedIn && (
+            {!isAuthLoading && !isLoggedIn && (
                 <p className="mb-4 text-gray-600">
                     Please <a href="/login" className="text-blue-600 hover:underline">login</a> to post a comment.
                 </p>

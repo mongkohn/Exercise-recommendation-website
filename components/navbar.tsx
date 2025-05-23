@@ -2,30 +2,30 @@
 
 import { ChevronDown, User2, Menu, X } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react"; // useEffect removed
+import { useAuth } from '@/context/AuthContext'; // Added useAuth
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
-  const [username, setUsername] = useState<string | null>(null);
+  // isLogin and username state removed
+  const { isLoggedIn, user, logout, isLoading } = useAuth(); // Added useAuth hook
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsLogin(sessionStorage.getItem("isLogin") === "true");
-      setUsername(sessionStorage.getItem("username"));
-    }
-  }, []);
+  // useEffect for sessionStorage removed
 
-  const handleLogout = () => {
-    sessionStorage.removeItem("isLogin");
-    sessionStorage.removeItem("username");
-    sessionStorage.removeItem("userId");
-    window.location.reload();
+  const handleLogout = async () => { // Updated handleLogout
+    await logout();
+    setDropdownOpen(false); // Close dropdown after logout
+    // Consider if reload is still needed or if context handles UI update
+    // router.push('/'); // Optionally redirect to home or login page
   };
 
   const renderUserMenu = () => {
-    if (!isLogin) {
+    if (isLoading) { // Added isLoading check
+      return <div className="w-24 h-8 bg-gray-200 animate-pulse rounded"></div>; // Placeholder for loading
+    }
+
+    if (!isLoggedIn) { // isLogin from useAuth
       return (
         <Link href="/login" className="hover:text-blue-400 flex items-center gap-2">
           <User2 className="w-6 h-6 text-black" />
@@ -41,15 +41,16 @@ export default function Navbar() {
           onClick={() => setDropdownOpen((open) => !open)}
         >
           <User2 className="w-6 h-6 text-black" />
-          {username}
+          {user?.username || 'User'} {/* Display username from context */}
           <ChevronDown className="w-4 h-4" />
         </button>
         {dropdownOpen && (
           <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-md z-20">
-            {username === "Admin" && (
+            {user?.username === "Admin" && ( // Check username from context for Admin
               <Link
                 href="/dashboard"
                 className="block w-full text-left px-4 py-2 hover:bg-blue-50"
+                onClick={() => setDropdownOpen(false)} // Close dropdown on click
               >
                 Dashboard
               </Link>
@@ -57,7 +58,7 @@ export default function Navbar() {
             <button
               type="button"
               className="block w-full text-left px-4 py-2 hover:bg-blue-50"
-              onClick={handleLogout}
+              onClick={handleLogout} // handleLogout now uses context
             >
               ออกจากระบบ
             </button>
@@ -123,9 +124,9 @@ export default function Navbar() {
             <Link href="/contact" className="block hover:text-blue-400">ช่องทางติดต่อ</Link>
             <Link href="/articles" className="block hover:text-blue-400">บทความ</Link>
             <Link href="/history" className="block hover:text-blue-400">ประวัติ</Link>
-            <Link href="/login" className="hover:text-blue-400 flex items-center gap-2">
+            <Link href={isLoggedIn ? "/profile" : "/login"} className="hover:text-blue-400 flex items-center gap-2"> {/* Consider linking to profile if logged in */}
               <User2 className="w-5 h-5" />
-              {isLogin ? username : "เข้าสู่ระบบ"}
+              {isLoggedIn ? (user?.username || 'Profile') : "เข้าสู่ระบบ"}
             </Link>
           </div>
         </div>

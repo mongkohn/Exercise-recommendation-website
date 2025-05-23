@@ -74,14 +74,15 @@ const deleteVideo = async (req, res) => {
 // Add a comment to a video
 const addComment = async (req, res) => {
     try {
-        const { username, text } = req.body;
-        if (!username || !text) {
-            return res.status(400).json({ error: "username and text are required" });
+        const { userId, username, text } = req.body; // Destructure userId
+        if (!userId || !username || !text) { // Update validation
+            return res.status(400).json({ error: "userId, username, and text are required" });
         }
         const video = await Video.findById(req.params.id);
         if (!video) return res.status(404).json({ error: "Video not found" });
 
         video.comments.push({
+            userId, // Add userId
             username,
             text,
             createdAt: new Date()

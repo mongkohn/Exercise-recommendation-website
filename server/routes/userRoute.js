@@ -11,4 +11,8 @@ router.post('/check', userController.checkDuplicateUser);
 router.put('/:id', userController.updateUser);
 router.delete('/:id', userController.deleteUser);
 
+// Auth routes
+router.post('/logout', userController.logoutUser);
+router.get('/status', userController.checkAuthStatus);
+
 module.exports = router;

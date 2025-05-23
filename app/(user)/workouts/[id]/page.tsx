@@ -1,47 +1,17 @@
 'use client';
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { useAuth } from '@/context/AuthContext'; // Import global useAuth
+import Link from 'next/link'; // Import Link
 
-// Custom hook for authentication
-export function useAuth() {
-  const [authState, setAuthState] = useState({
-    isLoggedIn: false,
-    username: "",
-    loading: true
-  });
-
-  useEffect(() => {
-    // Check authentication status on mount and whenever localStorage changes
-    const checkAuth = () => {
-      const isLoggedIn = localStorage.getItem("isLogin") === "true";
-      const username = localStorage.getItem("username") || "";
-      
-      setAuthState({
-        isLoggedIn,
-        username,
-        loading: false
-      });
-    };
-
-    // Initial check
-    checkAuth();
-
-    // Set up storage event listener to detect changes in other tabs
-    window.addEventListener("storage", checkAuth);
-    
-    return () => {
-      window.removeEventListener("storage", checkAuth);
-    };
-  }, []);
-
-  return authState;
-}
+// Custom hook for authentication (REMOVED)
 
 export default function WorkoutView() {
     const { id } = useParams();
     const [workoutData, setWorkoutData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const { isLoggedIn, username } = useAuth();
+    const { isLoggedIn, user, isLoading: isAuthLoading } = useAuth(); // Use global useAuth
+    // const usernameFromAuth = user?.username; // This line is no longer needed as we pass the whole user object
 
     useEffect(() => {
         if (!id) return;
@@ -49,7 +19,7 @@ export default function WorkoutView() {
         const fetchWorkout = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`http://localhost:5000/api/video/${id}`);
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/video/${id}`); // Updated API URL
                 if (!res.ok) throw new Error("Failed to fetch workout");
                 const data = await res.json();
                 setWorkoutData(data);
@@ -71,7 +41,7 @@ export default function WorkoutView() {
         return desc.split('\n').map((step, idx) => <p key={idx} className="mb-2">{step}</p>);
     };
 
-    if (loading) {
+    if (loading || isAuthLoading) { // Combined loading state
         return (
             <div className="max-w-6xl mx-auto px-4 py-16 flex flex-col items-center justify-center">
                 <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
@@ -157,15 +127,15 @@ export default function WorkoutView() {
             <CommentSection 
                 comments={workoutData.comments} 
                 videoId={workoutData._id} 
-                isLoggedIn={isLoggedIn}
-                username={username}
+                isLoggedIn={isLoggedIn} // from global context
+                user={user} // Pass the whole user object from AuthContext
             />
         </div>
     );
 }
 
 // Comment section component
-function CommentSection({ comments = [], videoId, isLoggedIn, username }) {
+function CommentSection({ comments = [], videoId, isLoggedIn, user }) { // Updated props: user instead of username
     const [text, setText] = useState("");
     const [submitting, setSubmitting] = useState(false);
     const [commentList, setCommentList] = useState(comments);
@@ -178,14 +148,16 @@ function CommentSection({ comments = [], videoId, isLoggedIn, username }) {
     // Add new comment
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!isLoggedIn || !username.trim() || !text.trim()) return;
+        // Updated validation to use user.userId and user.username
+        if (!isLoggedIn || !user?.userId || !user?.username?.trim() || !text.trim()) return;
 
         setSubmitting(true);
         try {
-            const res = await fetch(`http://localhost:5000/api/video/${videoId}/comments`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/video/${videoId}/comments`, { 
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, text }),
+                // Updated body to send userId and username from user object
+                body: JSON.stringify({ userId: user.userId, username: user.username, text }),
             });
 
             if (!res.ok) throw new Error("Failed to post comment");
@@ -217,9 +189,9 @@ function CommentSection({ comments = [], videoId, isLoggedIn, username }) {
                         <div className="mb-3">
                             <div className="flex items-center mb-2">
                                 <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium mr-2">
-                                    {username.charAt(0).toUpperCase()}
+                                    {user?.username?.charAt(0).toUpperCase() || '?'}
                                 </div>
-                                <span className="font-medium text-gray-700">{username}</span>
+                                <span className="font-medium text-gray-700">{user?.username || 'User'}</span>
                             </div>
                             <textarea
                                 placeholder="แสดงความคิดเห็นของคุณ..."
@@ -251,9 +223,11 @@ function CommentSection({ comments = [], videoId, isLoggedIn, username }) {
                 ) : (
                     <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 text-center">
                         <p className="text-blue-800 mb-2">กรุณาเข้าสู่ระบบเพื่อแสดงความคิดเห็น</p>
-                        <button type="button" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition">
-                            เข้าสู่ระบบ
-                        </button>
+                        <Link href="/login">
+                            <button type="button" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition">
+                                เข้าสู่ระบบ
+                            </button>
+                        </Link>
                     </div>
                 )}
             </form>

@@ -1,4 +1,5 @@
 // (admin)/layout.tsx
+import { AuthProvider } from '@/context/AuthContext';
 
 export const metadata = {
   title: 'ERD WebSite',
@@ -11,9 +12,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <link rel="icon" href="/favicon.png" type="image/png" />
       </head>
       <body>
-        <div>
-          {children}
-        </div>
+        <AuthProvider>
+          <div>
+            {children}
+          </div>
+        </AuthProvider>
       </body>
     </html>
   );
