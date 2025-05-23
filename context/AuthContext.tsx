@@ -57,28 +57,42 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }, []);
 
     const login = async (username_or_email: string, password: string):Promise<boolean> => {
-        setIsLoading(true);
-        try {
-            const response = await fetch(\`\${apiBaseUrl}/user/login\`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: username_or_email, password }), // Assuming backend uses 'username' for login
-            });
-            if (response.ok) {
-                const data = await response.json(); // Login response should also contain user data
-                setUser({ userId: data.userId, username: data.username, fullname: data.fullname });
-                setIsLoggedIn(true);
+            setIsLoading(true);
+            let apiSuccess = false;
+            try {
+                const response = await fetch(\`\${apiBaseUrl}/user/login\`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: username_or_email, password }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.userId && data.username && data.fullname) {
+                        setUser({ userId: data.userId, username: data.username, fullname: data.fullname });
+                        setIsLoggedIn(true);
+                        apiSuccess = true;
+                    } else {
+                        console.error("Login response OK but missing user data:", data);
+                        setUser(null);
+                        setIsLoggedIn(false);
+                        apiSuccess = false;
+                    }
+                } else {
+                    setUser(null);
+                    setIsLoggedIn(false);
+                    apiSuccess = false;
+                }
+            } catch (error) {
+                console.error("Login error:", error);
+                setUser(null);
+                setIsLoggedIn(false);
+                apiSuccess = false;
+            } finally {
                 setIsLoading(false);
-                return true;
             }
-            setIsLoading(false);
-            return false;
-        } catch (error) {
-            console.error("Login error:", error);
-            setIsLoading(false);
-            return false;
-        }
-    };
+            return apiSuccess;
+        };
 
     const logout = async () => {
         setIsLoading(true);
