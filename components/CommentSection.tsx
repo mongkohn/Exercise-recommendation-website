@@ -1,98 +1,87 @@
 "use client";
 
-import { useState, useEffect, FormEvent } from 'react';
-import { useAuth } from '@/context/AuthContext'; // Import useAuth
+import React, { useState, FormEvent } from 'react';
+import { useAuth } from '@/context/AuthContext'; // Assuming this path is correct
 
-interface Comment {
-    _id: string;
-    articleId: string;
-    userId: string;
-    username: string; // Username or fullname of the commenter
+// Define a common Comment type (can be moved to a types file later)
+export interface Comment {
+    _id?: string; // Optional because new comments might not have it yet client-side
+    userId: string; // Should match the User type's ID
+    username: string;
     text: string;
-    createdAt: string;
+    createdAt: string | Date;
 }
 
 interface CommentSectionProps {
-    articleId: string;
+    targetId: string;
+    comments: Comment[];
+    onCommentSubmit: (
+        targetId: string, 
+        text: string, 
+        user: { userId: string; username: string; fullname?: string } // Pass necessary user details
+    ) => Promise<boolean>; // Returns true on success, false on failure
+    // isLoadingComments: boolean; // Optional: if parent wants to indicate loading of comments
 }
 
-const CommentSection = ({ articleId }: CommentSectionProps) => {
-    const [comments, setComments] = useState<Comment[]>([]);
+const CommentSection = ({ 
+    targetId, 
+    comments, 
+    onCommentSubmit,
+    // isLoadingComments 
+}: CommentSectionProps) => {
     const [newCommentText, setNewCommentText] = useState('');
-    const [isLoading, setIsLoading] = useState(false); // This is for comment posting/fetching, not auth
+    const [isSubmitting, setIsSubmitting] = useState(false); // For comment submission
     const [error, setError] = useState<string | null>(null);
-    // Removed useState for isUserLoggedIn, userId, username
+    
+    const { isLoggedIn, user, isLoading: isAuthLoading } = useAuth();
 
-    const { isLoggedIn, user, isLoading: isAuthLoading } = useAuth(); // Use AuthContext
-
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
-
-    // Removed useEffect that used sessionStorage
-
-    const fetchComments = async () => {
-        if (!articleId) return;
-        setIsLoading(true);
-        setError(null);
-        try {
-            const response = await fetch(\`\${apiBaseUrl}/comments/\${articleId}\`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch comments');
-            }
-            const data = await response.json();
-            setComments(data);
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'An unknown error occurred');
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchComments();
-    }, [articleId, apiBaseUrl]); // Added apiBaseUrl as dependency
-
-    const handleCommentSubmit = async (e: FormEvent) => {
+    const handleLocalCommentSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (!isLoggedIn || !user?.userId || !user?.username || !newCommentText.trim()) {
             setError('You must be logged in to comment, and comment text cannot be empty.');
             return;
         }
-        setIsLoading(true); // This is the component's own loading state for submission
+
+        setIsSubmitting(true);
         setError(null);
+
         try {
-            const response = await fetch(\`\${apiBaseUrl}/comments\`, { // This is the generic /api/comments endpoint
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    articleId, // This prop remains
-                    userId: user.userId,
-                    username: user.username, // Send username from context's user object
-                    text: newCommentText,
-                }),
+            // Pass relevant user details. Fullname might be useful too.
+            const success = await onCommentSubmit(targetId, newCommentText, { 
+                userId: user.userId, 
+                username: user.username,
+                fullname: user.fullname 
             });
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to post comment');
+
+            if (success) {
+                setNewCommentText(''); // Clear input field
+                // Parent component is responsible for updating the 'comments' prop
+            } else {
+                setError('Failed to post comment. Please try again.');
             }
-            setNewCommentText(''); // Clear input field
-            fetchComments(); // Refresh comments list
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'An unknown error occurred while posting');
+            console.error("Error submitting comment via callback:", err);
+            setError(err instanceof Error ? err.message : 'An unknown error occurred while posting.');
         } finally {
-            setIsLoading(false);
+            setIsSubmitting(false);
         }
     };
+
+    if (isAuthLoading) {
+        return <p className="text-gray-500 p-4">Loading user status...</p>;
+    }
+
+    // Optional: if parent passes loading state for comments
+    // if (isLoadingComments) {
+    //     return <p className="text-gray-500 p-4">Loading comments...</p>;
+    // }
 
     return (
         <div className="mt-8 p-4 border-t border-gray-200">
             <h2 className="text-2xl font-semibold mb-4">Comments</h2>
             
-            {isAuthLoading && <p>Loading comments section...</p>}
-
-            {!isAuthLoading && isLoggedIn && ( // No need to check userId/username here as isLoggedIn implies user object is likely populated
-                <form onSubmit={handleCommentSubmit} className="mb-6">
+            {isLoggedIn && user && (
+                <form onSubmit={handleLocalCommentSubmit} className="mb-6">
                     <textarea
                         className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white text-black"
                         rows={3}
@@ -100,17 +89,18 @@ const CommentSection = ({ articleId }: CommentSectionProps) => {
                         value={newCommentText}
                         onChange={(e) => setNewCommentText(e.target.value)}
                         required
+                        disabled={isSubmitting}
                     />
                     <button
                         type="submit"
-                        className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-150"
-                        disabled={isLoading}
+                        className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-150 disabled:opacity-50"
+                        disabled={isSubmitting || !newCommentText.trim()}
                     >
-                        {isLoading ? 'Posting...' : 'Post Comment'}
+                        {isSubmitting ? 'Posting...' : 'Post Comment'}
                     </button>
                 </form>
             )}
-            {!isAuthLoading && !isLoggedIn && (
+            {!isLoggedIn && (
                 <p className="mb-4 text-gray-600">
                     Please <a href="/login" className="text-blue-600 hover:underline">login</a> to post a comment.
                 </p>
@@ -118,15 +108,13 @@ const CommentSection = ({ articleId }: CommentSectionProps) => {
 
             {error && <p className="text-red-500 mb-4">Error: {error}</p>}
 
-            {isLoading && comments.length === 0 && <p>Loading comments...</p>}
-
-            {comments.length === 0 && !isLoading && !error && (
-                <p>No comments yet. Be the first to comment!</p>
+            {comments.length === 0 && !error && ( // Consider !isLoadingComments here if that prop is used
+                <p className="text-gray-500">No comments yet. Be the first to comment!</p>
             )}
 
             <div className="space-y-4">
                 {comments.map((comment) => (
-                    <div key={comment._id} className="p-3 bg-gray-50 rounded-lg shadow">
+                    <div key={comment._id || comment.text + comment.createdAt.toString()} className="p-3 bg-gray-50 rounded-lg shadow"> {/* Added fallback key */}
                         <div className="flex items-center mb-1">
                             <strong className="text-gray-800 mr-2">{comment.username}</strong>
                             <span className="text-xs text-gray-500">
