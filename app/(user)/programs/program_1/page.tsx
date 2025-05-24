@@ -4,15 +4,15 @@ import FeedbackSection from "@/components/FeedbackSection";
 
 const workoutData = {
   id: 1,
-  name: "PROGRAM 1",
-  videoUrl: "https://drive.google.com/file/d/1uniMG91kgmaJfp8omHg5puteH3fu-WZV/preview",
+  name: "โปรแกรมออกกำลังกายใน 1 อาทิตย์",
+  videoUrl: "https://drive.google.com/file/d/1U7vJJu-JsjaD0t_NBo-wdsz1Zeb-X-oZ/preview",
   description: [
     "1. โน้มตัวไปข้างหน้า 45 องศา",
     "2. ให้จับบาร์กว้างกว่าไหล่",
     "3. ดึงข้อศอกไปด้านหลัง เกร็งหลัง",
   ],
-  equipment: ["🛠️ บาร์เบล"],
-  muscles: ["หน้าแขน", "หลัง"],
+  equipment: [" บาร์เบล","ดัมเบล","เชือก","เก้าอี้"],
+  muscles: ["ทุกส่วนของร่างกาย"],
 };
 
 export default function WorkoutView() {
@@ -44,7 +44,7 @@ export default function WorkoutView() {
       </div>
 
       {/* กล้ามเนื้อ */}
-      <div>
+      <div className="mb-6">
         <h2 className="font-semibold text-lg mb-2">กล้ามเนื้อ</h2>
         <div className="flex flex-wrap gap-2">
           {workoutData.muscles.map((muscle) => (
@@ -53,6 +53,14 @@ export default function WorkoutView() {
         </div>
       </div>
 
+      <div>
+        {/* <h2 className="font-semibold text-lg mt-2">คำอธิบาย</h2>
+        <div>
+          {workoutData.description.map((item) => (
+            <span key={item}>{item}</span>
+          ))}
+        </div> */}
+      </div>
       <hr className="w-full mt-10 border border-gray-300" />
       <FeedbackSection />
     </div>

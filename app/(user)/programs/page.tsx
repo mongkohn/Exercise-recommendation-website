@@ -5,11 +5,11 @@ import Image from "next/image";
 
 const workoutPrograms = [
   {
-    title: "Bodyweight Strength For Runners",
-    duration: "20 นาที",
+    title: "โปรแกรมออกกำลังกายใน 1 อาทิตย์",
+    duration: "10 นาที",
     difficulty: "ปานกลาง",
-    category: "Strength For Runners",
-    image: "https://www.hss.edu/images/socialmedia/running-knee-1200x630.jpg",
+    category: "Strength For Body",
+    image: "https://static.thairath.co.th/media/dFQROr7oWzulq5Fa5KwLK0f31ceC8Hf9vxGhlOgatevMLwxl9NnHBZmvWZYApUVcCUw.webp",
     link: "/programs/program_1",
     levelIcons: "🔵🔵⚪️",
   },
