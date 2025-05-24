@@ -1,27 +1,90 @@
 'use client';
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { useAuth } from '@/context/AuthContext'; // Import global useAuth
-import Link from 'next/link'; // Import Link
+import { useAuth } from '@/context/AuthContext';
+import Link from 'next/link';
 
-// Custom hook for authentication (REMOVED)
+// Type definitions
+interface WorkoutData {
+    _id: string;
+    title: string;
+    url: string;
+    description: string | string[];
+    muscles?: string[];
+    equipment?: string[];
+    comments: Comment[];
+}
+
+interface Comment {
+    _id?: string;
+    username: string;
+    text: string;
+    createdAt?: string;
+}
+
+interface User {
+    userId: string;
+    username: string;
+}
+
+// Custom hook for comment management
+function useComments(initialComments: Comment[], videoId: string, user: User | null, isLoggedIn: boolean) {
+    const [commentList, setCommentList] = useState<Comment[]>(initialComments);
+    const [text, setText] = useState<string>("");
+    const [submitting, setSubmitting] = useState<boolean>(false);
+
+    useEffect(() => {
+        setCommentList(initialComments);
+    }, [initialComments]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!isLoggedIn || !user?.userId || !user?.username?.trim() || !text.trim()) return;
+
+        setSubmitting(true);
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/video/${videoId}/comments`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId: user.userId, username: user.username, text }),
+            });
+
+            if (!res.ok) throw new Error("Failed to post comment");
+
+            const data = await res.json();
+            if (data.comments) setCommentList(data.comments);
+            setText("");
+        } catch (error) {
+            alert("เกิดข้อผิดพลาดในการส่งความคิดเห็น");
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    return {
+        commentList,
+        text,
+        setText,
+        submitting,
+        handleSubmit
+    };
+}
 
 export default function WorkoutView() {
     const { id } = useParams();
-    const [workoutData, setWorkoutData] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const { isLoggedIn, user, isLoading: isAuthLoading } = useAuth(); // Use global useAuth
-    // const usernameFromAuth = user?.username; // This line is no longer needed as we pass the whole user object
+    const [workoutData, setWorkoutData] = useState<WorkoutData | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const { isLoggedIn, user, isLoading: isAuthLoading } = useAuth();
 
     useEffect(() => {
         if (!id) return;
-        
+
         const fetchWorkout = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/video/${id}`); // Updated API URL
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/video/${id}`);
                 if (!res.ok) throw new Error("Failed to fetch workout");
-                const data = await res.json();
+                const data: WorkoutData = await res.json();
                 setWorkoutData(data);
             } catch (error) {
                 console.error("Error fetching workout:", error);
@@ -33,18 +96,17 @@ export default function WorkoutView() {
         fetchWorkout();
     }, [id]);
 
-    // Helper to render description as paragraphs
-    const renderDescription = (desc) => {
+    const renderDescription = (desc: string | string[]): JSX.Element[] => {
         if (Array.isArray(desc)) {
-            return desc.map((step, idx) => <p key={idx} className="mb-2">{step}</p>);
+            return desc.map((step, idx) => <p key={`desc-${idx}-${step.slice(0, 10)}`} className="mb-2">{step}</p>);
         }
-        return desc.split('\n').map((step, idx) => <p key={idx} className="mb-2">{step}</p>);
+        return desc.split('\n').map((step, idx) => <p key={`desc-${idx}-${step.slice(0, 10)}`} className="mb-2">{step}</p>);
     };
 
     if (loading || isAuthLoading) { // Combined loading state
         return (
             <div className="max-w-6xl mx-auto px-4 py-16 flex flex-col items-center justify-center">
-                <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
                 <p className="mt-4 text-lg text-gray-600">กำลังโหลดข้อมูล...</p>
             </div>
         );
@@ -67,8 +129,8 @@ export default function WorkoutView() {
             <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl">
                 <h1 className="text-3xl font-bold text-gray-800">{workoutData.title}</h1>
                 <div className="flex flex-wrap gap-2 mt-4">
-                    {workoutData.muscles?.map((muscle, index) => (
-                        <span key={index} className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">{muscle}</span>
+                    {workoutData.muscles?.map((muscle) => (
+                        <span key={muscle} className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">{muscle}</span>
                     ))}
                 </div>
             </div>
@@ -85,20 +147,21 @@ export default function WorkoutView() {
                             allowFullScreen
                         />
                     </div>
-                    
+
                     {/* Equipment section */}
                     <div className="mt-6 p-5 bg-white rounded-xl shadow-sm border border-gray-100">
                         <h2 className="font-semibold text-lg mb-3 flex items-center">
+                            {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2" />
                             </svg>
                             อุปกรณ์ที่ใช้
                         </h2>
                         <div className="flex flex-wrap gap-2">
-                            {workoutData.equipment?.length > 0 ? 
-                                workoutData.equipment.map((item, index) => (
-                                    <span key={index} className="bg-gray-100 px-3 py-1 rounded-full text-sm">{item}</span>
-                                )) : 
+                            {workoutData.equipment && workoutData.equipment.length > 0 ?
+                                workoutData.equipment.map((item) => (
+                                    <span key={item} className="bg-gray-100 px-3 py-1 rounded-full text-sm">{item}</span>
+                                )) :
                                 <span className="text-gray-500">ไม่จำเป็นต้องใช้อุปกรณ์เพิ่มเติม</span>
                             }
                         </div>
@@ -109,6 +172,7 @@ export default function WorkoutView() {
                 <div className="lg:col-span-1">
                     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                         <h2 className="text-xl font-semibold mb-4 flex items-center">
+                            {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                             </svg>
@@ -122,66 +186,39 @@ export default function WorkoutView() {
             </div>
 
             <hr className="border-gray-200 my-8" />
-            
+
             {/* Comments section */}
-            <CommentSection 
-                comments={workoutData.comments} 
-                videoId={workoutData._id} 
-                isLoggedIn={isLoggedIn} // from global context
-                user={user} // Pass the whole user object from AuthContext
+            <CommentSection
+                comments={workoutData.comments}
+                videoId={workoutData._id}
+                isLoggedIn={isLoggedIn}
+                user={user}
             />
         </div>
     );
 }
 
-// Comment section component
-function CommentSection({ comments = [], videoId, isLoggedIn, user }) { // Updated props: user instead of username
-    const [text, setText] = useState("");
-    const [submitting, setSubmitting] = useState(false);
-    const [commentList, setCommentList] = useState(comments);
+// Comment section component with proper types
+interface CommentSectionProps {
+    comments: Comment[];
+    videoId: string;
+    isLoggedIn: boolean;
+    user: User | null;
+}
 
-    // Always update commentList if comments prop changes (e.g. after reload)
-    useEffect(() => {
-        setCommentList(comments);
-    }, [comments]);
-
-    // Add new comment
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        // Updated validation to use user.userId and user.username
-        if (!isLoggedIn || !user?.userId || !user?.username?.trim() || !text.trim()) return;
-
-        setSubmitting(true);
-        try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/video/${videoId}/comments`, { 
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                // Updated body to send userId and username from user object
-                body: JSON.stringify({ userId: user.userId, username: user.username, text }),
-            });
-
-            if (!res.ok) throw new Error("Failed to post comment");
-
-            const data = await res.json();
-            // If API returns updated comments, update state
-            if (data.comments) setCommentList(data.comments);
-            setText("");
-        } catch (error) {
-            alert("เกิดข้อผิดพลาดในการส่งความคิดเห็น");
-        } finally {
-            setSubmitting(false);
-        }
-    };
+function CommentSection({ comments = [], videoId, isLoggedIn, user }: CommentSectionProps) {
+    const { commentList, text, setText, submitting, handleSubmit } = useComments(comments, videoId, user, isLoggedIn);
 
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
             <h2 className="font-semibold text-xl mb-6 flex items-center">
+                {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                 </svg>
                 ความคิดเห็น ({commentList.length})
             </h2>
-            
+
             {/* Comment input form */}
             <form onSubmit={handleSubmit} className="mb-8">
                 {isLoggedIn ? (
@@ -210,9 +247,10 @@ function CommentSection({ comments = [], videoId, isLoggedIn, user }) { // Updat
                             >
                                 {submitting ? (
                                     <>
+                                        {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
                                         <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                                         </svg>
                                         กำลังส่ง...
                                     </>
@@ -235,7 +273,7 @@ function CommentSection({ comments = [], videoId, isLoggedIn, user }) { // Updat
             {/* Comments list */}
             {commentList && commentList.length > 0 ? (
                 <div className="space-y-4">
-                    {commentList.map((comment, idx) => (
+                    {commentList.map((comment: Comment, idx: number) => (
                         <div key={comment._id || idx} className="border-b border-gray-100 pb-4 last:border-0">
                             <div className="flex items-center mb-2">
                                 <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-medium mr-2">
@@ -244,14 +282,14 @@ function CommentSection({ comments = [], videoId, isLoggedIn, user }) { // Updat
                                 <div>
                                     <p className="font-medium text-gray-800">{comment.username || "ผู้ใช้"}</p>
                                     <p className="text-xs text-gray-500">
-                                        {comment.createdAt 
-                                            ? new Date(comment.createdAt).toLocaleDateString('th-TH', { 
-                                                day: 'numeric', 
-                                                month: 'short', 
+                                        {comment.createdAt
+                                            ? new Date(comment.createdAt).toLocaleDateString('th-TH', {
+                                                day: 'numeric',
+                                                month: 'short',
                                                 year: 'numeric',
                                                 hour: '2-digit',
                                                 minute: '2-digit'
-                                            }) 
+                                            })
                                             : ""}
                                     </p>
                                 </div>
@@ -262,8 +300,9 @@ function CommentSection({ comments = [], videoId, isLoggedIn, user }) { // Updat
                 </div>
             ) : (
                 <div className="text-center py-8 text-gray-500">
+                    {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
                     <svg className="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                     </svg>
                     <p>ยังไม่มีความคิดเห็น เป็นคนแรกที่แสดงความคิดเห็น!</p>
                 </div>

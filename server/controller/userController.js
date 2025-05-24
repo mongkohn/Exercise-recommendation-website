@@ -149,25 +149,7 @@ const checkDuplicateUser = async (req, res) => {
   }
 };
 
-router.get('/', getAllUsers);
-router.get('/:id', getUserById);
-router.post('/register', createUser);
-router.post('/login', loginUser);
-router.post('/check', checkDuplicateUser);
-router.put('/:id', updateUser);
-router.delete('/:id', deleteUser);
 
-module.exports = {
-  getAllUsers,
-  getUserById,
-  createUser,
-  loginUser,
-  updateUser,
-  deleteUser,
-  checkDuplicateUser,
-  logoutUser,
-  checkAuthStatus
-};
 
 // Logout user
 const logoutUser = (req, res) => {
@@ -200,4 +182,16 @@ const checkAuthStatus = async (req, res) => {
   } catch (err) {
     res.status(401).json({ isLoggedIn: false, message: 'Invalid token' });
   }
+};
+
+module.exports = {
+  getAllUsers,
+  getUserById,
+  createUser,
+  loginUser,
+  updateUser,
+  deleteUser,
+  checkDuplicateUser,
+  logoutUser,
+  checkAuthStatus
 };

@@ -4,37 +4,31 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
+  const { isLoggedIn, login, isLoading } = useAuth();
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && sessionStorage.getItem('isLogin') === 'true') {
+    if (isLoggedIn) {
       router.push('/');
     }
-  }, [router]);
+  }, [isLoggedIn, router]);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        sessionStorage.setItem('username', data.username);
-        sessionStorage.setItem('isLogin', 'true');
-        sessionStorage.setItem('userId', data._id); // Set userId from MongoDB
-        window.location.href = '/'; // Uncomment to redirect
+      const success = await login(username, password);
+      if (success) {
+        router.push('/');
       } else {
-        alert(data.message || 'Login failed');
+        alert('เข้าสู่ระบบล้มเหลว');
       }
     } catch (err) {
-      alert('An error occurred during login');
+      alert('เกิดข้อผิดพลาดในการเข้าสู่ระบบ');
     }
   };
 
@@ -84,12 +78,12 @@ export default function Login() {
             </div>
             <div>
               <Link href="#" className="text-sm font-bold hover:text-blue-500">ลืมรหัสผ่าน</Link>
-            </div>
-            <button
+            </div>            <button
               type="submit"
-              className="w-full bg-blue-800 text-white py-3 rounded-md hover:bg-blue-500 transition"
+              className="w-full bg-blue-800 text-white py-3 rounded-md hover:bg-blue-500 transition disabled:opacity-50"
+              disabled={isLoading}
             >
-              เข้าสู่ระบบ
+              {isLoading ? 'กำลังเข้าสู่ระบบ...' : 'เข้าสู่ระบบ'}
             </button>
           </form>
         </div>
