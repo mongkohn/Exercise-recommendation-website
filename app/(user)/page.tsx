@@ -1,7 +1,7 @@
 "use client";
 import Articlesbox from "@/components/articlesbox";
 import ChatAdmin from "@/components/ChatAdmin";
-import { Link } from "lucide-react";
+import { ChevronRight, Play, Star, Users, Trophy, Heart, ArrowRight, Dumbbell, Target, BookOpen } from "lucide-react";
 import Image from "next/image";
 
 const HERO_CONTENT = {
@@ -98,23 +98,81 @@ const TESTIMONIALS = [
 
 function HeroSection() {
   return (
-    <section
-      className="w-full h-screen bg-cover bg-center flex flex-col justify-center items-center relative"
-      style={{ backgroundImage: `url('${HERO_CONTENT.bgImage}')` }}
-    >
-      <div className="absolute inset-0 bg-black opacity-50" />
-      <div className="relative z-10 text-center text-white px-4">
-        <h1 className="text-5xl md:text-6xl font-bold mb-6 drop-shadow-lg">
-          {HERO_CONTENT.title}
-        </h1>
-        <p className="text-lg md:text-2xl mb-8 drop-shadow-md">
-          {HERO_CONTENT.subtitle}
-        </p>
-        <a href={HERO_CONTENT.link}>
-        <button type="button" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-full transition">
-          {HERO_CONTENT.button}
-        </button>
-        </a>
+    <section className="relative w-full h-screen overflow-hidden">
+      {/* Background with overlay */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src={HERO_CONTENT.bgImage}
+          alt="Hero Background"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-slate-900/70 to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+      </div>
+
+      {/* Animated background elements */}
+      <div className="absolute inset-0 z-5">
+        <div className="absolute top-20 left-20 w-32 h-32 bg-blue-500/20 rounded-full blur-xl animate-pulse" />
+        <div className="absolute bottom-32 right-32 w-48 h-48 bg-purple-500/20 rounded-full blur-2xl animate-bounce" style={{ animationDuration: '3s' }} />
+        <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-green-500/20 rounded-full blur-lg animate-pulse" style={{ animationDelay: '1s' }} />
+      </div>
+
+      {/* Hero content */}
+      <div className="relative z-10 h-full flex flex-col justify-center items-center px-4">
+        <div className="text-center max-w-5xl mx-auto">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-6 py-2 mb-8 text-white/90 animate-fade-in">
+            <Trophy className="w-4 h-4 text-yellow-400" />
+            <span className="text-sm font-medium">#1 แพลตฟอร์มออกกำลังกายออนไลน์</span>
+          </div>
+
+          {/* Main title */}
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white leading-tight animate-slide-up">
+            <span className="bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent">
+              เปลี่ยนชีวิต
+            </span>
+            <br />
+            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              ด้วยการออกกำลังกาย
+            </span>
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-xl md:text-2xl mb-12 text-blue-100 max-w-3xl mx-auto leading-relaxed animate-fade-in-delay">
+            เสริมสร้างสุขภาพที่แข็งแรง พร้อมบรรลุเป้าหมายที่คุณต้องการ 
+            ด้วยโปรแกรมที่ออกแบบเฉพาะสำหรับคุณ
+          </p>
+
+          {/* CTA buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-up-delay">
+            <a href={HERO_CONTENT.link}>
+              <button type="button" className="group bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl border border-blue-500/30 flex items-center gap-2">
+                {HERO_CONTENT.button}
+                <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+              </button>
+            </a>
+            <button type="button" className="group bg-white/10 backdrop-blur-md hover:bg-white/20 text-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 border border-white/30 flex items-center gap-2">
+              <Play className="w-5 h-5" />
+              ดูวิดีโอแนะนำ
+            </button>
+          </div>
+
+          {/* Stats */}
+          <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-2xl mx-auto animate-fade-in-up">
+            {[
+              { number: "10K+", label: "สมาชิกที่พอใจ" },
+              { number: "500+", label: "ท่าออกกำลังกาย" },
+              { number: "95%", label: "อัตราความสำเร็จ" }
+            ].map((stat, index) => (
+              <div key={index} className="text-center">
+                <div className="text-3xl font-bold text-white mb-1">{stat.number}</div>
+                <div className="text-blue-200 text-sm">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -122,63 +180,107 @@ function HeroSection() {
 
 function AboutSection() {
   return (
-    <section className="bg-gray-100 py-20">
-      <div className="max-w-6xl mx-auto px-6 text-center">
-        <h2 className="text-4xl font-bold text-blue-600 mb-8">
-          {ABOUT_CONTENT.title}
-        </h2>
-        <p className="text-gray-700 text-lg leading-relaxed">
-          {ABOUT_CONTENT.description}
-        </p>
-      </div>
-    </section>
-  );
-}
+    <section className="relative py-24 overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-blue-50" />
+      
+      <div className="relative z-10 max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          {/* Content */}
+          <div>
+            <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <Heart className="w-4 h-4" />
+              เกี่ยวกับเรา
+            </div>
+            
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6 leading-tight">
+              สร้างสรรค์
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> ชีวิตใหม่ </span>
+              ที่แข็งแรง
+            </h2>
+            
+            <p className="text-lg text-slate-600 leading-relaxed mb-8">
+              {ABOUT_CONTENT.description}
+            </p>
 
-function FeatureCard({ img, alt, title, desc }: { img: string; alt: string; title: string; desc: string }) {
-  return (
-    <div>
-      <Image src={img} alt={alt} width={64} height={64} className="w-16 h-16 mx-auto mb-6" />
-      <h3 className="text-2xl font-semibold mb-2 text-blue-500">{title}</h3>
-      <p className="text-gray-600">{desc}</p>
-    </div>
-  );
-}
+            {/* Features list */}
+            <div className="space-y-4">
+              {[
+                "โปรแกรมออกแบบเฉพาะบุคคล",
+                "คำแนะนำจากผู้เชี่ยวชาญ",
+                "ติดตามผลลัพธ์แบบเรียลไทม์"
+              ].map((feature, index) => (
+                <div key={index} className="flex items-center gap-3">
+                  <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                    <Star className="w-3 h-3 text-white" />
+                  </div>
+                  <span className="text-slate-700 font-medium">{feature}</span>
+                </div>
+              ))}
+            </div>
+          </div>
 
-function FeaturesSection() {
-  return (
-    <section className="bg-blue-50 py-20">
-      <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-4xl font-bold text-center text-blue-600 mb-12">
-          จุดเด่นของเรา
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 ">
-          {FEATURES.map((f) => (
-           <div className="bg-blue-100 p-8 rounded-xl shadow-md hover:shadow-lg transition text-center">
-              <FeatureCard key={f.title} {...f} />
-             </div>
-          ))}
+          {/* Visual element */}
+          <div className="relative">
+            <div className="bg-white/80 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-white/50">
+              <div className="aspect-square bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center">
+                <Users className="w-24 h-24 text-white" />
+              </div>
+            </div>
+            {/* Floating elements */}
+            <div className="absolute -top-4 -right-4 w-16 h-16 bg-blue-500 rounded-full opacity-20 animate-pulse" />
+            <div className="absolute -bottom-4 -left-4 w-20 h-20 bg-purple-500 rounded-full opacity-20 animate-bounce" />
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-function CoursesSection() {
+function FeaturesSection() {
   return (
-    <section className="bg-white py-20">
-      <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-4xl font-bold text-center text-blue-600 mb-12">
-          คอร์สยอดนิยม
-        </h2>
+    <section className="relative py-24 overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-slate-900 to-purple-900" />
+      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+      
+      <div className="relative z-10 max-w-7xl mx-auto px-6">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            จุดเด่นที่ทำให้เรา
+            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent"> พิเศษ</span>
+          </h2>
+          <p className="text-xl text-blue-200 max-w-3xl mx-auto">
+            ความแตกต่างที่จะช่วยให้คุณบรรลุเป้าหมายได้อย่างมีประสิทธิภาพ
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {COURSES.map((c) => (
+          {FEATURES.map((feature, index) => (
             <div
-              key={c.title}
-              className={`bg-gradient-to-r ${c.bg} text-white p-8 rounded-lg hover:scale-105 transition`}
+              key={feature.title}
+              className="group bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-8 hover:bg-white/20 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2"
             >
-              <h3 className="text-2xl font-semibold mb-2">{c.title}</h3>
-              <p>{c.desc}</p>
+              {/* Icon */}
+              <div className="relative mb-6">
+                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto shadow-xl">
+                  <Image 
+                    src={feature.img} 
+                    alt={feature.alt} 
+                    width={40} 
+                    height={40} 
+                    className="w-10 h-10 filter brightness-0 invert"
+                  />
+                </div>
+                {/* Glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl opacity-20 blur-xl scale-150 group-hover:opacity-40 transition-opacity" />
+              </div>
+
+              <h3 className="text-2xl font-bold text-white mb-4 text-center">
+                {feature.title}
+              </h3>
+              <p className="text-blue-200 text-center leading-relaxed">
+                {feature.desc}
+              </p>
             </div>
           ))}
         </div>
@@ -189,29 +291,51 @@ function CoursesSection() {
 
 function TestimonialsSection() {
   return (
-    <section className="bg-white py-20">
-      <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-4xl font-bold text-center text-blue-600 mb-12">
-          MEMBERS&apos; TESTIMONIALS
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          {TESTIMONIALS.map((t) => (
+    <section className="relative py-24 bg-gradient-to-br from-slate-50 to-blue-50">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
+            เสียงจาก
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> สมาชิก </span>
+            ของเรา
+          </h2>
+          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+            ความสำเร็จที่เกิดขึ้นจริงจากผู้ที่เชื่อใจและเดินทางไปกับเรา
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {TESTIMONIALS.slice(0, 3).map((testimonial, index) => (
             <div
-              key={t.name}
-              className="bg-gray-100 p-8 rounded-xl shadow-md hover:shadow-lg transition"
+              key={`${testimonial.name}-${index}`}
+              className="group bg-white/80 backdrop-blur-lg border border-white/50 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
             >
-              <div className="flex flex-col items-center">
-                <Image
-                  src={t.img}
-                  alt={t.name}
-                  width={80}
-                  height={80}
-                  className="w-20 h-20 rounded-full object-cover mb-4"
-                />
-                <h3 className="text-xl font-semibold text-blue-500 mb-2">
-                  {t.name}
-                </h3>
-                <p className="text-gray-600 text-center">{t.quote}</p>
+              {/* Rating */}
+              <div className="flex gap-1 mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                ))}
+              </div>
+
+              <p className="text-slate-700 mb-6 italic leading-relaxed">
+                {testimonial.quote}
+              </p>
+
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <Image
+                    src={testimonial.img}
+                    alt={testimonial.name}
+                    width={56}
+                    height={56}
+                    className="w-14 h-14 rounded-full object-cover border-2 border-blue-200"
+                  />
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-800">{testimonial.name}</h4>
+                  <p className="text-slate-500 text-sm">สมาชิกพรีเมี่ยม</p>
+                </div>
               </div>
             </div>
           ))}
@@ -223,28 +347,32 @@ function TestimonialsSection() {
 
 function ArticlesSection() {
   return (
-    <section className="bg-gray-50 py-20">
-      <div className="max-w-6xl mx-auto px-6">
-        <h2 className="text-4xl font-bold text-center text-blue-600 mb-12">
-          บทความล่าสุด
-        </h2>
+    <section className="relative py-24 bg-white">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+            <BookOpen className="w-4 h-4" />
+            ความรู้สุขภาพ
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
+            บทความ
+            <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent"> ล่าสุด</span>
+          </h2>
+          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+            อัปเดตความรู้ใหม่ๆ เกี่ยวกับสุขภาพ การออกกำลังกาย และโภชนาการ
+          </p>
+        </div>
         <Articlesbox />
-      </div>
-    </section>
-  );
-}
-
-function CallToActionSection() {
-  return (
-    <section className="bg-blue-600 text-white py-20">
-      <div className="max-w-6xl mx-auto px-6 text-center">
-        <h2 className="text-4xl font-bold mb-4">พร้อมเปลี่ยนชีวิตแล้วหรือยัง?</h2>
-        <p className="mb-8 text-lg">
-          เข้าร่วมกับเราวันนี้เพื่อประสบการณ์ใหม่ที่ดีกว่า!
-        </p>
-        <button type="button" className="bg-white text-blue-600 font-bold py-3 px-8 rounded-full hover:bg-blue-100 transition">
-          สมัครสมาชิกฟรี
-        </button>
+        
+        {/* View all button */}
+        <div className="text-center mt-12">
+          <a href="/articles">
+            <button className="group bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2 mx-auto">
+              ดูบทความทั้งหมด
+              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+            </button>
+          </a>
+        </div>
       </div>
     </section>
   );
@@ -254,13 +382,48 @@ export default function Home() {
   return (
     <>
       <HeroSection />
-      <ChatAdmin/>
+      <ChatAdmin />
       <AboutSection />
       <FeaturesSection />
-      {/* <CoursesSection /> */}
       <TestimonialsSection />
       <ArticlesSection />
-      {/* <CallToActionSection /> */}
+      <style jsx>{`
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        @keyframes slide-up {
+          from { 
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to { 
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 1s ease-out;
+        }
+        
+        .animate-fade-in-delay {
+          animation: fade-in 1s ease-out 0.3s both;
+        }
+        
+        .animate-slide-up {
+          animation: slide-up 1s ease-out;
+        }
+        
+        .animate-slide-up-delay {
+          animation: slide-up 1s ease-out 0.5s both;
+        }
+        
+        .animate-fade-in-up {
+          animation: slide-up 1s ease-out 0.7s both;
+        }
+      `}</style>
     </>
   );
 }

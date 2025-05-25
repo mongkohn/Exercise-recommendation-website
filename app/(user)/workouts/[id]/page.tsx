@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
+import { Play, MessageSquare, User, Calendar, Send, ArrowLeft, Dumbbell, Target, Clock, Users } from 'lucide-react';
+import Image from 'next/image';
 
 // Type definitions
 interface WorkoutData {
@@ -22,13 +24,13 @@ interface Comment {
     createdAt?: string;
 }
 
-interface User {
+interface WorkoutUser {
     userId: string;
     username: string;
 }
 
 // Custom hook for comment management
-function useComments(initialComments: Comment[], videoId: string, user: User | null, isLoggedIn: boolean) {
+function useComments(initialComments: Comment[], videoId: string, user: WorkoutUser | null, isLoggedIn: boolean) {
     const [commentList, setCommentList] = useState<Comment[]>(initialComments);
     const [text, setText] = useState<string>("");
     const [submitting, setSubmitting] = useState<boolean>(false);
@@ -98,102 +100,232 @@ export default function WorkoutView() {
 
     const renderDescription = (desc: string | string[]): JSX.Element[] => {
         if (Array.isArray(desc)) {
-            return desc.map((step, idx) => <p key={`desc-${idx}-${step.slice(0, 10)}`} className="mb-2">{step}</p>);
+            return desc.map((step, idx) => (
+                <div key={`desc-${idx}-${step.slice(0, 10)}`} className="flex items-start gap-3 mb-4">
+                    <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-semibold mt-0.5 flex-shrink-0">
+                        {idx + 1}
+                    </div>
+                    <p className="text-slate-700 leading-relaxed">{step}</p>
+                </div>
+            ));
         }
-        return desc.split('\n').map((step, idx) => <p key={`desc-${idx}-${step.slice(0, 10)}`} className="mb-2">{step}</p>);
+        return desc.split('\n').map((step, idx) => (
+            <div key={`desc-${idx}-${step.slice(0, 10)}`} className="flex items-start gap-3 mb-4">
+                <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-semibold mt-0.5 flex-shrink-0">
+                    {idx + 1}
+                </div>
+                <p className="text-slate-700 leading-relaxed">{step}</p>
+            </div>
+        ));
     };
 
-    if (loading || isAuthLoading) { // Combined loading state
+    if (loading || isAuthLoading) {
         return (
-            <div className="max-w-6xl mx-auto px-4 py-16 flex flex-col items-center justify-center">
-                <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                <p className="mt-4 text-lg text-gray-600">กำลังโหลดข้อมูล...</p>
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+                <div className="absolute inset-0">
+                    <Image
+                        src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+                        alt="Gym Background"
+                        fill
+                        className="object-cover opacity-5"
+                    />
+                </div>
+                
+                <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4">
+                    <div className="bg-white/90 backdrop-blur-lg p-12 rounded-3xl shadow-2xl border border-white/50 text-center max-w-md w-full">
+                        <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-6" />
+                        <h3 className="text-xl font-bold text-slate-800 mb-2">กำลังโหลดข้อมูล</h3>
+                        <p className="text-slate-600">รอสักครู่...</p>
+                    </div>
+                </div>
             </div>
         );
     }
 
     if (!workoutData) {
         return (
-            <div className="max-w-6xl mx-auto px-4 py-16 text-center">
-                <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-                    <h2 className="text-xl font-semibold text-red-600 mb-2">ไม่พบข้อมูลวิดีโอ</h2>
-                    <p className="text-gray-600">วิดีโอที่คุณกำลังค้นหาอาจถูกลบหรือไม่มีอยู่ในระบบ</p>
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center px-4">
+                <div className="bg-white/90 backdrop-blur-lg p-12 rounded-3xl shadow-2xl border border-white/50 text-center max-w-md w-full">
+                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <Target className="w-8 h-8 text-red-500" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-slate-800 mb-4">ไม่พบข้อมูลวิดีโอ</h2>
+                    <p className="text-slate-600 mb-8">วิดีโอที่คุณกำลังค้นหาอาจถูกลบหรือไม่มีอยู่ในระบบ</p>
+                    <Link href="/workouts">
+                        <button type="button" className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 font-semibold">
+                            กลับหน้าแรก
+                        </button>
+                    </Link>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="max-w-6xl mx-auto px-4 py-8">
-            {/* Hero section with title */}
-            <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl">
-                <h1 className="text-3xl font-bold text-gray-800">{workoutData.title}</h1>
-                <div className="flex flex-wrap gap-2 mt-4">
-                    {workoutData.muscles?.map((muscle) => (
-                        <span key={muscle} className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">{muscle}</span>
-                    ))}
-                </div>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+            {/* Background Pattern */}
+            <div className="fixed inset-0">
+                <Image
+                    src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+                    alt="Gym Background"
+                    fill
+                    className="object-cover opacity-5"
+                />
             </div>
 
-            {/* Main content grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-                {/* Video column */}
-                <div className="lg:col-span-2">
-                    <div className="aspect-video bg-black rounded-xl overflow-hidden shadow-lg">
-                        <iframe
-                            className="w-full h-full"
-                            src={workoutData.url}
-                            title={workoutData.title}
-                            allowFullScreen
+            {/* Content */}
+            <div className="relative z-10 min-h-screen">
+                {/* Back Navigation */}
+                <div className="pt-6 pb-4">
+                    <div className="max-w-7xl mx-auto px-6">
+                        <Link href="/workouts">
+                            <button type="button" className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-800 transition-colors group">
+                                <ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
+                                กลับไปหน้าท่าออกกำลังกาย
+                            </button>
+                        </Link>
+                    </div>
+                </div>
+
+                {/* Hero Section - More Compact */}
+                <div className="pb-8">
+                    <div className="max-w-7xl mx-auto px-6">
+                        <div className="bg-white/90 backdrop-blur-lg rounded-3xl shadow-xl border border-white/50 p-6 md:p-8">
+                            <div className="flex flex-col lg:flex-row lg:items-center gap-6">
+                                <div className="flex items-start gap-4 flex-1">
+                                    <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                                        <Dumbbell className="w-7 h-7 text-white" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <h1 className="text-2xl md:text-3xl font-bold text-slate-800 mb-3 leading-tight">
+                                            {workoutData.title}
+                                        </h1>
+                                        
+                                        {/* Tags */}
+                                        <div className="flex flex-wrap gap-2">
+                                            {workoutData.muscles?.map((muscle) => (
+                                                <span 
+                                                    key={muscle} 
+                                                    className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-medium border border-blue-200"
+                                                >
+                                                    {muscle}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Compact Stats */}
+                                <div className="flex gap-6 lg:gap-8">
+                                    <div className="text-center">
+                                        <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-1">
+                                            <Target className="w-5 h-5 text-green-600" />
+                                        </div>
+                                        <div className="text-xs text-slate-600">กล้ามเนื้อ</div>
+                                        <div className="font-bold text-slate-800">{workoutData.muscles?.length || 0}</div>
+                                    </div>
+                                    
+                                    <div className="text-center">
+                                        <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-1">
+                                            <Dumbbell className="w-5 h-5 text-purple-600" />
+                                        </div>
+                                        <div className="text-xs text-slate-600">อุปกรณ์</div>
+                                        <div className="font-bold text-slate-800">{workoutData.equipment?.length || 0}</div>
+                                    </div>
+                                    
+                                    <div className="text-center">
+                                        <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-1">
+                                            <MessageSquare className="w-5 h-5 text-blue-600" />
+                                        </div>
+                                        <div className="text-xs text-slate-600">ความคิดเห็น</div>
+                                        <div className="font-bold text-slate-800">{workoutData.comments?.length || 0}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Main Content - Better Balance */}
+                <div className="pb-12">
+                    <div className="max-w-7xl mx-auto px-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            
+                            {/* Video Column - 2/3 width */}
+                            <div className="lg:col-span-2">
+                                {/* Video Player */}
+                                <div className="bg-white/90 backdrop-blur-lg rounded-3xl shadow-xl border border-white/50 overflow-hidden">
+                                    <div className="aspect-video bg-black relative">
+                                        <iframe
+                                            className="w-full h-full"
+                                            src={workoutData.url}
+                                            title={workoutData.title}
+                                            allowFullScreen
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Instructions and Equipment Column - 1/3 width */}
+                            <div className="lg:col-span-1">
+                                {/* Instructions Section */}
+                                <div className="bg-white/90 backdrop-blur-lg rounded-3xl shadow-xl border border-white/50 p-6 lg:sticky lg:top-6">
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <Target className="w-4 h-4 text-blue-600" />
+                                        </div>
+                                        <h2 className="text-lg font-bold text-slate-800">วิธีการออกกำลังกาย</h2>
+                                    </div>
+                                    
+                                    <div className="space-y-3 mb-8">
+                                        {renderDescription(workoutData.description)}
+                                    </div>
+
+                                    {/* Equipment Section */}
+                                    <div className="border-t border-slate-200 pt-6">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center">
+                                                <Dumbbell className="w-4 h-4 text-slate-600" />
+                                            </div>
+                                            <h3 className="text-lg font-bold text-slate-800">อุปกรณ์ที่ใช้</h3>
+                                        </div>
+                                        
+                                        <div className="flex flex-wrap gap-2">
+                                            {workoutData.equipment && workoutData.equipment.length > 0 ? (
+                                                workoutData.equipment.map((item) => (
+                                                    <div 
+                                                        key={item} 
+                                                        className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium text-sm"
+                                                    >
+                                                        {item}
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="flex items-center gap-2 text-slate-500">
+                                                    <Target className="w-4 h-4" />
+                                                    <span className="text-sm">ไม่จำเป็นต้องใช้อุปกรณ์เพิ่มเติม</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Comments Section */}
+                <div className="pb-12">
+                    <div className="max-w-7xl mx-auto px-6">
+                        <CommentSection
+                            comments={workoutData.comments}
+                            videoId={workoutData._id}
+                            isLoggedIn={isLoggedIn}
+                            user={user}
                         />
                     </div>
-
-                    {/* Equipment section */}
-                    <div className="mt-6 p-5 bg-white rounded-xl shadow-sm border border-gray-100">
-                        <h2 className="font-semibold text-lg mb-3 flex items-center">
-                            {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2" />
-                            </svg>
-                            อุปกรณ์ที่ใช้
-                        </h2>
-                        <div className="flex flex-wrap gap-2">
-                            {workoutData.equipment && workoutData.equipment.length > 0 ?
-                                workoutData.equipment.map((item) => (
-                                    <span key={item} className="bg-gray-100 px-3 py-1 rounded-full text-sm">{item}</span>
-                                )) :
-                                <span className="text-gray-500">ไม่จำเป็นต้องใช้อุปกรณ์เพิ่มเติม</span>
-                            }
-                        </div>
-                    </div>
-                </div>
-
-                {/* Instructions column */}
-                <div className="lg:col-span-1">
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                        <h2 className="text-xl font-semibold mb-4 flex items-center">
-                            {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                            </svg>
-                            วิธีการออกกำลังกาย
-                        </h2>
-                        <div className="text-gray-700 space-y-1">
-                            {renderDescription(workoutData.description)}
-                        </div>
-                    </div>
                 </div>
             </div>
-
-            <hr className="border-gray-200 my-8" />
-
-            {/* Comments section */}
-            <CommentSection
-                comments={workoutData.comments}
-                videoId={workoutData._id}
-                isLoggedIn={isLoggedIn}
-                user={user}
-            />
         </div>
     );
 }
@@ -203,108 +335,119 @@ interface CommentSectionProps {
     comments: Comment[];
     videoId: string;
     isLoggedIn: boolean;
-    user: User | null;
+    user: WorkoutUser | null;
 }
 
 function CommentSection({ comments = [], videoId, isLoggedIn, user }: CommentSectionProps) {
     const { commentList, text, setText, submitting, handleSubmit } = useComments(comments, videoId, user, isLoggedIn);
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 className="font-semibold text-xl mb-6 flex items-center">
-                {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                </svg>
-                ความคิดเห็น ({commentList.length})
-            </h2>
+        <div className="bg-white/90 backdrop-blur-lg rounded-3xl shadow-xl border border-white/50 p-6 md:p-8">
+            <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <MessageSquare className="w-4 h-4 text-blue-600" />
+                </div>
+                <h2 className="text-lg font-bold text-slate-800">
+                    ความคิดเห็น ({commentList.length})
+                </h2>
+            </div>
 
-            {/* Comment input form */}
-            <form onSubmit={handleSubmit} className="mb-8">
+            {/* Comment Form */}
+            <div className="mb-8">
                 {isLoggedIn ? (
-                    <>
-                        <div className="mb-3">
-                            <div className="flex items-center mb-2">
-                                <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium mr-2">
-                                    {user?.username?.charAt(0).toUpperCase() || '?'}
-                                </div>
-                                <span className="font-medium text-gray-700">{user?.username || 'User'}</span>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="flex items-start gap-3">
+                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
+                                {user?.username?.charAt(0).toUpperCase() || '?' }
                             </div>
-                            <textarea
-                                placeholder="แสดงความคิดเห็นของคุณ..."
-                                className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                                value={text}
-                                onChange={e => setText(e.target.value)}
-                                rows={3}
-                                required
-                            />
+                            <div className="flex-1">
+                                <div className="mb-2">
+                                    <span className="font-semibold text-slate-800 text-sm">{user?.username || 'User'}</span>
+                                </div>
+                                <textarea
+                                    placeholder="แสดงความคิดเห็นของคุณ..."
+                                    className="w-full border border-slate-200 rounded-xl px-4 py-3 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none text-sm"
+                                    value={text}
+                                    onChange={e => setText(e.target.value)}
+                                    rows={3}
+                                    required
+                                />
+                            </div>
                         </div>
                         <div className="flex justify-end">
                             <button
                                 type="submit"
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-medium transition flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 font-semibold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                                 disabled={submitting}
                             >
                                 {submitting ? (
                                     <>
-                                        {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
-                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                                        </svg>
+                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                         กำลังส่ง...
                                     </>
-                                ) : "ส่งความคิดเห็น"}
+                                ) : (
+                                    <>
+                                        <Send className="w-4 h-4" />
+                                        ส่งความคิดเห็น
+                                    </>
+                                )}
                             </button>
                         </div>
-                    </>
+                    </form>
                 ) : (
-                    <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 text-center">
-                        <p className="text-blue-800 mb-2">กรุณาเข้าสู่ระบบเพื่อแสดงความคิดเห็น</p>
+                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center">
+                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <User className="w-6 h-6 text-blue-600" />
+                        </div>
+                        <h3 className="text-base font-semibold text-blue-800 mb-2">เข้าสู่ระบบเพื่อแสดงความคิดเห็น</h3>
+                        <p className="text-blue-600 mb-4 text-sm">ร่วมสนทนาและแบ่งปันประสบการณ์กับสมาชิกคนอื่นๆ</p>
                         <Link href="/login">
-                            <button type="button" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition">
+                            <button type="button" className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 font-semibold text-sm">
                                 เข้าสู่ระบบ
                             </button>
                         </Link>
                     </div>
                 )}
-            </form>
+            </div>
 
-            {/* Comments list */}
+            {/* Comments List */}
             {commentList && commentList.length > 0 ? (
                 <div className="space-y-4">
                     {commentList.map((comment: Comment, idx: number) => (
-                        <div key={comment._id || idx} className="border-b border-gray-100 pb-4 last:border-0">
-                            <div className="flex items-center mb-2">
-                                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-medium mr-2">
+                        <div key={comment._id || idx} className="border-b border-slate-200 pb-4 last:border-0 last:pb-0">
+                            <div className="flex items-start gap-3">
+                                <div className="w-10 h-10 bg-gradient-to-br from-slate-400 to-slate-600 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
                                     {comment.username?.charAt(0).toUpperCase() || "?"}
                                 </div>
-                                <div>
-                                    <p className="font-medium text-gray-800">{comment.username || "ผู้ใช้"}</p>
-                                    <p className="text-xs text-gray-500">
-                                        {comment.createdAt
-                                            ? new Date(comment.createdAt).toLocaleDateString('th-TH', {
-                                                day: 'numeric',
-                                                month: 'short',
-                                                year: 'numeric',
-                                                hour: '2-digit',
-                                                minute: '2-digit'
-                                            })
-                                            : ""}
-                                    </p>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-3 mb-1">
+                                        <h4 className="font-semibold text-slate-800 text-sm">{comment.username || "ผู้ใช้"}</h4>
+                                        {comment.createdAt && (
+                                            <div className="flex items-center gap-1 text-xs text-slate-500">
+                                                <Calendar className="w-3 h-3" />
+                                                {new Date(comment.createdAt).toLocaleDateString('th-TH', {
+                                                    day: 'numeric',
+                                                    month: 'short',
+                                                    year: 'numeric',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                })}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="text-slate-700 leading-relaxed text-sm">{comment.text}</div>
                                 </div>
                             </div>
-                            <div className="pl-10 text-gray-700">{comment.text}</div>
                         </div>
                     ))}
                 </div>
             ) : (
-                <div className="text-center py-8 text-gray-500">
-                    {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
-                    <svg className="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                    </svg>
-                    <p>ยังไม่มีความคิดเห็น เป็นคนแรกที่แสดงความคิดเห็น!</p>
+                <div className="text-center py-8">
+                    <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <MessageSquare className="w-8 h-8 text-slate-400" />
+                    </div>
+                    <h3 className="text-base font-semibold text-slate-600 mb-1">ยังไม่มีความคิดเห็น</h3>
+                    <p className="text-slate-500 text-sm">เป็นคนแรกที่แสดงความคิดเห็น!</p>
                 </div>
             )}
         </div>
