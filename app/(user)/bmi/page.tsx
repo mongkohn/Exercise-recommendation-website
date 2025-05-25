@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from 'react';
+import Image from 'next/image';
+import { Calculator, Scale, Heart, Target, TrendingUp } from 'lucide-react';
 
 type BMICategory = {
   min: number;
@@ -120,105 +122,199 @@ export default function BMICalculator() {
     }
   };
 
+  const getBMIColor = () => {
+    if (bmi === 0) return 'text-blue-600';
+    if (bmi < 18.5) return 'text-yellow-600';
+    if (bmi <= 22.9) return 'text-green-600';
+    if (bmi <= 24.9) return 'text-orange-600';
+    if (bmi <= 29.9) return 'text-red-500';
+    return 'text-red-700';
+  };
+
+  const getBMILabel = () => {
+    if (bmi === 0) return '';
+    const category = getBMICategory(bmi);
+    return category ? category.label : '';
+  };
+
   return (
-    <div className="min-h-screen  p-10">
-      <h1 className="text-center text-2xl font-bold m-4">
-        เครื่องคำนวณหาค่าดัชนีมวลกาย (BMI)
-      </h1>
-      <p className="text-md text-center text-black mb-10">
-        ค่า BMI คือค่าดัชนีที่ใช้ชี้วัดความสมดุลของน้ำหนักตัว (กิโลกรัม) และส่วนสูง (เซนติเมตร) ซึ่งสามารถระบุได้ว่า ตอนนี้รูปร่างของคนคนนั้นอยู่ในระดับใด ตั้งแต่อ้วนมากไปจนถึงผอมเกินไป
-      </p>
-
-      <div className="max-w-md mx-auto bg-gray-100 p-6 rounded-2xl shadow-md ">
-        <p className="text-sm text-gray-700 mb-4 ">ใส่น้ำหนักและส่วนสูงของคุณ แล้วกดคำนวณเพื่อดูค่า BMI</p>
-
-        <div className="space-y-4 mb-4">
-          <div>
-            <label htmlFor="weight-input" className="block text-sm font-medium">น้ำหนักตัว (Kg.)</label>
-            <input
-              id="weight-input"
-              type="number"
-              placeholder="น้ำหนัก (Kg.)"
-              value={weight}
-              onChange={(e) => setWeight(e.target.value)}
-              className="w-full border rounded px-3 py-2 mt-1 text-black bg-white"
-            />
-          </div>
-          <div>
-            <label htmlFor="height-input" className="block text-sm font-medium">ส่วนสูง (Cm.)</label>
-            <input
-              id="height-input"
-              type="number"
-              placeholder="ส่วนสูง (Cm.)"
-              value={height}
-              onChange={(e) => setHeight(e.target.value)}
-              className="w-full border rounded px-3 py-2 mt-1 text-black bg-white"
-            />
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={calculateBMI}
-          className="w-full bg-blue-800 text-white py-2 rounded mb-4 hover:bg-blue-700"
-        >
-          คำนวณ
-        </button>
-
-        <div className="text-center border rounded py-6 mb-4 bg-white">
-          <div className="text-sm text-gray-600 ">BMI</div>
-          <div className="text-3xl font-bold text-blue-800">{bmi}</div>
-        </div>
-
-        <table className=" w-full text-sm text-left border bg-white rounded">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="p-2">BMI</th>
-              <th className="p-2">อยู่ในเกณฑ์</th>
-              <th className="p-2">ภาวะเสี่ยงโรค</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className={bmi > 0 && bmi < 18.5 ? 'bg-yellow-100 font-bold' : ''}>
-              <td className="p-2">น้อยกว่า 18.5</td>
-              <td>ผอม</td>
-              <td>มากกว่าคนปกติ</td>
-            </tr>
-            <tr className={bmi >= 18.5 && bmi <= 22.9 ? 'bg-green-100  font-bold' : ''}>
-              <td className="p-2">18.5 - 22.9</td>
-              <td>ปกติ</td>
-              <td>น้อย</td>
-            </tr>
-            <tr className={bmi >= 23 && bmi <= 24.9 ? 'bg-orange-100 font-bold' : ''}>
-              <td className="p-2">23 - 24.9</td>
-              <td>ท้วม</td>
-              <td>เริ่มเสี่ยง</td>
-            </tr>
-            <tr className={bmi >= 25 && bmi <= 29.9 ? 'bg-orange-200 font-bold' : ''}>
-              <td className="p-2">25 - 29.9</td>
-              <td>อ้วน</td>
-              <td>เสี่ยงสูง</td>
-            </tr>
-            <tr className={bmi >= 30 ? 'bg-red-200 font-bold' : ''}>
-              <td className="p-2">มากกว่า 30</td>
-              <td>อ้วนมาก</td>
-              <td>เสี่ยงสูงมาก</td>
-            </tr>
-          </tbody>
-        </table>
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+          alt="Fitness Background"
+          fill
+          className="object-cover opacity-20"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-blue-900/50"></div>
       </div>
-      <div>
-        {advice && (
-          <div className={`p-4 mt-4 rounded-lg text-gray-800 border-l-4 whitespace-pre-line ${bgColor}`}>
-            {advice}
+
+      {/* Content */}
+      <div className="relative z-10 min-h-screen py-12">
+        <div className="max-w-6xl mx-auto px-6">
+          
+          {/* Header */}
+          <div className="text-center mb-12">
+            <div className="flex justify-center mb-6">
+              <div className="p-4 bg-gradient-to-br from-green-600 to-green-700 rounded-2xl shadow-2xl">
+                <Scale className="w-12 h-12 text-white" />
+              </div>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 drop-shadow-lg">
+              เครื่องคำนวณดัชนีมวลกาย
+            </h1>
+            <div className="max-w-4xl mx-auto bg-white/90 backdrop-blur-md rounded-2xl p-8 shadow-2xl border border-white/20">
+              <p className="text-blue-900 text-lg leading-relaxed">
+                ค่า BMI คือค่าดัชนีที่ใช้ชี้วัดความสมดุลของน้ำหนักตัว (กิโลกรัม) และส่วนสูง (เซนติเมตร) 
+                ซึ่งสามารถระบุได้ว่า ตอนนี้รูปร่างของคนคนนั้นอยู่ในระดับใด ตั้งแต่อ้วนมากไปจนถึงผอมเกินไป
+              </p>
+            </div>
           </div>
-        )}
-        <div className="flex justify-center mt-10">
-          <a href="/bmr&tdee">
-            <button type="button" className=" bg-blue-800 text-white py-2  mb-4 hover:bg-blue-600 px-6 rounded-full transition">
-              คำนวณ BMR & TDEE ต่อ
-            </button>
-          </a>
+
+          {/* Calculator Section */}
+          <div className="grid lg:grid-cols-2 gap-8 mb-12">
+            
+            {/* Calculator Form */}
+            <div className="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-white/20">
+              <div className="flex items-center gap-3 mb-6">
+                <Calculator className="w-8 h-8 text-blue-600" />
+                <h2 className="text-2xl font-bold text-blue-900">คำนวณ BMI ของคุณ</h2>
+              </div>
+              
+              <p className="text-blue-700 mb-6">
+                ใส่น้ำหนักและส่วนสูงของคุณ แล้วกดคำนวณเพื่อดูค่า BMI
+              </p>
+
+              <div className="space-y-6 mb-6">
+                <div>
+                  <label htmlFor="weight-input" className="block text-sm font-semibold text-blue-900 mb-2">
+                    น้ำหนักตัว (กิโลกรัม)
+                  </label>
+                  <input
+                    id="weight-input"
+                    type="number"
+                    placeholder="กรอกน้ำหนักของคุณ"
+                    value={weight}
+                    onChange={(e) => setWeight(e.target.value)}
+                    className="w-full border-2 border-blue-200 rounded-xl px-4 py-3 bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent text-blue-900 placeholder-blue-400"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="height-input" className="block text-sm font-semibold text-blue-900 mb-2">
+                    ส่วนสูง (เซนติเมตร)
+                  </label>
+                  <input
+                    id="height-input"
+                    type="number"
+                    placeholder="กรอกส่วนสูงของคุณ"
+                    value={height}
+                    onChange={(e) => setHeight(e.target.value)}
+                    className="w-full border-2 border-blue-200 rounded-xl px-4 py-3 bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent text-blue-900 placeholder-blue-400"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={calculateBMI}
+                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-2xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 font-semibold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105"
+              >
+                คำนวณ BMI
+              </button>
+
+              {/* BMI Result */}
+              <div className="mt-8 text-center p-6 rounded-2xl bg-gradient-to-r from-blue-50 to-blue-100 border-2 border-blue-200">
+                <div className="text-sm font-medium text-blue-700 mb-2">ค่า BMI ของคุณ</div>
+                <div className={`text-5xl font-bold mb-2 ${getBMIColor()}`}>{bmi}</div>
+                {getBMILabel() && (
+                  <div className={`text-lg font-semibold ${getBMIColor()}`}>
+                    {getBMILabel()}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* BMI Chart */}
+            <div className="bg-white/95 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-white/20">
+              <div className="flex items-center gap-3 mb-6">
+                <TrendingUp className="w-8 h-8 text-green-600" />
+                <h2 className="text-2xl font-bold text-blue-900">เกณฑ์ค่า BMI</h2>
+              </div>
+
+              <div className="overflow-hidden rounded-2xl border-2 border-blue-200">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+                      <th className="p-4 text-left font-semibold">BMI</th>
+                      <th className="p-4 text-left font-semibold">เกณฑ์</th>
+                      <th className="p-4 text-left font-semibold">ภาวะเสี่ยง</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className={`transition-colors ${bmi > 0 && bmi < 18.5 ? 'bg-yellow-100 font-bold border-l-4 border-yellow-500' : 'bg-white hover:bg-blue-50'}`}>
+                      <td className="p-4">น้อยกว่า 18.5</td>
+                      <td className="p-4">ผอม</td>
+                      <td className="p-4">มากกว่าคนปกติ</td>
+                    </tr>
+                    <tr className={`transition-colors ${bmi >= 18.5 && bmi <= 22.9 ? 'bg-green-100 font-bold border-l-4 border-green-500' : 'bg-white hover:bg-blue-50'}`}>
+                      <td className="p-4">18.5 - 22.9</td>
+                      <td className="p-4">ปกติ</td>
+                      <td className="p-4">น้อย</td>
+                    </tr>
+                    <tr className={`transition-colors ${bmi >= 23 && bmi <= 24.9 ? 'bg-orange-100 font-bold border-l-4 border-orange-500' : 'bg-white hover:bg-blue-50'}`}>
+                      <td className="p-4">23 - 24.9</td>
+                      <td className="p-4">ท้วม</td>
+                      <td className="p-4">เริ่มเสี่ยง</td>
+                    </tr>
+                    <tr className={`transition-colors ${bmi >= 25 && bmi <= 29.9 ? 'bg-red-100 font-bold border-l-4 border-red-500' : 'bg-white hover:bg-blue-50'}`}>
+                      <td className="p-4">25 - 29.9</td>
+                      <td className="p-4">อ้วน</td>
+                      <td className="p-4">เสี่ยงสูง</td>
+                    </tr>
+                    <tr className={`transition-colors ${bmi >= 30 ? 'bg-red-200 font-bold border-l-4 border-red-600' : 'bg-white hover:bg-blue-50'}`}>
+                      <td className="p-4">มากกว่า 30</td>
+                      <td className="p-4">อ้วนมาก</td>
+                      <td className="p-4">เสี่ยงสูงมาก</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          {/* Advice Section */}
+          {advice && (
+            <div className="mb-12">
+              <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
+                <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6">
+                  <div className="flex items-center gap-3">
+                    <Heart className="w-8 h-8 text-white" />
+                    <h3 className="text-2xl font-bold text-white">คำแนะนำสำหรับคุณ</h3>
+                  </div>
+                </div>
+                <div className="p-8">
+                  <div className="text-blue-900 leading-relaxed whitespace-pre-line">
+                    {advice}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Action Button */}
+          <div className="flex justify-center">
+            <a href="/bmr&tdee">
+              <button 
+                type="button" 
+                className="flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 px-8 rounded-2xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 font-semibold text-lg shadow-2xl hover:shadow-3xl transform hover:scale-105"
+              >
+                <Target className="w-6 h-6" />
+                คำนวณ BMR & TDEE ต่อ
+              </button>
+            </a>
+          </div>
         </div>
       </div>
     </div>
