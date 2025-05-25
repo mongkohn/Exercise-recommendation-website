@@ -62,8 +62,8 @@ function ProfileHeader({ user, onEdit, onLogout }: {
   onLogout: () => void; 
 }) {
   return (
-    <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20 shadow-2xl">
-      <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8">
+    <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20 shadow-2xl mt-12">
+      <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8 ">
         {/* Avatar Section */}
         <div className="flex flex-col items-center">
           <UserAvatar user={user} />
