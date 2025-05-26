@@ -3,6 +3,7 @@
 import CommentSection from '@/components/CommentSection'; // Adjust path if necessary
 import { useParams } from 'next/navigation'; // Or use props for App Router
 
+
 // For Next.js App Router, params are passed as props to the page component
 // export default function ArticleDetailPage({ params }: { params: { articleId: string } }) {
 // For older Next.js or if using `useParams` (ensure compatibility with current Next.js version)
@@ -23,18 +24,6 @@ export default function ArticleDetailPage() {
             <p className="text-xl font-semibold text-blue-600 mb-6 break-all">
                 {articleId}
             </p>
-            
-            {/* 
-              Ideally, you would fetch and display the actual article content here.
-              For now, we are just focusing on the comment section.
-              Example:
-              <div>
-                <h2>{article.title}</h2>
-                <p>{article.content}</p>
-              </div>
-            */}
-            
-            <CommentSection articleId={articleId} />
         </div>
     );
 }

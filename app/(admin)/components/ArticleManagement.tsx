@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Plus, Edit, Trash2, X, Save, ExternalLink } from "lucide-react";
 
@@ -22,10 +22,10 @@ export default function ArticleManagement() {
     const [saving, setSaving] = useState(false);
 
     // Get API URL with fallback
-    const getApiUrl = () => process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+    const getApiUrl = () => process.env.NEXT_PUBLIC_API_URL;
 
     // Fetch articles
-    const fetchArticles = async () => {
+    const fetchArticles = useCallback(async () => {
         try {
             setLoadingArticles(true);
             const response = await fetch(`${getApiUrl()}/article/`);
@@ -47,11 +47,11 @@ export default function ArticleManagement() {
         } finally {
             setLoadingArticles(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchArticles();
-    }, []);
+    }, [fetchArticles]);
 
     // Handler for updating article
     const handleUpdateArticle = async (article: Article) => {
@@ -486,7 +486,7 @@ export default function ArticleManagement() {
                             </div>
                             <h3 className="text-xl font-bold text-slate-800 mb-2">ยืนยันการลบ</h3>
                             <p className="text-slate-600 mb-2">คุณแน่ใจหรือไม่ที่จะลบบทความนี้?</p>
-                            <p className="text-sm text-slate-500 mb-6 font-medium">"{showDeleteArticle.article.title}"</p>
+                            <p className="text-sm text-slate-500 mb-6 font-medium">&quot;{showDeleteArticle.article.title}&quot;</p>
                             <div className="flex justify-center gap-3">
                                 <button
                                     type="button"

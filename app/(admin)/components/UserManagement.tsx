@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Edit, Trash2, X, Save, Users, Calendar, Mail, User as UserIcon } from "lucide-react";
 
 type User = {
@@ -20,10 +20,10 @@ export default function UserManagement() {
     const [saving, setSaving] = useState(false);
 
     // Get API URL with fallback
-    const getApiUrl = () => process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+    const getApiUrl = () => process.env.NEXT_PUBLIC_API_URL
 
     // Fetch users
-    const fetchUsers = async () => {
+    const fetchUsers = useCallback(async () => {
         try {
             setLoadingUsers(true);
             const response = await fetch(`${getApiUrl()}/user/`);
@@ -37,11 +37,11 @@ export default function UserManagement() {
         } finally {
             setLoadingUsers(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchUsers();
-    }, []);
+    }, [fetchUsers]);
 
     // Handler for updating user
     const handleUpdateUser = async (user: User) => {
@@ -300,7 +300,7 @@ export default function UserManagement() {
                             </div>
                             <h3 className="text-xl font-bold text-slate-800 mb-2">ยืนยันการลบ</h3>
                             <p className="text-slate-600 mb-2">คุณแน่ใจหรือไม่ที่จะลบผู้ใช้นี้?</p>
-                            <p className="text-sm text-slate-500 mb-6 font-medium">"{showDelete.user.username}"</p>
+                            <p className="text-sm text-slate-500 mb-6 font-medium">&quot;{showDelete.user.username}&quot;</p>
                             <div className="flex justify-center gap-3">
                                 <button
                                     type="button"

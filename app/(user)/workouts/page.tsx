@@ -26,7 +26,7 @@ export default function WorkoutsPage() {
   const router = useRouter();
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/video")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/video`)
       .then((res) => res.json())
       .then((data) => {
         setWorkouts(data);
@@ -108,7 +108,7 @@ export default function WorkoutsPage() {
   return (
     <div className="h-screen relative overflow-hidden">
       {/* Fixed Background Image */}
-      <div className="absolute inset-0 z-0 fixed">
+      <div className="absolute inset-0 z-0">
         <Image
           src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
           alt="Gym Background"

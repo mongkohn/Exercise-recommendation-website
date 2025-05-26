@@ -38,11 +38,11 @@ export default function DashboardAnalytics({ onMenuChange }: { onMenuChange?: (m
         setLoading(true);
         
         // Fetch users
-        const usersRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/user/`);
+        const usersRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/`);
         const usersData = await usersRes.json();
         
         // Fetch articles
-        const articlesRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/article/`);
+        const articlesRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/article/`);
         const articlesData = await articlesRes.json();
         
         // Mock data for exercises and programs (since we don't have APIs yet)

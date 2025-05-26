@@ -30,24 +30,6 @@ export default function Profile() {
   const { isLoggedIn, user: authUser, logout } = useAuth();
   const router = useRouter();
 
-  const fetchUserProfile = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      if (authUser) {
-        setUser(authUser);
-      } else {
-        throw new Error('ไม่พบข้อมูลผู้ใช้');
-      }
-    } catch (err) {
-      console.error('Profile fetch error:', err);
-      setError(err instanceof Error ? err.message : 'เกิดข้อผิดพลาด');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleLogout = async () => {
     if (confirm('คุณต้องการออกจากระบบหรือไม่?')) {
       await logout();
@@ -58,8 +40,24 @@ export default function Profile() {
   const handleEditSuccess = (updatedUser: UserProfile) => {
     setUser(updatedUser);
     setShowEditModal(false);
-    // Update auth context user data
-    fetchUserProfile();
+  };
+
+  const fetchUserProfile = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      if (authUser) {
+        setUser(authUser as unknown as UserProfile);
+      } else {
+        throw new Error('ไม่พบข้อมูลผู้ใช้');
+      }
+    } catch (err) {
+      console.error('Profile fetch error:', err);
+      setError(err instanceof Error ? err.message : 'เกิดข้อผิดพลาด');
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -73,6 +71,7 @@ export default function Profile() {
     }, 100);
 
     return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn, authUser, router]);
 
   if (loading) {

@@ -106,8 +106,6 @@ export default function HomePage() {
       {/* Sidebar - Fixed */}
       <AdminSidebar
         onSelect={handleMenuSelect}
-        isOpen={sidebarOpen}
-        onToggle={toggleSidebar}
       />
 
       {/* Main content area */}
@@ -131,7 +129,6 @@ export default function HomePage() {
 
 function Content({
   activeMenu,
-  onMenuChange,
 }: {
   activeMenu: string;
   onMenuChange: (menu: string) => void;

@@ -82,7 +82,7 @@ export default function ExerciseManagement() {
   const fetchExercises = async () => {
     try {
       setLoading(true);
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
       const response = await fetch(`${apiUrl}/video`);
       
       if (!response.ok) {
@@ -118,7 +118,7 @@ export default function ExerciseManagement() {
         equipment: formData.equipment.split(',').map(e => e.trim()).filter(e => e)
       };
 
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
       const response = await fetch(`${apiUrl}/video`, {
         method: 'POST',
         headers: {
@@ -155,7 +155,7 @@ export default function ExerciseManagement() {
         equipment: formData.equipment.split(',').map(e => e.trim()).filter(e => e)
       };
 
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
       const response = await fetch(`${apiUrl}/video/${selectedExercise._id}`, {
         method: 'PUT',
         headers: {
@@ -185,7 +185,7 @@ export default function ExerciseManagement() {
     if (!confirm('คุณแน่ใจหรือไม่ที่จะลบท่าออกกำลังกายนี้?')) return;
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
       const response = await fetch(`${apiUrl}/video/${exerciseId}`, {
         method: 'DELETE',
       });
@@ -242,7 +242,7 @@ export default function ExerciseManagement() {
             <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-blue-700 mb-2">กำลังโหลดข้อมูล...</p>
             <p className="text-xs text-slate-500">
-              API URL: {process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}
+              API URL: {process.env.NEXT_PUBLIC_API_URL}
             </p>
           </div>
         </div>
@@ -480,15 +480,6 @@ export default function ExerciseManagement() {
             จำนวนท่าทั้งหมด: {exercises.length} ท่า 
             {searchTerm && ` | พบ: ${filteredExercises.length} ท่า`}
           </p>
-          {/* Debug info in development
-          {process.env.NODE_ENV === 'development' && (
-            <div className="text-xs text-slate-400 mt-1 space-y-1">
-              <p>API: {process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}</p>
-              <p>Raw exercises count: {exercises.length}</p>
-              <p>Filtered exercises count: {filteredExercises.length}</p>
-              <p>Current page exercises: {currentExercises.length}</p>
-            </div>
-          )} */}
         </div>
         <button
           type="button"

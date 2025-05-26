@@ -398,8 +398,8 @@ function ArticlesSection() {
             const dateFields = ['createdAt', 'created_at', 'updatedAt', 'updated_at', 'date', '_id'];
             for (const field of dateFields) {
               if (article[field]) {
-                if (field === '_id' && typeof article[field] === 'string' && article[field].length === 24) {
-                  return new Date(parseInt(article[field].substring(0, 8), 16) * 1000);
+                if (field === '_id' && typeof article[field] === 'string' && (article[field] as string).length === 24) {
+                  return new Date(parseInt((article[field] as string).substring(0, 8), 16) * 1000);
                 }
                 return new Date(article[field]);
               }
