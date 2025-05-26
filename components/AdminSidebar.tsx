@@ -61,26 +61,26 @@ export default function AdminSidebar({ onSelect }: AdminSidebarProps) {
       </div>
 
       <div className="px-6 py-4 border-t border-blue-100">
-        <button
-          type="button"
+        <a
+          href="/"
           className="w-full flex items-center justify-center gap-2 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-all font-medium border border-red-200 hover:border-red-300"
         >
           {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
           <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+        className="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-            />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+        />
           </svg>
-          <span>ออกจากระบบ</span>
-        </button>
+          <span>กลับสู่หน้าหลัก</span>
+        </a>
       </div>
     </aside>
   );

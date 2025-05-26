@@ -1,8 +1,9 @@
 "use client";
 import Articlesbox from "@/components/articlesbox";
 import ChatAdmin from "@/components/ChatAdmin";
-import { ChevronRight, Play, Star, Users, Trophy, Heart, ArrowRight, Dumbbell, Target, BookOpen } from "lucide-react";
+import { ChevronRight, Play, Star, Users, Trophy, Heart, ArrowRight, Dumbbell, Target, BookOpen, RefreshCw, Loader2, Clock } from "lucide-react";
 import Image from "next/image";
+import { useState, useEffect } from "react";
 
 const HERO_CONTENT = {
   title: "เปลี่ยนชีวิตด้วยการออกกำลังกาย",
@@ -153,10 +154,6 @@ function HeroSection() {
                 <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               </button>
             </a>
-            <button type="button" className="group bg-white/10 backdrop-blur-md hover:bg-white/20 text-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 border border-white/30 flex items-center gap-2">
-              <Play className="w-5 h-5" />
-              ดูวิดีโอแนะนำ
-            </button>
           </div>
 
           {/* Stats */}
@@ -345,7 +342,96 @@ function TestimonialsSection() {
   );
 }
 
+interface Article {
+  _id?: string;
+  title?: string;
+  description?: string;
+  image?: string;
+  link?: string;
+  createdAt?: string;
+  created_at?: string;
+  updatedAt?: string;
+  updated_at?: string;
+  date?: string;
+}
+
 function ArticlesSection() {
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+
+  const fetchLatestArticles = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/article/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
+        cache: 'no-store',
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // Handle different API response structures
+      let articlesData = [];
+      if (Array.isArray(data)) {
+        articlesData = data;
+      } else if (data.data && Array.isArray(data.data)) {
+        articlesData = data.data;
+      } else if (data.articles && Array.isArray(data.articles)) {
+        articlesData = data.articles;
+      }
+
+      // Sort by creation date (most recent first) and take only first 3
+      const sortedArticles = articlesData
+        .sort((a: any, b: any) => {
+          const getDate = (article: { [x: string]: string | number | Date; }) => {
+            const dateFields = ['createdAt', 'created_at', 'updatedAt', 'updated_at', 'date', '_id'];
+            for (const field of dateFields) {
+              if (article[field]) {
+                if (field === '_id' && typeof article[field] === 'string' && article[field].length === 24) {
+                  return new Date(parseInt(article[field].substring(0, 8), 16) * 1000);
+                }
+                return new Date(article[field]);
+              }
+            }
+            return new Date(0);
+          };
+          
+          const dateA = getDate(a);
+          const dateB = getDate(b);
+          return dateB.getTime() - dateA.getTime();
+        })
+        .slice(0, 3); // Show only latest 3 articles
+
+      setArticles(sortedArticles);
+      setError(false);
+      setLastUpdated(new Date());
+    } catch (error) {
+      console.error('Failed to fetch latest articles:', error);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLatestArticles();
+    
+    // Auto-refresh every 10 minutes
+    const interval = setInterval(fetchLatestArticles, 10 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section className="relative py-24 bg-white">
       <div className="max-w-7xl mx-auto px-6">
@@ -358,14 +444,134 @@ function ArticlesSection() {
             บทความ
             <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent"> ล่าสุด</span>
           </h2>
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+          <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-4">
             อัปเดตความรู้ใหม่ๆ เกี่ยวกับสุขภาพ การออกกำลังกาย และโภชนาการ
           </p>
+          
+          {/* Last updated info */}
+          <div className="flex items-center justify-center gap-4 flex-wrap">
+            <button
+              onClick={fetchLatestArticles}
+              disabled={loading}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 hover:bg-green-200 text-green-700 rounded-xl transition-all duration-300 font-medium disabled:opacity-50"
+            >
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              {loading ? 'กำลังอัพเดท...' : 'รีเฟรช'}
+            </button>
+            
+            {lastUpdated && (
+              <div className="flex items-center gap-2 text-sm text-slate-500">
+                <Clock className="w-4 h-4" />
+                <span>อัพเดทล่าสุด: {lastUpdated.toLocaleTimeString('th-TH')}</span>
+              </div>
+            )}
+          </div>
         </div>
-        <Articlesbox />
+
+        {/* Articles Content */}
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="flex flex-col items-center gap-4">
+              <Loader2 className="w-12 h-12 text-green-600 animate-spin" />
+              <p className="text-slate-600 font-medium">กำลังโหลดบทความล่าสุด...</p>
+            </div>
+          </div>
+        ) : error ? (
+          <div className="text-center py-20">
+            <div className="bg-red-50 border border-red-200 rounded-2xl p-8 max-w-md mx-auto">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <BookOpen className="w-8 h-8 text-red-600" />
+              </div>
+              <h3 className="text-xl font-bold text-red-800 mb-2">ไม่สามารถโหลดบทความได้</h3>
+              <p className="text-red-600 mb-4">กรุณาลองใหม่อีกครั้ง</p>
+              <button
+                onClick={fetchLatestArticles}
+                className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl transition-colors font-medium"
+              >
+                ลองใหม่
+              </button>
+            </div>
+          </div>
+        ) : articles.length === 0 ? (
+          <div className="text-center py-20">
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-8 max-w-md mx-auto">
+              <BookOpen className="w-16 h-16 text-slate-400 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-slate-800 mb-2">ยังไม่มีบทความ</h3>
+              <p className="text-slate-600">กรุณารอสักครู่ เราจะอัพเดทบทความใหม่เร็วๆ นี้</p>
+            </div>
+          </div>
+        ) : (
+          <>
+
+            {/* Custom Articles Display - Fixed size cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+              {articles.map((article, index) => (
+                <div key={article._id || index} className="group relative">
+                  <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 overflow-hidden border border-slate-100 h-full flex flex-col">
+                    {/* Article Image - Increased height */}
+                    <div className="relative h-56 bg-gradient-to-br from-green-100 to-blue-100 flex-shrink-0">
+                      {article.image ? (
+                        <Image
+                          src={article.image}
+                          alt={article.title || 'Article'}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center h-full">
+                          <BookOpen className="w-12 h-12 text-slate-400" />
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Article Content - Increased padding */}
+                    <div className="p-8 flex flex-col flex-grow">
+                      <h3 className="font-bold text-xl mb-4 text-slate-800 line-clamp-2 group-hover:text-green-600 transition-colors min-h-[3.5rem]">
+                        {article.title || 'ไม่มีชื่อบทความ'}
+                      </h3>
+                      
+                      <p className="text-slate-600 text-sm mb-5 line-clamp-3 flex-grow min-h-[5rem]">
+                        {article.description || 'ไม่มีคำอธิบาย'}
+                      </p>
+                      
+                      {/* Article date */}
+                      {(article.createdAt || article.created_at) && (
+                        <div className="flex items-center gap-2 text-sm text-slate-500 mb-4">
+                          <Clock className="w-4 h-4" />
+                          <span>
+                            {new Date(article.createdAt || article.created_at!).toLocaleDateString('th-TH', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </span>
+                        </div>
+                      )}
+                      
+                      {/* Read more link - Always at bottom */}
+                      <div className="mt-auto">
+                        {article.link && (
+                          <a
+                            href={article.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 text-green-600 text-base font-medium hover:text-green-800 transition-colors group/link"
+                          >
+                            อ่านต่อ...
+                            <ArrowRight className="w-4 h-4 transition-transform group-hover/link:translate-x-1" />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
         
         {/* View all button */}
-        <div className="text-center mt-12">
+        <div className="text-center">
           <a href="/articles">
             <button className="group bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center gap-2 mx-auto">
               ดูบทความทั้งหมด

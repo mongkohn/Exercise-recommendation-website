@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
-import { Play, MessageSquare, User, Calendar, Send, ArrowLeft, Dumbbell, Target, Clock, Users } from 'lucide-react';
+import { Play, MessageSquare, User, Calendar, Send, ArrowLeft, Dumbbell, Target, Clock, Users, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 
 // Type definitions
@@ -34,6 +34,7 @@ function useComments(initialComments: Comment[], videoId: string, user: WorkoutU
     const [commentList, setCommentList] = useState<Comment[]>(initialComments);
     const [text, setText] = useState<string>("");
     const [submitting, setSubmitting] = useState<boolean>(false);
+    const [deletingCommentId, setDeletingCommentId] = useState<string | null>(null);
 
     useEffect(() => {
         setCommentList(initialComments);
@@ -63,12 +64,56 @@ function useComments(initialComments: Comment[], videoId: string, user: WorkoutU
         }
     };
 
+    const handleDeleteComment = async (commentId: string) => {
+        if (!commentId) return;
+        
+        const confirmDelete = window.confirm("คุณแน่ใจหรือไม่ที่จะลบความคิดเห็นนี้?");
+        if (!confirmDelete) return;
+
+        setDeletingCommentId(commentId);
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/video/${videoId}/comments/${commentId}`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+            });
+
+            if (!res.ok) throw new Error("Failed to delete comment");
+
+            const data = await res.json();
+            if (data.comments) {
+                setCommentList(data.comments);
+            } else {
+                // Fallback: remove comment from local state
+                setCommentList(prev => prev.filter(comment => comment._id !== commentId));
+            }
+        } catch (error) {
+            console.error("Error deleting comment:", error);
+            alert("เกิดข้อผิดพลาดในการลบความคิดเห็น");
+        } finally {
+            setDeletingCommentId(null);
+        }
+    };
+
+    const canDeleteComment = (comment: Comment): boolean => {
+        if (!isLoggedIn || !user?.username) return false;
+        
+        // Get current user from sessionStorage
+        const currentUsername = sessionStorage.getItem('username');
+        const isAdmin = currentUsername?.toLowerCase() === 'admin';
+        const isCommentOwner = comment.username === currentUsername;
+        
+        return isAdmin || isCommentOwner;
+    };
+
     return {
         commentList,
         text,
         setText,
         submitting,
-        handleSubmit
+        deletingCommentId,
+        handleSubmit,
+        handleDeleteComment,
+        canDeleteComment
     };
 }
 
@@ -339,7 +384,16 @@ interface CommentSectionProps {
 }
 
 function CommentSection({ comments = [], videoId, isLoggedIn, user }: CommentSectionProps) {
-    const { commentList, text, setText, submitting, handleSubmit } = useComments(comments, videoId, user, isLoggedIn);
+    const { 
+        commentList, 
+        text, 
+        setText, 
+        submitting, 
+        deletingCommentId,
+        handleSubmit,
+        handleDeleteComment,
+        canDeleteComment
+    } = useComments(comments, videoId, user, isLoggedIn);
 
     return (
         <div className="bg-white/90 backdrop-blur-lg rounded-3xl shadow-xl border border-white/50 p-6 md:p-8">
@@ -420,19 +474,38 @@ function CommentSection({ comments = [], videoId, isLoggedIn, user }: CommentSec
                                     {comment.username?.charAt(0).toUpperCase() || "?"}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-3 mb-1">
-                                        <h4 className="font-semibold text-slate-800 text-sm">{comment.username || "ผู้ใช้"}</h4>
-                                        {comment.createdAt && (
-                                            <div className="flex items-center gap-1 text-xs text-slate-500">
-                                                <Calendar className="w-3 h-3" />
-                                                {new Date(comment.createdAt).toLocaleDateString('th-TH', {
-                                                    day: 'numeric',
-                                                    month: 'short',
-                                                    year: 'numeric',
-                                                    hour: '2-digit',
-                                                    minute: '2-digit'
-                                                })}
-                                            </div>
+                                    <div className="flex items-center justify-between mb-1">
+                                        <div className="flex items-center gap-3">
+                                            <h4 className="font-semibold text-slate-800 text-sm">{comment.username || "ผู้ใช้"}</h4>
+                                            {comment.createdAt && (
+                                                <div className="flex items-center gap-1 text-xs text-slate-500">
+                                                    <Calendar className="w-3 h-3" />
+                                                    {new Date(comment.createdAt).toLocaleDateString('th-TH', {
+                                                        day: 'numeric',
+                                                        month: 'short',
+                                                        year: 'numeric',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })}
+                                                </div>
+                                            )}
+                                        </div>
+                                        
+                                        {/* Delete Button */}
+                                        {canDeleteComment(comment) && comment._id && (
+                                            <button
+                                                type="button"
+                                                onClick={() => handleDeleteComment(comment._id!)}
+                                                disabled={deletingCommentId === comment._id}
+                                                className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                title="ลบความคิดเห็น"
+                                            >
+                                                {deletingCommentId === comment._id ? (
+                                                    <div className="w-4 h-4 border-2 border-red-600/30 border-t-red-600 rounded-full animate-spin" />
+                                                ) : (
+                                                    <Trash2 className="w-4 h-4" />
+                                                )}
+                                            </button>
                                         )}
                                     </div>
                                     <div className="text-slate-700 leading-relaxed text-sm">{comment.text}</div>

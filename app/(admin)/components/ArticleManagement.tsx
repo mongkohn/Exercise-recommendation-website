@@ -31,7 +31,15 @@ export default function ArticleManagement() {
             const response = await fetch(`${getApiUrl()}/article/`);
             if (!response.ok) throw new Error('Failed to fetch articles');
             const data = await response.json();
-            setArticlesData(Array.isArray(data) ? data : []);
+            
+            // Sort articles by creation date (most recent first)
+            const sortedData = Array.isArray(data) ? data.sort((a, b) => {
+                const dateA = new Date(a.createdAt || a._id ? new Date(parseInt(a._id.substring(0, 8), 16) * 1000) : 0);
+                const dateB = new Date(b.createdAt || b._id ? new Date(parseInt(b._id.substring(0, 8), 16) * 1000) : 0);
+                return dateB.getTime() - dateA.getTime();
+            }) : [];
+            
+            setArticlesData(sortedData);
         } catch (error) {
             console.error('Error fetching articles:', error);
             alert('ไม่สามารถโหลดข้อมูลบทความได้');
@@ -240,25 +248,55 @@ export default function ArticleManagement() {
                             className="space-y-4"
                         >
                             <div>
-                                <label htmlFor="add-article-title" className="block text-sm font-semibold text-slate-700 mb-2">ชื่อบทความ</label>
+                                <div className="flex justify-between items-center mb-2">
+                                    <label htmlFor="add-article-title" className="block text-sm font-semibold text-slate-700">ชื่อบทความ</label>
+                                    <span className={`text-xs ${newArticle.title.length > 50 ? 'text-red-500' : 'text-slate-500'}`}>
+                                        {newArticle.title.length}/50
+                                    </span>
+                                </div>
                                 <input
                                     id="add-article-title"
-                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className={`w-full border px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent ${
+                                        newArticle.title.length > 50 
+                                            ? 'border-red-300 focus:ring-red-500' 
+                                            : 'border-slate-200 focus:ring-blue-500'
+                                    }`}
                                     value={newArticle.title}
-                                    onChange={e => setNewArticle({ ...newArticle, title: e.target.value })}
+                                    onChange={e => setNewArticle({ ...newArticle, title: e.target.value.slice(0, 50) })}
+                                    maxLength={50}
                                     required
                                 />
+                                {newArticle.title.length > 45 && (
+                                    <p className="text-xs text-amber-600 mt-1">
+                                        เหลืออีก {50 - newArticle.title.length} ตัวอักษร
+                                    </p>
+                                )}
                             </div>
                             <div>
-                                <label htmlFor="add-article-description" className="block text-sm font-semibold text-slate-700 mb-2">รายละเอียด</label>
+                                <div className="flex justify-between items-center mb-2">
+                                    <label htmlFor="add-article-description" className="block text-sm font-semibold text-slate-700">รายละเอียด</label>
+                                    <span className={`text-xs ${newArticle.description.length > 250 ? 'text-red-500' : 'text-slate-500'}`}>
+                                        {newArticle.description.length}/250
+                                    </span>
+                                </div>
                                 <textarea
                                     id="add-article-description"
                                     rows={4}
-                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                                    className={`w-full border px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent resize-none ${
+                                        newArticle.description.length > 250 
+                                            ? 'border-red-300 focus:ring-red-500' 
+                                            : 'border-slate-200 focus:ring-blue-500'
+                                    }`}
                                     value={newArticle.description}
-                                    onChange={e => setNewArticle({ ...newArticle, description: e.target.value })}
+                                    onChange={e => setNewArticle({ ...newArticle, description: e.target.value.slice(0, 250) })}
+                                    maxLength={250}
                                     required
                                 />
+                                {newArticle.description.length > 230 && (
+                                    <p className="text-xs text-amber-600 mt-1">
+                                        เหลืออีก {250 - newArticle.description.length} ตัวอักษร
+                                    </p>
+                                )}
                             </div>
                             <div>
                                 <label htmlFor="add-article-image" className="block text-sm font-semibold text-slate-700 mb-2">รูปภาพ (URL)</label>
@@ -294,7 +332,7 @@ export default function ArticleManagement() {
                                 <button
                                     type="submit"
                                     className="flex items-center gap-2 px-6 py-3 rounded-xl bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-50"
-                                    disabled={saving}
+                                    disabled={saving || newArticle.title.length > 50 || newArticle.description.length > 250}
                                 >
                                     {saving ? (
                                         <>
@@ -334,25 +372,55 @@ export default function ArticleManagement() {
                             className="space-y-4"
                         >
                             <div>
-                                <label htmlFor="edit-article-title" className="block text-sm font-semibold text-slate-700 mb-2">ชื่อบทความ</label>
+                                <div className="flex justify-between items-center mb-2">
+                                    <label htmlFor="edit-article-title" className="block text-sm font-semibold text-slate-700">ชื่อบทความ</label>
+                                    <span className={`text-xs ${editArticle.title.length > 50 ? 'text-red-500' : 'text-slate-500'}`}>
+                                        {editArticle.title.length}/50
+                                    </span>
+                                </div>
                                 <input
                                     id="edit-article-title"
-                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className={`w-full border px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent ${
+                                        editArticle.title.length > 50 
+                                            ? 'border-red-300 focus:ring-red-500' 
+                                            : 'border-slate-200 focus:ring-blue-500'
+                                    }`}
                                     value={editArticle.title}
-                                    onChange={e => setEditArticle({ ...editArticle, title: e.target.value })}
+                                    onChange={e => setEditArticle({ ...editArticle, title: e.target.value.slice(0, 50) })}
+                                    maxLength={50}
                                     required
                                 />
+                                {editArticle.title.length > 45 && (
+                                    <p className="text-xs text-amber-600 mt-1">
+                                        เหลืออีก {50 - editArticle.title.length} ตัวอักษร
+                                    </p>
+                                )}
                             </div>
                             <div>
-                                <label htmlFor="edit-article-description" className="block text-sm font-semibold text-slate-700 mb-2">รายละเอียด</label>
+                                <div className="flex justify-between items-center mb-2">
+                                    <label htmlFor="edit-article-description" className="block text-sm font-semibold text-slate-700">รายละเอียด</label>
+                                    <span className={`text-xs ${editArticle.description.length > 250 ? 'text-red-500' : 'text-slate-500'}`}>
+                                        {editArticle.description.length}/250
+                                    </span>
+                                </div>
                                 <textarea
                                     id="edit-article-description"
                                     rows={4}
-                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                                    className={`w-full border px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent resize-none ${
+                                        editArticle.description.length > 250 
+                                            ? 'border-red-300 focus:ring-red-500' 
+                                            : 'border-slate-200 focus:ring-blue-500'
+                                    }`}
                                     value={editArticle.description}
-                                    onChange={e => setEditArticle({ ...editArticle, description: e.target.value })}
+                                    onChange={e => setEditArticle({ ...editArticle, description: e.target.value.slice(0, 250) })}
+                                    maxLength={250}
                                     required
                                 />
+                                {editArticle.description.length > 230 && (
+                                    <p className="text-xs text-amber-600 mt-1">
+                                        เหลืออีก {250 - editArticle.description.length} ตัวอักษร
+                                    </p>
+                                )}
                             </div>
                             <div>
                                 <label htmlFor="edit-article-image" className="block text-sm font-semibold text-slate-700 mb-2">รูปภาพ (URL)</label>
@@ -388,7 +456,7 @@ export default function ArticleManagement() {
                                 <button
                                     type="submit"
                                     className="flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-50"
-                                    disabled={saving}
+                                    disabled={saving || editArticle.title.length > 50 || editArticle.description.length > 250}
                                 >
                                     {saving ? (
                                         <>
