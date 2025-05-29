@@ -8,18 +8,21 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 
-// User type definition
+// User type definition updated to match new schema
 export type UserProfile = {
+  phone: string;
   _id: string;
   username: string;
-  email: string;
   fullname: string;
   gender: string;
+  weight?: number;
+  height?: number;
   birthday: string;
-  weight?: string;
-  height?: string;
-  createdAt: string;
-  updatedAt: string;
+  email?: string;
+  tel?: string;
+  status: string;
+  create_at: string;
+  update_at: string;
 };
 
 export default function Profile() {
@@ -47,14 +50,57 @@ export default function Profile() {
       setLoading(true);
       setError(null);
       
-      if (authUser) {
-        setUser(authUser as unknown as UserProfile);
-      } else {
-        throw new Error('ไม่พบข้อมูลผู้ใช้');
+      // Get userId from auth context or session storage
+      const userId = authUser?.userId || sessionStorage.getItem('userId');
+      
+      if (!userId) {
+        throw new Error('ไม่พบรหัสผู้ใช้');
       }
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      console.log(`Fetching user profile from: ${apiUrl}/user/${userId}`);
+      
+      const response = await fetch(`${apiUrl}/user/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Include cookies for authentication
+      });
+
+      console.log('Profile fetch response status:', response.status);
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('ไม่พบข้อมูลผู้ใช้');
+        } else if (response.status === 401) {
+          throw new Error('ไม่มีสิทธิ์เข้าถึง กรุณาเข้าสู่ระบบใหม่');
+        }
+        const errorText = await response.text();
+        throw new Error(`เกิดข้อผิดพลาด: ${response.status} - ${errorText}`);
+      }
+
+      const userData = await response.json();
+      console.log('User profile data received:', userData);
+      
+      // Ensure we have required fields
+      if (!userData._id || !userData.username) {
+        throw new Error('ข้อมูลผู้ใช้ไม่ครบถ้วน');
+      }
+
+      setUser(userData);
     } catch (err) {
       console.error('Profile fetch error:', err);
-      setError(err instanceof Error ? err.message : 'เกิดข้อผิดพลาด');
+      const errorMessage = err instanceof Error ? err.message : 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
+      setError(errorMessage);
+      
+      // If authentication error, redirect to login
+      if (err instanceof Error && err.message.includes('ไม่มีสิทธิ์เข้าถึง')) {
+        setTimeout(() => {
+          logout();
+          router.push('/login');
+        }, 2000);
+      }
     } finally {
       setLoading(false);
     }
@@ -72,7 +118,7 @@ export default function Profile() {
 
     return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoggedIn, authUser, router]);
+  }, [isLoggedIn, authUser?.userId, router]);
 
   if (loading) {
     return (
@@ -113,16 +159,24 @@ export default function Profile() {
         </div>
         
         <div className="relative z-10 min-h-screen flex items-center justify-center">
-          <div className="bg-white/90 backdrop-blur-lg p-12 rounded-3xl shadow-2xl border border-white/20 text-center">
-            <div className="text-red-600 text-2xl font-bold mb-6">
+          <div className="bg-white/90 backdrop-blur-lg p-12 rounded-3xl shadow-2xl border border-white/20 text-center max-w-md">
+            <div className="text-red-600 text-xl font-bold mb-6">
               {error || 'ไม่พบข้อมูลผู้ใช้'}
             </div>
-            <button 
-              onClick={fetchUserProfile}
-              className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-700 text-white rounded-2xl hover:from-blue-700 hover:to-purple-800 transition-all duration-300 font-semibold shadow-xl"
-            >
-              ลองใหม่
-            </button>
+            <p className="text-gray-600 mb-6 text-sm">
+              {error?.includes('ไม่มีสิทธิ์เข้าถึง') 
+                ? 'กำลังนำคุณไปยังหน้าเข้าสู่ระบบ...' 
+                : 'กรุณาลองใหม่อีกครั้ง'
+              }
+            </p>
+            {!error?.includes('ไม่มีสิทธิ์เข้าถึง') && (
+              <button 
+                onClick={fetchUserProfile}
+                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-700 text-white rounded-2xl hover:from-blue-700 hover:to-purple-800 transition-all duration-300 font-semibold shadow-xl"
+              >
+                ลองใหม่
+              </button>
+            )}
           </div>
         </div>
       </div>

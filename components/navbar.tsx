@@ -2,6 +2,7 @@
 
 import { ChevronDown, User2, Menu, X, Calculator, Dumbbell, Calendar, FileText, History, Settings, Home } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { useAuth } from '@/context/AuthContext';
 
@@ -91,10 +92,9 @@ export default function Navbar() {
   return (
     <nav className="bg-white shadow-lg rounded-xl border border-blue-100">
       <div className="container mx-auto flex items-center justify-between px-6 py-3">
-        
         {/* Logo */}
         <Link href="/" className="flex items-center">
-          <img src="/logo.jpeg" alt="ERD Logo" height={80} width={80} className="rounded-lg" />
+          <Image src="/logo.jpeg" alt="ERD Logo" height={80} width={80} className="rounded-lg" />
         </Link>
 
         {/* Hamburger icon for mobile */}

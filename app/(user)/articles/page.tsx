@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { BookOpen, ExternalLink, Loader2, AlertCircle } from "lucide-react";
+import { BookOpen, ExternalLink, Loader2, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
 
 type Article = {
   _id: string;
@@ -57,6 +57,25 @@ export default function ArticlesPage() {
   const [articles, setArticles] = React.useState<Article[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(false);
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [itemsPerPage, setItemsPerPage] = React.useState(9);
+
+  // Pagination logic
+  const totalPages = Math.ceil(articles.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentArticles = articles.slice(startIndex, endIndex);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+    // Scroll to top when changing pages
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Reset to first page when items per page changes
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [itemsPerPage]);
 
   React.useEffect(() => {
     const fetchArticles = async () => {
@@ -177,6 +196,40 @@ export default function ArticlesPage() {
             </div>
           </div>
 
+          {/* Results Summary and Items Per Page */}
+          {articles.length > 0 && (
+            <div className="flex items-center justify-between mb-6">
+              <div className="bg-white backdrop-blur-md rounded-xl px-4 py-2 shadow-lg border border-white/30">
+                <p className="text-blue-900 font-medium">
+                  พบ <span className="font-bold text-blue-600">{articles.length}</span> บทความ
+                  {articles.length > 0 && (
+                    <span className="text-sm ml-2">
+                      (แสดง {startIndex + 1}-{Math.min(endIndex, articles.length)} จาก {articles.length})
+                    </span>
+                  )}
+                </p>
+              </div>
+              
+              {/* Items per page selector */}
+              <div className="bg-white backdrop-blur-md rounded-xl px-4 py-2 shadow-lg border border-white/30">
+                <label className="flex items-center gap-2 text-blue-900 font-medium">
+                  <span className="text-sm">แสดง:</span>
+                  <select
+                    value={itemsPerPage}
+                    onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                    className="bg-transparent border-none focus:outline-none cursor-pointer"
+                  >
+                    <option value={6}>6</option>
+                    <option value={9}>9</option>
+                    <option value={12}>12</option>
+                    <option value={18}>18</option>
+                  </select>
+                  <span className="text-sm">รายการ</span>
+                </label>
+              </div>
+            </div>
+          )}
+
           {/* Articles Grid */}
           {articles.length === 0 ? (
             <div className="bg-white rounded-3xl p-12 text-center shadow-2xl border border-white/30">
@@ -185,11 +238,79 @@ export default function ArticlesPage() {
               <p className="text-blue-700">ยังไม่มีบทความให้อ่านในขณะนี้</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-8">
-              {articles.map((article) => (
-                <ArticleCard key={article._id} article={article} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-8">
+                {currentArticles.map((article) => (
+                  <ArticleCard key={article._id} article={article} />
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex flex-col items-center gap-4 pb-8">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => goToPage(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="p-2 rounded-lg bg-white backdrop-blur-md border border-white/40 text-blue-600 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                      // Show first page, last page, current page, and pages around current page
+                      if (
+                        page === 1 ||
+                        page === totalPages ||
+                        (page >= currentPage - 2 && page <= currentPage + 2)
+                      ) {
+                        return (
+                          <button
+                            key={page}
+                            type="button"
+                            onClick={() => goToPage(page)}
+                            className={`px-4 py-2 rounded-lg transition-colors shadow-lg ${
+                              currentPage === page
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-white backdrop-blur-md border border-white/40 text-blue-600 hover:bg-blue-50'
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        );
+                      }
+                      
+                      // Show ellipsis
+                      if (page === currentPage - 3 || page === currentPage + 3) {
+                        return (
+                          <span key={page} className="px-2 text-blue-600/70">
+                            ...
+                          </span>
+                        );
+                      }
+                      
+                      return null;
+                    })}
+                    
+                    <button
+                      type="button"
+                      onClick={() => goToPage(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="p-2 rounded-lg bg-white backdrop-blur-md border border-white/40 text-blue-600 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+                  
+                  <div className="bg-white backdrop-blur-md rounded-xl px-4 py-2 shadow-lg border border-white/30">
+                    <p className="text-sm text-blue-900">
+                      หน้า {currentPage} จาก {totalPages}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

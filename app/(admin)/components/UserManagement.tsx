@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Edit, Trash2, X, Save, Users, Calendar, Mail, User as UserIcon } from "lucide-react";
+import { Edit, Trash2, X, Save, Users, Calendar, Mail, User as UserIcon, Shield, ShieldOff, Key } from "lucide-react";
 
 type User = {
     _id: string;
@@ -10,6 +10,7 @@ type User = {
     fullname: string;
     gender: string;
     birthday?: string;
+    status?: 'active' | 'disabled';
 };
 
 export default function UserManagement() {
@@ -17,6 +18,7 @@ export default function UserManagement() {
     const [loadingUsers, setLoadingUsers] = useState(false);
     const [editUser, setEditUser] = useState<User | null>(null);
     const [showDelete, setShowDelete] = useState<{ open: boolean; user: User | null }>({ open: false, user: null });
+    const [showResetPassword, setShowResetPassword] = useState<{ open: boolean; user: User | null }>({ open: false, user: null });
     const [saving, setSaving] = useState(false);
 
     // Get API URL with fallback
@@ -87,6 +89,51 @@ export default function UserManagement() {
         }
     };
 
+    // Handler for toggling user status
+    const handleToggleStatus = async (user: User) => {
+        try {
+            setSaving(true);
+            const newStatus = user.status === 'active' ? 'disabled' : 'active';
+            const response = await fetch(`${getApiUrl()}/user/${user._id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ...user, status: newStatus }),
+            });
+            
+            if (!response.ok) throw new Error('Failed to update user status');
+            
+            await fetchUsers();
+            alert(`${newStatus === 'active' ? 'เปิดใช้งาน' : 'ปิดใช้งาน'}ผู้ใช้สำเร็จ!`);
+        } catch (error) {
+            console.error('Error updating user status:', error);
+            alert('ไม่สามารถอัปเดตสถานะผู้ใช้ได้');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    // Handler for resetting user password
+    const handleResetPassword = async (userId: string) => {
+        try {
+            setSaving(true);
+            const response = await fetch(`${getApiUrl()}/user/${userId}/reset-password`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+            });
+            
+            if (!response.ok) throw new Error('Failed to reset password');
+            
+            const result = await response.json();
+            setShowResetPassword({ open: false, user: null });
+            alert(`รีเซ็ตรหัสผ่านสำเร็จ! รหัสผ่านใหม่: ${result.newPassword || 'ได้ส่งไปยังอีเมลของผู้ใช้แล้ว'}`);
+        } catch (error) {
+            console.error('Error resetting password:', error);
+            alert('ไม่สามารถรีเซ็ตรหัสผ่านได้');
+        } finally {
+            setSaving(false);
+        }
+    };
+
     return (
         <section className="p-8">
             <div className="flex items-center justify-between mb-6">
@@ -120,6 +167,7 @@ export default function UserManagement() {
                                     <th className="px-6 py-4 text-slate-800 font-semibold">ชื่อเต็ม</th>
                                     <th className="px-6 py-4 text-slate-800 font-semibold">เพศ</th>
                                     <th className="px-6 py-4 text-slate-800 font-semibold">วันเกิด</th>
+                                    <th className="px-6 py-4 text-slate-800 font-semibold">สถานะ</th>
                                     <th className="px-6 py-4 text-slate-800 font-semibold">การกระทำ</th>
                                 </tr>
                             </thead>
@@ -157,7 +205,54 @@ export default function UserManagement() {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
+                                            <span className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 w-fit ${
+                                                user.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                                            }`}>
+                                                {user.status === 'active' ? (
+                                                    <>
+                                                        <Shield className="w-3 h-3" />
+                                                        เปิดใช้งาน
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <ShieldOff className="w-3 h-3" />
+                                                        ปิดใช้งาน
+                                                    </>
+                                                )}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4">
                                             <div className="flex gap-2">
+                                                <button
+                                                    type="button"
+                                                    className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors text-sm ${
+                                                        user.status === 'active' 
+                                                            ? 'bg-orange-600 text-white hover:bg-orange-700' 
+                                                            : 'bg-green-600 text-white hover:bg-green-700'
+                                                    }`}
+                                                    onClick={() => handleToggleStatus(user)}
+                                                    disabled={saving}
+                                                >
+                                                    {user.status === 'active' ? (
+                                                        <>
+                                                            <ShieldOff className="w-4 h-4" />
+                                                            ปิดใช้งาน
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Shield className="w-4 h-4" />
+                                                            เปิดใช้งาน
+                                                        </>
+                                                    )}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="flex items-center gap-1 px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
+                                                    onClick={() => setShowResetPassword({ open: true, user })}
+                                                >
+                                                    <Key className="w-4 h-4" />
+                                                    รีเซ็ตรหัสผ่าน
+                                                </button>
                                                 <button
                                                     type="button"
                                                     className="flex items-center gap-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
@@ -258,6 +353,18 @@ export default function UserManagement() {
                                     onChange={e => setEditUser({ ...editUser, birthday: e.target.value })}
                                 />
                             </div>
+                            <div>
+                                <label htmlFor="edit-status" className="block text-sm font-semibold text-slate-700 mb-2">สถานะ</label>
+                                <select
+                                    id="edit-status"
+                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    value={editUser.status || 'active'}
+                                    onChange={e => setEditUser({ ...editUser, status: e.target.value as 'active' | 'disabled' })}
+                                >
+                                    <option value="active">เปิดใช้งาน</option>
+                                    <option value="disabled">ปิดใช้งาน</option>
+                                </select>
+                            </div>
                             <div className="flex justify-end gap-3 mt-8">
                                 <button
                                     type="button"
@@ -286,6 +393,51 @@ export default function UserManagement() {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Reset Password Modal */}
+            {showResetPassword.open && showResetPassword.user && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+                    <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative">
+                        <div className="text-center">
+                            <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Key className="w-8 h-8 text-purple-600" />
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-800 mb-2">รีเซ็ตรหัสผ่าน</h3>
+                            <p className="text-slate-600 mb-2">คุณแน่ใจหรือไม่ที่จะรีเซ็ตรหัสผ่านของผู้ใช้นี้?</p>
+                            <p className="text-sm text-slate-500 mb-2">รหัสผ่านใหม่จะถูกสร้างขึ้นอัตโนมัติ</p>
+                            <p className="text-sm text-slate-500 mb-6 font-medium">&quot;{showResetPassword.user.username}&quot;</p>
+                            <div className="flex justify-center gap-3">
+                                <button
+                                    type="button"
+                                    className="px-6 py-3 rounded-xl bg-slate-200 text-slate-700 hover:bg-slate-300 transition-colors"
+                                    onClick={() => setShowResetPassword({ open: false, user: null })}
+                                    disabled={saving}
+                                >
+                                    ยกเลิก
+                                </button>
+                                <button
+                                    type="button"
+                                    className="flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-600 text-white hover:bg-purple-700 transition-colors disabled:opacity-50"
+                                    onClick={() => handleResetPassword(showResetPassword.user!._id)}
+                                    disabled={saving}
+                                >
+                                    {saving ? (
+                                        <>
+                                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                            กำลังรีเซ็ต...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Key className="w-4 h-4" />
+                                            รีเซ็ตรหัสผ่าน
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}

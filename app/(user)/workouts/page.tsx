@@ -1,5 +1,5 @@
 "use client";
-import { Search, Filter, ChevronRight, Dumbbell, X } from "lucide-react";
+import { Search, Filter, ChevronRight, Dumbbell, X, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -23,6 +23,8 @@ export default function WorkoutsPage() {
   });
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [view, setView] = useState("grid"); // grid or list
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
   const router = useRouter();
 
   useEffect(() => {
@@ -59,9 +61,27 @@ export default function WorkoutsPage() {
         : true
     );
 
+  // Pagination logic
+  const totalPages = Math.ceil(filteredWorkouts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentWorkouts = filteredWorkouts.slice(startIndex, endIndex);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+    // Scroll to top when changing pages
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, filters, itemsPerPage]);
+
   const handleClearFilters = () => {
     setFilters({ equipment: "", muscles: [] });
     setSearch("");
+    setCurrentPage(1);
   };
 
   const toggleMuscleFilter = (muscle: string) => {
@@ -245,8 +265,33 @@ export default function WorkoutsPage() {
             <div className="bg-white backdrop-blur-md rounded-xl px-4 py-2 shadow-lg border border-white/30">
               <p className="text-blue-900 font-medium">
                 พบ <span className="font-bold text-blue-600">{filteredWorkouts.length}</span> ท่าออกกำลังกาย
+                {filteredWorkouts.length > 0 && (
+                  <span className="text-sm ml-2">
+                    (แสดง {startIndex + 1}-{Math.min(endIndex, filteredWorkouts.length)} จาก {filteredWorkouts.length})
+                  </span>
+                )}
               </p>
             </div>
+            
+            {/* Items per page selector */}
+            {filteredWorkouts.length > 0 && (
+              <div className="bg-white backdrop-blur-md rounded-xl px-4 py-2 shadow-lg border border-white/30">
+                <label className="flex items-center gap-2 text-blue-900 font-medium">
+                  <span className="text-sm">แสดง:</span>
+                  <select
+                    value={itemsPerPage}
+                    onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                    className="bg-transparent border-none focus:outline-none cursor-pointer"
+                  >
+                    <option value={6}>6</option>
+                    <option value={12}>12</option>
+                    <option value={24}>24</option>
+                    <option value={48}>48</option>
+                  </select>
+                  <span className="text-sm">รายการ</span>
+                </label>
+              </div>
+            )}
           </div>
 
           {/* Workouts Grid or List */}
@@ -264,156 +309,64 @@ export default function WorkoutsPage() {
               </button>
             </div>
           ) : view === "grid" ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 pb-8">
-              {filteredWorkouts.map((workout) => (
-                <button
-                  type="button"
-                  key={workout._id}
-                  className="bg-white backdrop-blur-md rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-white/40 flex flex-col h-full text-left transform hover:scale-105"
-                  onClick={() => router.push(`/workouts/${workout._id}`)}
-                >
-                  <div className="aspect-video relative bg-gradient-to-br from-blue-100 to-blue-200">
-                    <iframe
-                      src={workout.url}
-                      className="absolute w-full h-full object-cover rounded-t-2xl"
-                      allowFullScreen
-                      title={workout.title}
-                      style={{ border: "none" }}
-                    />
-                    {/* Loading overlay for iframe */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-blue-700/20 flex items-center justify-center">
-                      <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin opacity-50" />
-                    </div>
-                  </div>
-                  <div className="p-6 flex flex-col flex-1">
-                    <h2 className="font-bold text-xl mb-4 text-blue-900 line-clamp-2">{workout.title}</h2>
-
-                    <div className="mb-4">
-                      <h3 className="font-medium text-blue-800 mb-2">กล้ามเนื้อหลัก</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {workout.muscles?.map((muscle) => (
-                          <span
-                            key={muscle}
-                            className="text-xs px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium"
-                          >
-                            {muscle}
-                          </span>
-                        ))}
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 pb-8">
+                {currentWorkouts.map((workout) => (
+                  <button
+                    type="button"
+                    key={workout._id}
+                    className="bg-white backdrop-blur-md rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-white/40 flex flex-col h-full text-left transform hover:scale-105"
+                    onClick={() => router.push(`/workouts/${workout._id}`)}
+                  >
+                    <div className="aspect-video relative bg-gradient-to-br from-blue-100 to-blue-200">
+                      <iframe
+                        src={workout.url}
+                        className="absolute w-full h-full object-cover rounded-t-2xl"
+                        allowFullScreen
+                        title={workout.title}
+                        style={{ border: "none" }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-blue-700/20 flex items-center justify-center">
+                        <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin opacity-50" />
                       </div>
                     </div>
+                    <div className="p-6 flex flex-col flex-1">
+                      <h2 className="font-bold text-xl mb-4 text-blue-900 line-clamp-2">{workout.title}</h2>
 
-                    {workout.equipment?.length > 0 && (
                       <div className="mb-4">
-                        <h3 className="font-medium text-blue-800 mb-2">อุปกรณ์ที่ใช้</h3>
+                        <h3 className="font-medium text-blue-800 mb-2">กล้ามเนื้อหลัก</h3>
                         <div className="flex flex-wrap gap-2">
-                          {workout.equipment.map((eq) => (
+                          {workout.muscles?.map((muscle) => (
                             <span
-                              key={eq}
-                              className="text-xs px-3 py-1 bg-gray-100 text-gray-700 rounded-full"
+                              key={muscle}
+                              className="text-xs px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium"
                             >
-                              {eq}
+                              {muscle}
                             </span>
                           ))}
                         </div>
                       </div>
-                    )}
 
-                    <div className="mt-auto pt-4">
-                      <button
-                        type="button"
-                        className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          router.push(`/workouts/${workout._id}`);
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            router.push(`/workouts/${workout._id}`);
-                          }
-                        }}
-                        onKeyUp={(e) => {
-                          // Optionally handle onKeyUp for accessibility
-                          if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            router.push(`/workouts/${workout._id}`);
-                          }
-                        }}
-                      >
-                        ดูรายละเอียด
-                        <ChevronRight size={18} />
-                      </button>
-                    </div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          ) : (
-            <div className="space-y-6 pb-8">
-              {filteredWorkouts.map((workout) => (
-                // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
-                <div
-                  key={workout._id}
-                  className="bg-white backdrop-blur-md rounded-2xl shadow-xl overflow-hidden border border-white/40 hover:shadow-2xl transition-all duration-300 transform hover:scale-102"
-                  onClick={() => router.push(`/workouts/${workout._id}`)}
-                >
-                  <div className="flex flex-col md:flex-row">
-                    <div className="md:w-1/3 lg:w-1/4">
-                      <div className="aspect-video md:h-full relative bg-gradient-to-br from-blue-100 to-blue-200">
-                        <iframe
-                          src={workout.url}
-                          className="w-full h-full object-cover"
-                          allowFullScreen
-                          title={workout.title}
-                          style={{ border: "none" }}
-                        />
-                        {/* Loading overlay for iframe */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-blue-700/20 flex items-center justify-center">
-                          <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin opacity-50" />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="p-6 flex flex-col flex-1">
-                      <h2 className="font-bold text-xl mb-3 text-blue-900">{workout.title}</h2>
-
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-                        <div>
-                          <h3 className="font-medium text-gray-700 mb-2">กล้ามเนื้อหลัก</h3>
+                      {workout.equipment?.length > 0 && (
+                        <div className="mb-4">
+                          <h3 className="font-medium text-blue-800 mb-2">อุปกรณ์ที่ใช้</h3>
                           <div className="flex flex-wrap gap-2">
-                            {workout.muscles?.map((muscle) => (
+                            {workout.equipment.map((eq) => (
                               <span
-                                key={muscle}
-                                className="text-xs px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium"
+                                key={eq}
+                                className="text-xs px-3 py-1 bg-gray-100 text-gray-700 rounded-full"
                               >
-                                {muscle}
+                                {eq}
                               </span>
                             ))}
                           </div>
                         </div>
+                      )}
 
-                        {workout.equipment?.length > 0 && (
-                          <div>
-                            <h3 className="font-medium text-gray-700 mb-2">อุปกรณ์ที่ใช้</h3>
-                            <div className="flex flex-wrap gap-2">
-                              {workout.equipment.map((eq) => (
-                                <span
-                                  key={eq}
-                                  className="text-xs px-3 py-1 bg-gray-100 text-gray-700 rounded-full"
-                                >
-                                  {eq}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="mt-4 md:mt-auto md:text-right">
+                      <div className="mt-auto pt-4">
                         <button
                           type="button"
-                          className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-300 inline-flex items-center gap-2 shadow-lg"
+                          className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg"
                           onClick={(e) => {
                             e.stopPropagation();
                             router.push(`/workouts/${workout._id}`);
@@ -424,10 +377,219 @@ export default function WorkoutsPage() {
                         </button>
                       </div>
                     </div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Pagination for Grid View */}
+              {totalPages > 1 && (
+                <div className="flex flex-col items-center gap-4 pb-8">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => goToPage(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="p-2 rounded-lg bg-white backdrop-blur-md border border-white/40 text-blue-600 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                      // Show first page, last page, current page, and pages around current page
+                      if (
+                        page === 1 ||
+                        page === totalPages ||
+                        (page >= currentPage - 2 && page <= currentPage + 2)
+                      ) {
+                        return (
+                          <button
+                            key={page}
+                            type="button"
+                            onClick={() => goToPage(page)}
+                            className={`px-4 py-2 rounded-lg transition-colors shadow-lg ${
+                              currentPage === page
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-white backdrop-blur-md border border-white/40 text-blue-600 hover:bg-blue-50'
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        );
+                      }
+                      
+                      // Show ellipsis
+                      if (page === currentPage - 3 || page === currentPage + 3) {
+                        return (
+                          <span key={page} className="px-2 text-white/70">
+                            ...
+                          </span>
+                        );
+                      }
+                      
+                      return null;
+                    })}
+                    
+                    <button
+                      type="button"
+                      onClick={() => goToPage(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="p-2 rounded-lg bg-white backdrop-blur-md border border-white/40 text-blue-600 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+                  
+                  <div className="bg-white backdrop-blur-md rounded-xl px-4 py-2 shadow-lg border border-white/30">
+                    <p className="text-sm text-blue-900">
+                      หน้า {currentPage} จาก {totalPages}
+                    </p>
                   </div>
                 </div>
-              ))}
-            </div>
+              )}
+            </>
+          ) : (
+            <>
+              <div className="space-y-6 pb-8">
+                {currentWorkouts.map((workout) => (
+                  // biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
+                  <div
+                    key={workout._id}
+                    className="bg-white backdrop-blur-md rounded-2xl shadow-xl overflow-hidden border border-white/40 hover:shadow-2xl transition-all duration-300 transform hover:scale-102 cursor-pointer"
+                    onClick={() => router.push(`/workouts/${workout._id}`)}
+                  >
+                    <div className="flex flex-col md:flex-row">
+                      <div className="md:w-1/3 lg:w-1/4">
+                        <div className="aspect-video md:h-full relative bg-gradient-to-br from-blue-100 to-blue-200">
+                          <iframe
+                            src={workout.url}
+                            className="w-full h-full object-cover"
+                            allowFullScreen
+                            title={workout.title}
+                            style={{ border: "none" }}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-blue-700/20 flex items-center justify-center">
+                            <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin opacity-50" />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-6 flex flex-col flex-1">
+                        <h2 className="font-bold text-xl mb-3 text-blue-900">{workout.title}</h2>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+                          <div>
+                            <h3 className="font-medium text-gray-700 mb-2">กล้ามเนื้อหลัก</h3>
+                            <div className="flex flex-wrap gap-2">
+                              {workout.muscles?.map((muscle) => (
+                                <span
+                                  key={muscle}
+                                  className="text-xs px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium"
+                                >
+                                  {muscle}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+
+                          {workout.equipment?.length > 0 && (
+                            <div>
+                              <h3 className="font-medium text-gray-700 mb-2">อุปกรณ์ที่ใช้</h3>
+                              <div className="flex flex-wrap gap-2">
+                                {workout.equipment.map((eq) => (
+                                  <span
+                                    key={eq}
+                                    className="text-xs px-3 py-1 bg-gray-100 text-gray-700 rounded-full"
+                                  >
+                                    {eq}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="mt-4 md:mt-auto md:text-right">
+                          <button
+                            type="button"
+                            className="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-300 inline-flex items-center gap-2 shadow-lg"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              router.push(`/workouts/${workout._id}`);
+                            }}
+                          >
+                            ดูรายละเอียด
+                            <ChevronRight size={18} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Pagination for List View */}
+              {totalPages > 1 && (
+                <div className="flex flex-col items-center gap-4 pb-8">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => goToPage(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="p-2 rounded-lg bg-white backdrop-blur-md border border-white/40 text-blue-600 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                      if (
+                        page === 1 ||
+                        page === totalPages ||
+                        (page >= currentPage - 2 && page <= currentPage + 2)
+                      ) {
+                        return (
+                          <button
+                            key={page}
+                            type="button"
+                            onClick={() => goToPage(page)}
+                            className={`px-4 py-2 rounded-lg transition-colors shadow-lg ${
+                              currentPage === page
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-white backdrop-blur-md border border-white/40 text-blue-600 hover:bg-blue-50'
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        );
+                      }
+                      
+                      if (page === currentPage - 3 || page === currentPage + 3) {
+                        return (
+                          <span key={page} className="px-2 text-white/70">
+                            ...
+                          </span>
+                        );
+                      }
+                      
+                      return null;
+                    })}
+                    
+                    <button
+                      type="button"
+                      onClick={() => goToPage(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="p-2 rounded-lg bg-white backdrop-blur-md border border-white/40 text-blue-600 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+                  
+                  <div className="bg-white backdrop-blur-md rounded-xl px-4 py-2 shadow-lg border border-white/30">
+                    <p className="text-sm text-blue-900">
+                      หน้า {currentPage} จาก {totalPages}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
           {/* Filter Modal */}

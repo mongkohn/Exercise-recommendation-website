@@ -41,12 +41,6 @@ export default function ProfileHeader({ user, onEdit, onLogout }: ProfileHeaderP
               </div>
               <div className="text-blue-100 text-sm">อายุ (ปี)</div>
             </div>
-            <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 text-center">
-              <div className="text-2xl font-bold text-white">
-                {user.createdAt ? Math.floor((Date.now() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24)) : '-'}
-              </div>
-              <div className="text-blue-100 text-sm">วันที่ใช้งาน</div>
-            </div>
           </div>
 
           {/* Action Buttons */}
