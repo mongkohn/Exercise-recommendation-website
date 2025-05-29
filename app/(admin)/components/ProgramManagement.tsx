@@ -1,42 +1,911 @@
 "use client";
 
-import Image from "next/image";
-import programList from "@/data/programList.json";
+import { useState, useEffect } from "react";
+import { Plus, Edit, Trash2, ArrowLeft, Save, X, Dumbbell, Target, Search, ChevronLeft, ChevronRight } from "lucide-react";
+
+type Program = {
+  _id?: string;
+  id?: string;
+  name: string;
+  videoUrl: string;
+  description: string | string[];
+  muscles?: string[];
+  equipment?: string[];
+  image?: string;
+  duration?: string;
+  difficulty?: string;
+  category?: string;
+};
+
+type ProgramForm = {
+  name: string;
+  videoUrl: string;
+  description: string;
+  muscles: string;
+  equipment: string;
+  duration: string;
+  difficulty: string;
+  category: string;
+};
 
 export default function ProgramManagement() {
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [filteredPrograms, setFilteredPrograms] = useState<Program[]>([]);
+  const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(8);
+  const [formData, setFormData] = useState<ProgramForm>({
+    name: '',
+    videoUrl: '',
+    description: '',
+    muscles: '',
+    equipment: '',
+    duration: '',
+    difficulty: '',
+    category: ''
+  });
+
+  // Fetch programs from database
+  useEffect(() => {
+    fetchPrograms();
+  }, []);
+
+  // Search and filter functionality
+  useEffect(() => {
+    const filtered = programs.filter(program =>
+      program.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      program.muscles?.some(muscle => muscle.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      program.equipment?.some(eq => eq.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      program.category?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredPrograms(filtered);
+    setCurrentPage(1); // Reset to first page when searching
+  }, [programs, searchTerm]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredPrograms.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentPrograms = filteredPrograms.slice(startIndex, endIndex);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  };
+
+  // Quick edit function
+  const handleQuickEdit = (program: Program, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedProgram(program);
+    startEditing(program);
+  };
+
+  // Quick delete function
+  const handleQuickDelete = async (programId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    console.log('Quick delete triggered for program ID:', programId);
+    
+    if (!programId) {
+      console.error('Quick delete: No program ID provided');
+      alert('ไม่พบรหัสโปรแกรม');
+      return;
+    }
+    
+    await handleDeleteProgram(programId);
+  };
+
+  const fetchPrograms = async () => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    try {
+      setLoading(true);
+      const response = await fetch(`${apiUrl}/program`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          console.log('No programs found, starting with empty list');
+          setPrograms([]);
+          setFilteredPrograms([]);
+          return;
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('Fetched programs:', data);
+      console.log('First program structure:', data[0]); // Debug log to check structure
+      
+      // Ensure data is an array
+      const programArray = Array.isArray(data) ? data : [];
+      setPrograms(programArray);
+      setFilteredPrograms(programArray);
+    } catch (error) {
+      console.error('Error fetching programs:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      
+      // Check if it's a network error
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        alert(`ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: ${apiUrl}`);
+      } else {
+        alert(`ไม่สามารถโหลดข้อมูลโปรแกรมได้: ${errorMessage}`);
+      }
+      
+      setPrograms([]);
+      setFilteredPrograms([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateProgram = async () => {
+    if (!formData.name.trim() || !formData.videoUrl.trim()) {
+      alert('กรุณากรอกชื่อโปรแกรมและ URL วิดีโอ');
+      return;
+    }
+
+    try {
+      const programData = {
+        name: formData.name.trim(),
+        videoUrl: formData.videoUrl.trim(),
+        description: formData.description.split('\n').filter(line => line.trim()),
+        muscles: formData.muscles.split(',').map(m => m.trim()).filter(m => m),
+        equipment: formData.equipment.split(',').map(e => e.trim()).filter(e => e),
+        duration: formData.duration.trim() || undefined,
+        difficulty: formData.difficulty || undefined,
+        category: formData.category.trim() || undefined
+      };
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${apiUrl}/program`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(programData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(`Failed to create program: ${response.status} - ${errorData}`);
+      }
+
+      const result = await response.json();
+      console.log('Created program:', result);
+      
+      await fetchPrograms();
+      setIsCreating(false);
+      resetForm();
+      alert('สร้างโปรแกรมสำเร็จ!');
+    } catch (error) {
+      console.error('Error creating program:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      alert(`ไม่สามารถสร้างโปรแกรมได้: ${errorMessage}`);
+    }
+  };
+
+  const handleUpdateProgram = async () => {
+    if (!selectedProgram?._id) {
+      alert('ไม่พบรหัสโปรแกรม');
+      return;
+    }
+
+    if (!formData.name.trim() || !formData.videoUrl.trim()) {
+      alert('กรุณากรอกชื่อโปรแกรมและ URL วิดีโอ');
+      return;
+    }
+
+    try {
+      const programData = {
+        name: formData.name.trim(),
+        videoUrl: formData.videoUrl.trim(),
+        description: formData.description.split('\n').filter(line => line.trim()),
+        muscles: formData.muscles.split(',').map(m => m.trim()).filter(m => m),
+        equipment: formData.equipment.split(',').map(e => e.trim()).filter(e => e),
+        duration: formData.duration.trim() || undefined,
+        difficulty: formData.difficulty || undefined,
+        category: formData.category.trim() || undefined
+      };
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${apiUrl}/program/${selectedProgram._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(programData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error(`Failed to update program: ${response.status} - ${errorData}`);
+      }
+
+      const result = await response.json();
+      console.log('Updated program:', result);
+      
+      await fetchPrograms();
+      const updatedProgram = { ...selectedProgram, ...programData };
+      setSelectedProgram(updatedProgram);
+      setIsEditing(false);
+      alert('อัปเดตโปรแกรมสำเร็จ!');
+    } catch (error) {
+      console.error('Error updating program:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      alert(`ไม่สามารถอัปเดตโปรแกรมได้: ${errorMessage}`);
+    }
+  };
+
+  const handleDeleteProgram = async (programId: string) => {
+    console.log('Attempting to delete program with ID:', programId);
+    console.log('Type of programId:', typeof programId);
+    console.log('programId length:', programId?.length);
+    
+    if (!programId || programId === 'undefined' || programId === 'null') {
+      console.error('Invalid program ID provided:', programId);
+      alert('ไม่พบรหัสโปรแกรม (ID ไม่ถูกต้อง)');
+      return;
+    }
+
+    if (!confirm('คุณแน่ใจหรือไม่ที่จะลบโปรแกรมนี้? การดำเนินการนี้ไม่สามารถย้อนกลับได้')) {
+      console.log('Delete cancelled by user');
+      return;
+    }
+
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const deleteUrl = `${apiUrl}/program/${programId}`;
+      console.log(`Making DELETE request to: ${deleteUrl}`);
+      
+      const response = await fetch(deleteUrl, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('Delete response status:', response.status);
+      console.log('Delete response ok:', response.ok);
+      
+      // Log response headers
+      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('Delete failed with error:', errorData);
+        
+        // Check if it's a "not found" error
+        if (response.status === 404) {
+          alert(`ไม่พบโปรแกรมที่มี ID: ${programId}\nอาจจะถูกลบไปแล้วหรือ ID ไม่ถูกต้อง`);
+        } else {
+          throw new Error(`Failed to delete program: ${response.status} - ${errorData}`);
+        }
+        return;
+      }
+
+      // Try to get response data if available
+      let responseData;
+      try {
+        const responseText = await response.text();
+        console.log('Raw response text:', responseText);
+        
+        if (responseText) {
+          responseData = JSON.parse(responseText);
+          console.log('Delete response data:', responseData);
+        }
+      } catch (jsonError) {
+        console.log('No JSON response data, but delete was successful');
+      }
+
+      console.log('Successfully deleted program:', programId);
+      
+      // Refresh the programs list
+      await fetchPrograms();
+      
+      // Clear selected program if it was the deleted one
+      if (selectedProgram?._id === programId) {
+        setSelectedProgram(null);
+      }
+      
+      alert('ลบโปรแกรมสำเร็จ!');
+    } catch (error) {
+      console.error('Error deleting program:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      
+      // Show more detailed error message
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        alert(`ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้: ${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}`);
+      } else {
+        alert(`ไม่สามารถลบโปรแกรมได้: ${errorMessage}\n\nกรุณาตรวจสอบ Console สำหรับรายละเอียดเพิ่มเติม`);
+      }
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      videoUrl: '',
+      description: '',
+      muscles: '',
+      equipment: '',
+      duration: '',
+      difficulty: '',
+      category: ''
+    });
+  };
+
+  const startEditing = (program: Program) => {
+    setFormData({
+      name: program.name,
+      videoUrl: program.videoUrl,
+      description: Array.isArray(program.description) 
+        ? program.description.join('\n') 
+        : program.description,
+      muscles: program.muscles?.join(', ') || '',
+      equipment: program.equipment?.join(', ') || '',
+      duration: program.duration || '',
+      difficulty: program.difficulty || '',
+      category: program.category || ''
+    });
+    setIsEditing(true);
+  };
+
+  const startCreating = () => {
+    resetForm();
+    setIsCreating(true);
+  };
+
+  // Loading state with debug info
+  if (loading) {
+    return (
+      <section className="p-8">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-blue-700 mb-2">กำลังโหลดข้อมูล...</p>
+            <p className="text-xs text-slate-500">
+              API URL: {process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}
+            </p>
+            <p className="text-xs text-slate-500 mt-1">
+              Endpoint: /program
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Create/Edit Form
+  if (isCreating || isEditing) {
+    return (
+      <section className="p-8 max-w-4xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-blue-900">
+            {isCreating ? 'เพิ่มโปรแกรมใหม่' : 'แก้ไขโปรแกรม'}
+          </h2>
+          <button
+            type="button"
+            onClick={() => {
+              setIsCreating(false);
+              setIsEditing(false);
+              resetForm();
+            }}
+            className="flex items-center gap-2 text-slate-600 hover:text-slate-800 transition-colors"
+          >
+            <X className="w-5 h-5" />
+            ยกเลิก
+          </button>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-lg p-8">
+          <div className="grid grid-cols-1 gap-6">
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">ชื่อโปรแกรม</label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="เช่น โปรแกรมออกกำลังกายใน 1 อาทิตย์"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">ระยะเวลา</label>
+                <input
+                  type="text"
+                  value={formData.duration}
+                  onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="เช่น 30 นาที"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">ความยาก</label>
+                <select
+                  value={formData.difficulty}
+                  onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">เลือกความยาก</option>
+                  <option value="ง่าย">ง่าย</option>
+                  <option value="ปานกลาง">ปานกลาง</option>
+                  <option value="ยาก">ยาก</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">หมวดหมู่</label>
+                <input
+                  type="text"
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="เช่น Strength For Body"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">URL วิดีโอ</label>
+              <input
+                type="url"
+                value={formData.videoUrl}
+                onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="https://www.youtube.com/embed/..."
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">รายละเอียดโปรแกรม</label>
+              <textarea
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                rows={6}
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="แต่ละบรรทัดจะเป็นขั้นตอนหนึ่ง&#10;1. เตรียมร่างกาย&#10;2. เริ่มออกกำลังกาย&#10;3. คลายกล้ามเนื้อ"
+                required
+              />
+              <p className="text-xs text-slate-500 mt-1">แต่ละบรรทัดจะเป็นขั้นตอนหนึ่ง</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">กล้ามเนื้อหลัก</label>
+                <input
+                  type="text"
+                  value={formData.muscles}
+                  onChange={(e) => setFormData({ ...formData, muscles: e.target.value })}
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="หลัง, แขน, ไหล่ (คั่นด้วยจุลภาค)"
+                />
+                <p className="text-xs text-slate-500 mt-1">คั่นด้วยจุลภาค เช่น หลัง, แขน, ไหล่</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">อุปกรณ์ที่ใช้</label>
+                <input
+                  type="text"
+                  value={formData.equipment}
+                  onChange={(e) => setFormData({ ...formData, equipment: e.target.value })}
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="บาร์เบล, ดัมเบล (คั่นด้วยจุลภาค)"
+                />
+                <p className="text-xs text-slate-500 mt-1">คั่นด้วยจุลภาค เช่น บาร์เบล, ดัมเบล</p>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-4 pt-6">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCreating(false);
+                  setIsEditing(false);
+                  resetForm();
+                }}
+                className="px-6 py-3 border border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 transition-colors"
+              >
+                ยกเลิก
+              </button>
+              <button
+                type="button"
+                onClick={isCreating ? handleCreateProgram : handleUpdateProgram}
+                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 flex items-center gap-2"
+              >
+                <Save className="w-4 h-4" />
+                {isCreating ? 'สร้างโปรแกรม' : 'บันทึกการแก้ไข'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Program Detail View
+  if (selectedProgram) {
+    return (
+      <section className="p-8 max-w-6xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <button
+            type="button"
+            onClick={() => setSelectedProgram(null)}
+            className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium transition"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            ย้อนกลับ
+          </button>
+          
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => startEditing(selectedProgram)}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+            >
+              <Edit className="w-4 h-4" />
+              แก้ไข
+            </button>
+            <button
+              type="button"
+              onClick={() => selectedProgram._id && handleDeleteProgram(selectedProgram._id)}
+              className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors"
+            >
+              <Trash2 className="w-4 h-4" />
+              ลบ
+            </button>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-lg p-8">
+          <div className="flex items-center gap-4 mb-8">
+            <h1 className="text-3xl font-bold text-slate-800">{selectedProgram.name}</h1>
+            {selectedProgram.category && (
+              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                {selectedProgram.category}
+              </span>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            <div className="lg:col-span-2">
+              <div className="aspect-video bg-black rounded-xl overflow-hidden">
+                <iframe
+                  className="w-full h-full"
+                  src={selectedProgram.videoUrl}
+                  title={selectedProgram.name}
+                  allowFullScreen
+                />
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {(selectedProgram.duration || selectedProgram.difficulty) && (
+                <div className="bg-green-50 p-6 rounded-xl">
+                  <h3 className="font-semibold text-lg text-slate-800 mb-4">ข้อมูลโปรแกรม</h3>
+                  <div className="space-y-2">
+                    {selectedProgram.duration && (
+                      <div className="flex justify-between">
+                        <span className="text-slate-600">ระยะเวลา:</span>
+                        <span className="font-medium">{selectedProgram.duration}</span>
+                      </div>
+                    )}
+                    {selectedProgram.difficulty && (
+                      <div className="flex justify-between">
+                        <span className="text-slate-600">ความยาก:</span>
+                        <span className="font-medium">{selectedProgram.difficulty}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div className="bg-blue-50 p-6 rounded-xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <Target className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <h3 className="font-semibold text-lg text-slate-800">กล้ามเนื้อหลัก</h3>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {selectedProgram.muscles?.map((muscle) => (
+                    <span key={muscle} className="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                      {muscle}
+                    </span>
+                  )) || <span className="text-slate-500 text-sm">ไม่ระบุ</span>}
+                </div>
+              </div>
+
+              <div className="bg-slate-50 p-6 rounded-xl">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center">
+                    <Dumbbell className="w-4 h-4 text-slate-600" />
+                  </div>
+                  <h3 className="font-semibold text-lg text-slate-800">อุปกรณ์ที่ใช้</h3>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {selectedProgram.equipment?.map((item) => (
+                    <span key={item} className="px-3 py-1.5 bg-white text-slate-700 rounded-full text-sm border border-slate-200">
+                      {item}
+                    </span>
+                  )) || <span className="text-slate-500 text-sm">ไม่จำเป็นต้องใช้อุปกรณ์</span>}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-slate-50 p-6 rounded-xl">
+            <h3 className="font-semibold text-lg text-slate-800 mb-4">รายละเอียดโปรแกรม</h3>
+            <div className="space-y-3">
+              {Array.isArray(selectedProgram.description) ? (
+                selectedProgram.description.map((step, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-semibold mt-0.5 flex-shrink-0">
+                      {index + 1}
+                    </div>
+                    <p className="text-slate-700 leading-relaxed">{step}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-slate-700 leading-relaxed">{selectedProgram.description}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Program List View
   return (
     <section className="p-8">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-blue-900">จัดการโปรแกรม</h2>
-        <div className="flex gap-3">
-          <button type="button" className="px-6 py-3 bg-green-600 text-white rounded-xl shadow hover:bg-green-700 transition font-medium">
-            เพิ่มโปรแกรม
-          </button>
-          <button type="button" className="px-6 py-3 bg-red-600 text-white rounded-xl shadow hover:bg-red-700 transition font-medium">
-            ลบโปรแกรม
-          </button>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-800">จัดการโปรแกรมออกกำลังกาย</h2>
+          <p className="text-slate-600 mt-1">
+            จำนวนโปรแกรมทั้งหมด: {programs.length} โปรแกรม 
+            {searchTerm && ` | พบ: ${filteredPrograms.length} โปรแกรม`}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={startCreating}
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg"
+        >
+          <Plus className="w-5 h-5" />
+          เพิ่มโปรแกรมใหม่
+        </button>
+      </div>
+
+      {/* Search Bar */}
+      <div className="mb-6">
+        <div className="relative max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+          <input
+            type="text"
+            placeholder="ค้นหาโปรแกรม, กล้ามเนื้อ, หรืออุปกรณ์..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {programList.map((program, idx) => (
-          <div key={program.name || idx} className="bg-white shadow-md hover:shadow-lg rounded-xl overflow-hidden transition-all duration-300">
-            <Image
-              src={program.image}
-              alt={program.name}
-              width={400}
-              height={192}
-              className="w-full h-48 object-cover"
-            />
-            <div className="p-6">
-              <h3 className="text-lg font-semibold text-blue-900 mb-2">
-                {program.name}
-              </h3>
-              <p className="text-blue-700 text-sm">{program.description}</p>
+      {filteredPrograms.length === 0 ? (
+        <div className="text-center py-12">
+          <Dumbbell className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-slate-600 mb-2">
+            {searchTerm ? 'ไม่พบโปรแกรมที่ค้นหา' : 'ยังไม่มีโปรแกรมออกกำลังกาย'}
+          </h3>
+          <p className="text-slate-500 mb-6">
+            {searchTerm ? 'ลองใช้คำค้นหาอื่น หรือ' : 'เริ่มต้นสร้างโปรแกรมแรกของคุณ'}
+          </p>
+          {programs.length === 0 && !searchTerm && (
+            <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-left max-w-md mx-auto">
+              <h4 className="font-semibold text-yellow-800 mb-2">ข้อมูลการเชื่อมต่อ:</h4>
+              <ul className="text-sm text-yellow-700 space-y-1">
+                <li>• API URL: {process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}</li>
+                <li>• Endpoint: /program</li>
+                <li>• ตรวจสอบว่าเซิร์ฟเวอร์ API ทำงานอยู่</li>
+                <li>• ดูใน Console สำหรับข้อความ error</li>
+              </ul>
             </div>
+          )}
+          <button
+            type="button"
+            onClick={searchTerm ? () => setSearchTerm('') : startCreating}
+            className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+          >
+            {searchTerm ? 'ล้างการค้นหา' : 'เพิ่มโปรแกรมแรก'}
+          </button>
+        </div>
+      ) : (
+        <>
+          {/* Program Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+            {currentPrograms.map((program, index) => (
+              <div
+                key={program._id || `program-${index}`}
+                className="group bg-white shadow-lg hover:shadow-xl rounded-2xl overflow-hidden transition-all duration-300 transform hover:scale-105 relative"
+              >
+                {/* Quick Action Buttons */}
+                <div className="absolute top-3 right-3 z-10 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <button
+                    type="button"
+                    onClick={(e) => handleQuickEdit(program, e)}
+                    className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg"
+                    title="แก้ไข"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      console.log('Delete button clicked for program:', program);
+                      console.log('Program _id:', program._id);
+                      console.log('Program object keys:', Object.keys(program));
+                      
+                      // Check for different possible ID fields
+                      const possibleId = program._id || program.id || program._id?.toString();
+                      console.log('Possible ID found:', possibleId);
+                      
+                      if (possibleId) {
+                        handleQuickDelete(possibleId, e);
+                      } else {
+                        console.error('No valid ID found in program object');
+                        console.log('Full program object:', JSON.stringify(program, null, 2));
+                        alert('ไม่พบรหัสโปรแกรม - ตรวจสอบ Console สำหรับรายละเอียด');
+                      }
+                    }}
+                    className="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors shadow-lg"
+                    title="ลบ"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedProgram(program)}
+                  className="w-full text-left"
+                >
+                  <div className="aspect-video bg-gradient-to-br from-blue-100 to-blue-200 relative">
+                    {program.videoUrl ? (
+                      <iframe
+                        src={program.videoUrl}
+                        className="w-full h-full object-cover"
+                        title={program.name || 'Program video'}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Dumbbell className="w-12 h-12 text-blue-400" />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-lg font-bold text-slate-800 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+                      {program.name || 'ไม่มีชื่อโปรแกรม'}
+                      {/* Debug info in development - show all possible ID fields */}
+                      {process.env.NODE_ENV === 'development' && (
+                        <div className="text-xs text-gray-400 space-y-1">
+                          <div>_id: {program._id || 'No _id'}</div>
+                          <div>id: {program.id || 'No id'}</div>
+                          <div>Keys: {Object.keys(program).join(', ')}</div>
+                        </div>
+                      )}
+                    </h3>
+                    
+                    {/* Program Info */}
+                    <div className="flex items-center gap-2 mb-2 text-xs text-slate-500">
+                      {program.duration && <span>{program.duration}</span>}
+                      {program.difficulty && (
+                        <>
+                          <span>•</span>
+                          <span>{program.difficulty}</span>
+                        </>
+                      )}
+                    </div>
+
+                    <div className="flex flex-wrap gap-1 mb-3">
+                      {program.muscles?.slice(0, 2).map((muscle) => (
+                        <span key={muscle} className="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded-full">
+                          {muscle}
+                        </span>
+                      ))}
+                      {program.muscles && program.muscles.length > 2 && (
+                        <span className="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-full">
+                          +{program.muscles.length - 2}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-slate-600 text-sm line-clamp-2">
+                      {Array.isArray(program.description) 
+                        ? program.description[0] 
+                        : program.description?.slice(0, 80) || 'ไม่มีคำอธิบาย'}
+                      {((Array.isArray(program.description) && program.description[0]?.length > 80) || 
+                        (!Array.isArray(program.description) && program.description?.length > 80)) && '...'}
+                    </p>
+                  </div>
+                </button>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="p-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                // Show first page, last page, current page, and pages around current page
+                if (
+                  page === 1 ||
+                  page === totalPages ||
+                  (page >= currentPage - 2 && page <= currentPage + 2)
+                ) {
+                  return (
+                    <button
+                      key={page}
+                      type="button"
+                      onClick={() => goToPage(page)}
+                      className={`px-4 py-2 rounded-lg transition-colors ${
+                        currentPage === page
+                          ? 'bg-blue-600 text-white'
+                          : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                }
+                
+                // Show ellipsis
+                if (page === currentPage - 3 || page === currentPage + 3) {
+                  return (
+                    <span key={page} className="px-2 text-slate-400">
+                      ...
+                    </span>
+                  );
+                }
+                
+                return null;
+              })}
+              
+              <button
+                type="button"
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="p-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          )}
+
+          {/* Pagination Info */}
+          <div className="text-center mt-4 text-sm text-slate-500">
+            แสดง {startIndex + 1}-{Math.min(endIndex, filteredPrograms.length)} จาก {filteredPrograms.length} โปรแกรม
+          </div>
+        </>
+      )}
     </section>
   );
 }

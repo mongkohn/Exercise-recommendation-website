@@ -22,6 +22,7 @@ const userRoute = require('./routes/userRoute');
 const articleRoute = require('./routes/articleRoute');
 const videoRoute = require('./routes/videoRoute');
 const commentRoute = require('./routes/commentRoute');
+const programRoute = require('./routes/programRoute');
 
 // Connect to MongoDB
 const connectDB = async () => {
@@ -46,6 +47,7 @@ app.use('/api/user', userRoute);
 app.use("/api/article", articleRoute);
 app.use("/api/video", videoRoute);
 app.use('/api/comments', commentRoute);
+app.use('/api/program', programRoute);
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

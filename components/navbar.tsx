@@ -63,14 +63,14 @@ export default function Navbar() {
               <User2 className="w-5 h-5 text-blue-600" />
               <span className="font-medium">โปรไฟล์</span>
             </Link>
-            <Link
+            {/* <Link
               href="/history"
               className="flex items-center gap-3 px-4 py-3 hover:bg-blue-50 text-blue-900 transition-colors"
               onClick={() => setDropdownOpen(false)}
             >
               <History className="w-5 h-5 text-blue-600" />
               <span className="font-medium">ประวัติ</span>
-            </Link>
+            </Link> */}
             <div className="border-t border-blue-100 my-2"></div>
             <button
               type="button"
