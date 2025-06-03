@@ -49,7 +49,7 @@ export default function Footer() {
                   ติดตาม ERD ได้ที่
                 </h3>
                 <a 
-                  href="https://line.me" 
+                  href="https://line.me/R/ti/p/@624ahpmn?ts=06010100&oat_content=url" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white px-4 py-2 rounded-xl transition-all duration-300 border border-white/20"

@@ -100,10 +100,30 @@ export default function Programs() {
 
   if (loading) {
     return (
-      <div className="max-w-5xl mx-auto px-4 py-10">
-        <h1 className="text-center text-gray-800 text-3xl font-semibold mb-10 p-7">
-          โปรแกรมออกกำลังกาย
-        </h1>
+     <div className="h-screen relative overflow-hidden">
+            {/* Fixed Background Image */}
+            <div className="absolute inset-0 z-0">
+              <Image
+                src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+                alt="Gym Background"
+                fill
+                className="object-cover opacity-20"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-blue-900/50" />
+            
+        <div className="relative z-10 h-screen overflow-y-auto">
+        <div className="max-w-7xl mx-auto px-4 py-10">
+          {/* Header */}
+          <div className="mb-12 mt-4 text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-sm">โปรแกรมออกกำลังกาย</h1>
+            <div className="max-w-2xl mx-auto bg-white backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/30">
+              <p className="text-lg text-blue-800">
+                เลือกโปรแกรมการออกกำลังกายที่เหมาะกับคุณ 
+              </p>
+            </div>
+          </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-7">
           {[1, 2, 3].map((i) => (
             <div key={i} className="bg-white rounded-xl shadow-md overflow-hidden animate-pulse">
@@ -119,16 +139,40 @@ export default function Programs() {
             </div>
           ))}
         </div>
+        </div>
+        </div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="max-w-5xl mx-auto px-4 py-10">
-        <h1 className="text-center text-gray-800 text-3xl font-semibold mb-10 p-7">
-          โปรแกรมออกกำลังกาย
-        </h1>
+      
+
+      <div className="h-screen relative overflow-hidden">
+            {/* Fixed Background Image */}
+            <div className="absolute inset-0 z-0">
+              <Image
+                src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+                alt="Gym Background"
+                fill
+                className="object-cover opacity-20"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-blue-900/50" />
+            
+        <div className="relative z-10 h-screen overflow-y-auto">
+        <div className="max-w-7xl mx-auto px-4 py-10">
+          {/* Header */}
+          <div className="mb-12 mt-4 text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-sm">โปรแกรมออกกำลังกาย</h1>
+            <div className="max-w-2xl mx-auto bg-white backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/30">
+              <p className="text-lg text-blue-800">
+                เลือกโปรแกรมการออกกำลังกายที่เหมาะกับคุณ 
+              </p>
+            </div>
+          </div>
         <div className="text-center p-8 bg-red-50 border border-red-200 rounded-lg">
           <div className="text-red-600 text-lg font-medium mb-2">
             ไม่สามารถโหลดโปรแกรมได้
@@ -143,35 +187,74 @@ export default function Programs() {
             ลองใหม่
           </button>
         </div>
+        </div>
       </div>
+      </div>
+          </div>
+      
     );
+    
   }
 
   if (programs.length === 0) {
     return (
+      <div className="h-screen relative overflow-hidden">
+            {/* Fixed Background Image */}
+            <div className="absolute inset-0 z-0">
+              <Image
+                src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+                alt="Gym Background"
+                fill
+                className="object-cover opacity-20"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-blue-900/50" />
+
       <div className="max-w-5xl mx-auto px-4 py-10">
         <h1 className="text-center text-gray-800 text-3xl font-semibold mb-10 p-7">
           โปรแกรมออกกำลังกาย
         </h1>
+        <div className="max-w-2xl mx-auto bg-white backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/30">
+        <p className="text-lg text-blue-800">เลือกโปรแกรมการออกกำลังกายที่เหมาะกับคุณ </p>
+        </div>
         <div className="text-center p-8 bg-gray-50 border border-gray-200 rounded-lg">
           <div className="text-gray-600 text-lg">
             ยังไม่มีโปรแกรมออกกำลังกาย
           </div>
         </div>
       </div>
+      </div>
+      </div>
+      
     );
   }
 
   return (
+          <div className="h-screen relative overflow-hidden">
+            {/* Fixed Background Image */}
+            <div className="absolute inset-0 z-0">
+              <Image
+                src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+                alt="Gym Background"
+                fill
+                className="object-cover opacity-20"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-blue-900/50" />
     <div className="max-w-5xl mx-auto px-4 py-10">
       <h1 className="text-center text-gray-800 text-3xl font-semibold mb-10 p-7">
         โปรแกรมออกกำลังกาย
       </h1>
+    <div className="max-w-2xl mx-auto bg-white backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/30">
+        <p className="text-lg text-blue-800">เลือกโปรแกรมการออกกำลังกายที่เหมาะกับคุณ </p>
+    </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-7">
         {programs.filter(program => program._id || program.id).map((program) => (
           <ProgramCard key={program._id || program.id} program={program} />
         ))}
       </div>
+    </div>
+    </div>
     </div>
   );
 }

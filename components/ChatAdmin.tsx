@@ -8,7 +8,7 @@ export default function ChatAdmin() {
   return (
     <div className="fixed bottom-6 right-6 z-50">
       {/* ปุ่มกลม */}
-      <a href="https://line.me" target="_blank" rel="noopener noreferrer">
+      <a href="https://line.me/R/ti/p/@624ahpmn?ts=06010100&oat_content=url" target="_blank" rel="noopener noreferrer">
       <button
         className="bg-blue-500 text-white p-4 rounded-full shadow-lg hover:bg-blue-600 transition">
         <MessageCircle className="w-6 h-6" />
