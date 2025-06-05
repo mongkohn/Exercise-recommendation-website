@@ -161,7 +161,7 @@ function HeroSection() {
             {[
               { number: "10K+", label: "สมาชิกที่พอใจ" },
               { number: "500+", label: "ท่าออกกำลังกาย" },
-              { number: "95%", label: "อัตราความสำเร็จ" }
+              { number: "99%", label: "อัตราความสำเร็จ" }
             ].map((stat, index) => (
               <div key={index} className="text-center">
                 <div className="text-3xl font-bold text-white mb-1">{stat.number}</div>
