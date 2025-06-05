@@ -245,9 +245,9 @@ export default function Programs() {
       <h1 className="text-center text-gray-800 text-3xl font-semibold mb-10 p-7">
         โปรแกรมออกกำลังกาย
       </h1>
-    <div className="max-w-2xl mx-auto bg-white backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/30">
+ <div className="max-w-2xl mx-auto bg-white backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/30">
         <p className="text-lg text-blue-800">เลือกโปรแกรมการออกกำลังกายที่เหมาะกับคุณ </p>
-    </div>
+        </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-7">
         {programs.filter(program => program._id || program.id).map((program) => (
           <ProgramCard key={program._id || program.id} program={program} />
