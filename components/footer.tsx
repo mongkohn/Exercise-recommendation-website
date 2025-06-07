@@ -186,20 +186,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-white/20 bg-black/20 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-6 py-6">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <p className="text-blue-200 text-sm">
-                © {new Date().getFullYear()} ERD Space Online. สงวนลิขสิทธิ์ทั้งหมด
-              </p>
-              <div className="flex items-center gap-6 text-sm text-blue-200">
-                <a href="/privacy" className="hover:text-white transition-colors">นโยบายความเป็นส่วนตัว</a>
-                <a href="/terms" className="hover:text-white transition-colors">เงื่อนไขการใช้งาน</a>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </footer>
   )
