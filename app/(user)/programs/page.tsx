@@ -211,9 +211,7 @@ export default function Programs() {
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-blue-900/50" />
 
       <div className="max-w-5xl mx-auto px-4 py-10">
-        <h1 className="text-center text-gray-800 text-3xl font-semibold mb-10 p-7">
-          โปรแกรมออกกำลังกาย
-        </h1>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-sm">โปรแกรมออกกำลังกาย</h1>
         <div className="max-w-2xl mx-auto bg-white backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/30">
         <p className="text-lg text-blue-800">เลือกโปรแกรมการออกกำลังกายที่เหมาะกับคุณ </p>
         </div>
@@ -231,23 +229,33 @@ export default function Programs() {
 
   return (
           <div className="h-screen relative overflow-hidden">
-            {/* Fixed Background Image */}
-            <div className="absolute inset-0 z-0">
-              <Image
-                src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-                alt="Gym Background"
-                fill
-                className="object-cover opacity-20"
-                priority
-              />
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-blue-900/50" />
+  {/* Fixed Background Image */}
+  <div className="absolute inset-0 -z-10"> {/* แก้จาก z-0 เป็น -z-10 */}
+    <Image
+      src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+      alt="Gym Background"
+      fill
+      className="object-cover opacity-20"
+      priority
+    />
+    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-blue-900/50" />
+  </div>
     <div className="max-w-5xl mx-auto px-4 py-10">
+<<<<<<< HEAD
       <h1 className="text-center text-gray-800 text-3xl font-semibold mb-10 p-7">
         โปรแกรมออกกำลังกาย
       </h1>
  <div className="max-w-2xl mx-auto bg-white backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/30">
         <p className="text-lg text-blue-800">เลือกโปรแกรมการออกกำลังกายที่เหมาะกับคุณ </p>
         </div>
+=======
+          <h1 className="text-4xl md:text-5xl font-bold text-white m-4 drop-shadow-sm flex justify-center">
+            โปรแกรมออกกำลังกาย
+            </h1>
+    <div className="max-w-2xl mx-auto bg-white backdrop-blur-md rounded-2xl p-6 mb-12 shadow-xl border border-white/30">
+        <p className="text-lg text-blue-800 flex justify-center">เลือกโปรแกรมการออกกำลังกายที่เหมาะกับคุณ </p>
+    </div>
+>>>>>>> v2
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-7">
         {programs.filter(program => program._id || program.id).map((program) => (
           <ProgramCard key={program._id || program.id} program={program} />
@@ -255,6 +263,6 @@ export default function Programs() {
       </div>
     </div>
     </div>
-    </div>
+    
   );
 }
