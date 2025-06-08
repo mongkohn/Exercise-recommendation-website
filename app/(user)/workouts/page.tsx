@@ -472,8 +472,8 @@ export default function WorkoutsPage() {
                           </div>
                         </div>
                       </div>
-                      <div className="p-6 flex flex-col flex-1">
-                        <h2 className="font-bold text-xl mb-3 text-blue-900">{workout.title}</h2>
+                      <div className="p-6 ml-16 flex flex-col flex-1">
+                        <h2 className="font-bold text-xl mb-3  text-blue-900">{workout.title}</h2>
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                           <div>
