@@ -223,7 +223,7 @@ export default function UserManagement() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex gap-2">
-                                                <button
+                                                {/* <button
                                                     type="button"
                                                     className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors text-sm ${
                                                         user.status === 'active' 
@@ -244,15 +244,15 @@ export default function UserManagement() {
                                                             เปิดใช้งาน
                                                         </>
                                                     )}
-                                                </button>
-                                                <button
+                                                </button> */}
+                                                {/* <button
                                                     type="button"
                                                     className="flex items-center gap-1 px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
                                                     onClick={() => setShowResetPassword({ open: true, user })}
                                                 >
                                                     <Key className="w-4 h-4" />
                                                     รีเซ็ตรหัสผ่าน
-                                                </button>
+                                                </button> */}
                                                 <button
                                                     type="button"
                                                     className="flex items-center gap-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
@@ -354,7 +354,7 @@ export default function UserManagement() {
                                 />
                             </div>
                             <div>
-                                <label htmlFor="edit-status" className="block text-sm font-semibold text-slate-700 mb-2">สถานะ</label>
+                                {/* <label htmlFor="edit-status" className="block text-sm font-semibold text-slate-700 mb-2">สถานะ</label>
                                 <select
                                     id="edit-status"
                                     className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -363,7 +363,7 @@ export default function UserManagement() {
                                 >
                                     <option value="active">เปิดใช้งาน</option>
                                     <option value="disabled">ปิดใช้งาน</option>
-                                </select>
+                                </select> */}
                             </div>
                             <div className="flex justify-end gap-3 mt-8">
                                 <button

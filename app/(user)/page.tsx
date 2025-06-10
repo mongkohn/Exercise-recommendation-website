@@ -159,9 +159,9 @@ function HeroSection() {
           {/* Stats */}
           <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-2xl mx-auto animate-fade-in-up">
             {[
-              { number: "10K+", label: "สมาชิกที่พอใจ" },
-              { number: "500+", label: "ท่าออกกำลังกาย" },
-              { number: "99%", label: "อัตราความสำเร็จ" }
+              { number: "", label: "" },
+              { number: "", label: "" },
+              { number: "", label: "" }
             ].map((stat, index) => (
               <div key={index} className="text-center">
                 <div className="text-3xl font-bold text-white mb-1">{stat.number}</div>

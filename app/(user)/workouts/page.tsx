@@ -330,7 +330,7 @@ export default function WorkoutsPage() {
                         <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin opacity-50" />
                       </div>
                     </div>
-                    <div className="p-6 flex flex-col flex-1">
+                    <div className="p-6 pl-4 flex flex-col flex-1">
                       <h2 className="font-bold text-xl mb-4 text-blue-900 line-clamp-2">{workout.title}</h2>
 
                       <div className="mb-4">
@@ -472,10 +472,10 @@ export default function WorkoutsPage() {
                           </div>
                         </div>
                       </div>
-                      <div className="p-6 flex flex-col flex-1">
+                      <div className="p-6 pl-4 md:pl-16 flex flex-col flex-1">
                         <h2 className="font-bold text-xl mb-3 text-blue-900">{workout.title}</h2>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+                        <div className="grid grid-cols-2 lg:grid-cols-2 gap-4 mb-4">
                           <div>
                             <h3 className="font-medium text-gray-700 mb-2">กล้ามเนื้อหลัก</h3>
                             <div className="flex flex-wrap gap-2">
