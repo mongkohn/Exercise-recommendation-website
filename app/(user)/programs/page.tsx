@@ -24,7 +24,7 @@ function ProgramCard({ program }: { program: any }) {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-200 mb-10">
+    <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:scale-105 relative mb-10">
       <Link href={`/programs/${programId}`}>
         <Image
           src={program.image || "W1.jpg"}
