@@ -167,7 +167,7 @@ export default function UserManagement() {
                                     <th className="px-6 py-4 text-slate-800 font-semibold">ชื่อเต็ม</th>
                                     <th className="px-6 py-4 text-slate-800 font-semibold">เพศ</th>
                                     <th className="px-6 py-4 text-slate-800 font-semibold">วันเกิด</th>
-                                    <th className="px-6 py-4 text-slate-800 font-semibold">สถานะ</th>
+                                    {/* <th className="px-6 py-4 text-slate-800 font-semibold">สถานะ</th> */}
                                     <th className="px-6 py-4 text-slate-800 font-semibold">การกระทำ</th>
                                 </tr>
                             </thead>
@@ -204,7 +204,7 @@ export default function UserManagement() {
                                                 {user.birthday ? new Date(new Date(user.birthday).setDate(new Date(user.birthday).getDate() + 1)).toLocaleDateString('th-TH') : "ไม่ระบุ"}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        {/* <td className="px-6 py-4">
                                             <span className={`px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 w-fit ${
                                                 user.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
                                             }`}>
@@ -220,7 +220,7 @@ export default function UserManagement() {
                                                     </>
                                                 )}
                                             </span>
-                                        </td>
+                                        </td> */}
                                         <td className="px-6 py-4">
                                             <div className="flex gap-2">
                                                 {/* <button
@@ -361,7 +361,7 @@ export default function UserManagement() {
                                     onChange={e => setEditUser({ ...editUser, birthday: e.target.value })}
                                 />
                             </div>
-                            <div>
+                            {/* <div>
                                 <label htmlFor="edit-status" className="block text-sm font-semibold text-slate-700 mb-2">สถานะ</label>
                                 <select
                                     id="edit-status"
@@ -372,7 +372,7 @@ export default function UserManagement() {
                                     <option value="active">เปิดใช้งาน</option>
                                     <option value="disabled">ปิดใช้งาน</option>
                                 </select>
-                            </div>
+                            </div> */}
                             <div className="flex justify-end gap-3 mt-8">
                                 <button
                                     type="button"
