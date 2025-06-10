@@ -27,7 +27,7 @@ function ProgramCard({ program }: { program: any }) {
     <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-200 mb-10">
       <Link href={`/programs/${programId}`}>
         <Image
-          src={program.image || "/placeholder-workout.jpg"}
+          src={program.image || "W1.jpg"}
           alt={program.name || program.title}
           width={400}
           height={192}
@@ -50,7 +50,7 @@ function ProgramCard({ program }: { program: any }) {
           <div className="text-right">
             <div className="text-gray-500">หมวดหมู่</div>
             <Badge className="mt-1 bg-blue-100 text-blue-800">
-              {program.category || "ไม่ระบุหมวดหมู่"}
+              {program.category || "โปรแกรมการออกกำลังกาย"}
             </Badge>
           </div>
         </div>

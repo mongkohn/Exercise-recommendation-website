@@ -201,7 +201,7 @@ export default function UserManagement() {
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-2 text-slate-600">
                                                 <Calendar className="w-4 h-4" />
-                                                {user.birthday ? new Date(user.birthday).toLocaleDateString('th-TH') : "ไม่ระบุ"}
+                                                {user.birthday ? new Date(new Date(user.birthday).setDate(new Date(user.birthday).getDate() + 1)).toLocaleDateString('th-TH') : "ไม่ระบุ"}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
@@ -349,12 +349,20 @@ export default function UserManagement() {
                                     id="edit-birthday"
                                     type="date"
                                     className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    value={editUser.birthday ? new Date(editUser.birthday).toISOString().split('T')[0] : ''}
+                                    value={
+                                        editUser.birthday
+                                            ? (() => { 
+                                                const date = new Date(editUser.birthday);
+                                                date.setDate(date.getDate() + 1);
+                                                return date.toISOString().split('T')[0];
+                                              })()
+                                            : ''
+                                        }
                                     onChange={e => setEditUser({ ...editUser, birthday: e.target.value })}
                                 />
                             </div>
                             <div>
-                                {/* <label htmlFor="edit-status" className="block text-sm font-semibold text-slate-700 mb-2">สถานะ</label>
+                                <label htmlFor="edit-status" className="block text-sm font-semibold text-slate-700 mb-2">สถานะ</label>
                                 <select
                                     id="edit-status"
                                     className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -363,7 +371,7 @@ export default function UserManagement() {
                                 >
                                     <option value="active">เปิดใช้งาน</option>
                                     <option value="disabled">ปิดใช้งาน</option>
-                                </select> */}
+                                </select>
                             </div>
                             <div className="flex justify-end gap-3 mt-8">
                                 <button
