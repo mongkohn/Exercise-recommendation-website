@@ -26,6 +26,7 @@ const articleRoute = require('./routes/articleRoute');
 const videoRoute = require('./routes/videoRoute');
 const commentRoute = require('./routes/commentRoute');
 const programRoute = require('./routes/programRoute');
+const passwordResetRoute = require('./routes/passwordResetRoutes');
 
 // Connect to MongoDB
 const connectDB = async () => {
@@ -51,6 +52,7 @@ app.use("/api/article", articleRoute);
 app.use("/api/video", videoRoute);
 app.use('/api/comments', commentRoute);
 app.use('/api/program', programRoute);
+app.use('/api/password-reset', passwordResetRoute);
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
