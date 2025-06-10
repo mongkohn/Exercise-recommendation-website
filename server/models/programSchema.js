@@ -13,6 +13,9 @@ const programSchema = new mongoose.Schema({
   description: [{ type: String }],
   equipment: [{ type: String }],
   muscles: [{ type: String }],
+  duration: { type: String },
+  difficulty: { type: String },
+  category: { type: String },
   comments: [commentSchema]
 }, { timestamps: true });
 

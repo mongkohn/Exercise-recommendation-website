@@ -1,21 +1,10 @@
 const Program = require("../models/programSchema");
 
-// Helper to format program object
-const formatProgram = (p) => ({
-    id: p.id,
-    name: p.name,
-    videoUrl: p.videoUrl,
-    description: p.description,
-    equipment: p.equipment,
-    muscles: p.muscles,
-    comments: p.comments
-});
-
 // Get all programs
 const getAllPrograms = async (req, res) => {
     try {
         const programs = await Program.find().sort({ createdAt: -1 });
-        res.json(programs.map(formatProgram));
+        res.json(programs);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -26,18 +15,7 @@ const getProgramById = async (req, res) => {
     try {
         const p = await Program.findById(req.params.id);
         if (!p) return res.status(404).json({ error: "Program not found" });
-        res.json(formatProgram(p));
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-};
-
-// Get single program by numeric ID
-const getProgramByNumericId = async (req, res) => {
-    try {
-        const p = await Program.findOne({ id: parseInt(req.params.id) });
-        if (!p) return res.status(404).json({ error: "Program not found" });
-        res.json(formatProgram(p));
+        res.json(p);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -46,17 +24,19 @@ const getProgramByNumericId = async (req, res) => {
 // Create new program
 const createProgram = async (req, res) => {
     try {
-        const { id, name, videoUrl, description, equipment, muscles } = req.body;
+        const { name, videoUrl, description, equipment, muscles, duration, difficulty, category } = req.body;
         const program = new Program({ 
-            id,
             name, 
             videoUrl,
             description, 
             equipment, 
-            muscles
+            muscles,
+            duration,
+            difficulty,
+            category
         });
         await program.save();
-        res.status(201).json(formatProgram(program));
+        res.status(201).json(program);
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
@@ -65,14 +45,14 @@ const createProgram = async (req, res) => {
 // Update program
 const updateProgram = async (req, res) => {
     try {
-        const { id, name, videoUrl, description, equipment, muscles } = req.body;
+        const { name, videoUrl, description, equipment, muscles, duration, difficulty, category } = req.body;
         const program = await Program.findByIdAndUpdate(
             req.params.id,
-            { id, name, videoUrl, description, equipment, muscles },
+            { name, videoUrl, description, equipment, muscles, duration, difficulty, category },
             { new: true }
         );
         if (!program) return res.status(404).json({ error: "Program not found" });
-        res.json(formatProgram(program));
+        res.json(program);
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
@@ -136,7 +116,6 @@ const deleteComment = async (req, res) => {
 module.exports = {
     getAllPrograms,
     getProgramById,
-    getProgramByNumericId,
     createProgram,
     updateProgram,
     deleteProgram,

@@ -142,12 +142,10 @@ export default function Login() {
                       )}
                     </button>
                   </div>
-                </div>
-
-                {/* Forgot Password */}
+                </div>                {/* Forgot Password */}
                 <div className="flex justify-end">
                   <Link
-                    href="#"
+                    href="/forgot-password"
                     className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
                   >
                     ลืมรหัสผ่าน?
