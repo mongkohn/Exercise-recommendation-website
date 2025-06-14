@@ -113,7 +113,7 @@ export default function ExerciseManagement() {
       const exerciseData = {
         title: formData.title,
         url: formData.url,
-        description: formData.description.split('\n').filter(line => line.trim()),
+        description: formData.description, // send as string, not array
         muscles: formData.muscles.split(',').map(m => m.trim()).filter(m => m),
         equipment: formData.equipment.split(',').map(e => e.trim()).filter(e => e)
       };
