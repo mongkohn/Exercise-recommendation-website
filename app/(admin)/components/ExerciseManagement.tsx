@@ -150,7 +150,7 @@ export default function ExerciseManagement() {
       const exerciseData = {
         title: formData.title,
         url: formData.url,
-        description: formData.description.split('\n').filter(line => line.trim()),
+        description: formData.description, // send as string, not array
         muscles: formData.muscles.split(',').map(m => m.trim()).filter(m => m),
         equipment: formData.equipment.split(',').map(e => e.trim()).filter(e => e)
       };
@@ -280,7 +280,7 @@ export default function ExerciseManagement() {
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                 placeholder="เช่น Push Up, Barbell Row"
                 required
               />
@@ -292,7 +292,7 @@ export default function ExerciseManagement() {
                 type="url"
                 value={formData.url}
                 onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                 placeholder="https://www.youtube.com/embed/..."
                 required
               />
@@ -304,7 +304,7 @@ export default function ExerciseManagement() {
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={6}
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                 placeholder="แต่ละบรรทัดจะเป็นขั้นตอนหนึ่ง&#10;1. เตรียมท่าเริ่มต้น&#10;2. ดำเนินการออกกำลังกาย&#10;3. กลับสู่ท่าเริ่มต้น"
                 required
               />
@@ -318,7 +318,7 @@ export default function ExerciseManagement() {
                   type="text"
                   value={formData.muscles}
                   onChange={(e) => setFormData({ ...formData, muscles: e.target.value })}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                   placeholder="หลัง, แขน, ไหล่ (คั่นด้วยจุลภาค)"
                 />
                 <p className="text-xs text-slate-500 mt-1">คั่นด้วยจุลภาค เช่น หลัง, แขน, ไหล่</p>
@@ -330,7 +330,7 @@ export default function ExerciseManagement() {
                   type="text"
                   value={formData.equipment}
                   onChange={(e) => setFormData({ ...formData, equipment: e.target.value })}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                   placeholder="บาร์เบล, ดัมเบล (คั่นด้วยจุลภาค)"
                 />
                 <p className="text-xs text-slate-500 mt-1">คั่นด้วยจุลภาค เช่น บาร์เบล, ดัมเบล</p>

@@ -250,13 +250,13 @@ export default function ArticleManagement() {
                             <div>
                                 <div className="flex justify-between items-center mb-2">
                                     <label htmlFor="add-article-title" className="block text-sm font-semibold text-slate-700">ชื่อบทความ</label>
-                                    <span className={`text-xs ${newArticle.title.length > 50 ? 'text-red-500' : 'text-slate-500'}`}>
+                                    <span className={`text-xs  ${newArticle.title.length > 50 ? 'text-red-500' : 'text-slate-500'}`}>
                                         {newArticle.title.length}/50
                                     </span>
                                 </div>
                                 <input
                                     id="add-article-title"
-                                    className={`w-full border px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent ${
+                                    className={`w-full border px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent bg-white ${
                                         newArticle.title.length > 50 
                                             ? 'border-red-300 focus:ring-red-500' 
                                             : 'border-slate-200 focus:ring-blue-500'
@@ -282,7 +282,7 @@ export default function ArticleManagement() {
                                 <textarea
                                     id="add-article-description"
                                     rows={4}
-                                    className={`w-full border px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent resize-none ${
+                                    className={`w-full border px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent resize-none bg-white ${
                                         newArticle.description.length > 250 
                                             ? 'border-red-300 focus:ring-red-500' 
                                             : 'border-slate-200 focus:ring-blue-500'
@@ -303,7 +303,7 @@ export default function ArticleManagement() {
                                 <input
                                     id="add-article-image"
                                     type="url"
-                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                                     value={newArticle.image}
                                     onChange={e => setNewArticle({ ...newArticle, image: e.target.value })}
                                     required
@@ -314,7 +314,7 @@ export default function ArticleManagement() {
                                 <input
                                     id="add-article-link"
                                     type="url"
-                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                                     value={newArticle.link}
                                     onChange={e => setNewArticle({ ...newArticle, link: e.target.value })}
                                     required
@@ -380,7 +380,7 @@ export default function ArticleManagement() {
                                 </div>
                                 <input
                                     id="edit-article-title"
-                                    className={`w-full border px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent ${
+                                    className={`w-full border px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent bg-white ${
                                         editArticle.title.length > 50 
                                             ? 'border-red-300 focus:ring-red-500' 
                                             : 'border-slate-200 focus:ring-blue-500'
@@ -406,7 +406,7 @@ export default function ArticleManagement() {
                                 <textarea
                                     id="edit-article-description"
                                     rows={4}
-                                    className={`w-full border px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent resize-none ${
+                                    className={`w-full border px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:border-transparent resize-none bg-white ${
                                         editArticle.description.length > 250 
                                             ? 'border-red-300 focus:ring-red-500' 
                                             : 'border-slate-200 focus:ring-blue-500'
@@ -427,7 +427,7 @@ export default function ArticleManagement() {
                                 <input
                                     id="edit-article-image"
                                     type="url"
-                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                                     value={editArticle.image}
                                     onChange={e => setEditArticle({ ...editArticle, image: e.target.value })}
                                     required
@@ -438,7 +438,7 @@ export default function ArticleManagement() {
                                 <input
                                     id="edit-article-link"
                                     type="url"
-                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                                     value={editArticle.link}
                                     onChange={e => setEditArticle({ ...editArticle, link: e.target.value })}
                                     required

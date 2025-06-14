@@ -411,7 +411,7 @@ export default function ProgramManagement() {
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                 placeholder="เช่น โปรแกรมออกกำลังกายใน 1 อาทิตย์"
                 required
               />
@@ -424,7 +424,7 @@ export default function ProgramManagement() {
                   type="text"
                   value={formData.duration}
                   onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                   placeholder="เช่น 30 นาที"
                 />
               </div>
@@ -434,7 +434,7 @@ export default function ProgramManagement() {
                 <select
                   value={formData.difficulty}
                   onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                 >
                   <option value="">เลือกความยาก</option>
                   <option value="ง่าย">ง่าย</option>
@@ -449,7 +449,7 @@ export default function ProgramManagement() {
                   type="text"
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                   placeholder="เช่น Strength For Body"
                 />
               </div>
@@ -461,7 +461,7 @@ export default function ProgramManagement() {
                 type="url"
                 value={formData.videoUrl}
                 onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                 placeholder="https://www.youtube.com/embed/..."
                 required
               />
@@ -473,7 +473,7 @@ export default function ProgramManagement() {
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 rows={6}
-                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                 placeholder="แต่ละบรรทัดจะเป็นขั้นตอนหนึ่ง&#10;1. เตรียมร่างกาย&#10;2. เริ่มออกกำลังกาย&#10;3. คลายกล้ามเนื้อ"
                 required
               />
@@ -487,7 +487,7 @@ export default function ProgramManagement() {
                   type="text"
                   value={formData.muscles}
                   onChange={(e) => setFormData({ ...formData, muscles: e.target.value })}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                   placeholder="หลัง, แขน, ไหล่ (คั่นด้วยจุลภาค)"
                 />
                 <p className="text-xs text-slate-500 mt-1">คั่นด้วยจุลภาค เช่น หลัง, แขน, ไหล่</p>
@@ -499,7 +499,7 @@ export default function ProgramManagement() {
                   type="text"
                   value={formData.equipment}
                   onChange={(e) => setFormData({ ...formData, equipment: e.target.value })}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                   placeholder="บาร์เบล, ดัมเบล (คั่นด้วยจุลภาค)"
                 />
                 <p className="text-xs text-slate-500 mt-1">คั่นด้วยจุลภาค เช่น บาร์เบล, ดัมเบล</p>

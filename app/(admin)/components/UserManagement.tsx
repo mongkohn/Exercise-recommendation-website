@@ -199,7 +199,7 @@ export default function UserManagement() {
                                 <label htmlFor="edit-username" className="block text-sm font-semibold text-slate-700 mb-2">ชื่อผู้ใช้</label>
                                 <input
                                     id="edit-username"
-                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                                     value={editUser.username}
                                     onChange={e => setEditUser({ ...editUser, username: e.target.value })}
                                     required
@@ -210,7 +210,7 @@ export default function UserManagement() {
                                 <input
                                     id="edit-email"
                                     type="email"
-                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                                     value={editUser.email}
                                     onChange={e => setEditUser({ ...editUser, email: e.target.value })}
                                     required
@@ -220,7 +220,7 @@ export default function UserManagement() {
                                 <label htmlFor="edit-fullname" className="block text-sm font-semibold text-slate-700 mb-2">ชื่อเต็ม</label>
                                 <input
                                     id="edit-fullname"
-                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                                     value={editUser.fullname}
                                     onChange={e => setEditUser({ ...editUser, fullname: e.target.value })}
                                     required
@@ -230,7 +230,7 @@ export default function UserManagement() {
                                 <label htmlFor="edit-gender" className="block text-sm font-semibold text-slate-700 mb-2">เพศ</label>
                                 <select
                                     id="edit-gender"
-                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                                     value={editUser.gender}
                                     onChange={e => setEditUser({ ...editUser, gender: e.target.value })}
                                 >
@@ -245,7 +245,7 @@ export default function UserManagement() {
                                 <input
                                     id="edit-birthday"
                                     type="date"
-                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full border border-slate-200 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
                                     value={
                                         editUser.birthday
                                             ? (() => { 

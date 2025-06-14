@@ -40,14 +40,17 @@ export default function DashboardAnalytics({ onMenuChange }: { onMenuChange?: (m
         // Fetch users
         const usersRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/`);
         const usersData = await usersRes.json();
-        
-        // Fetch articles
+          // Fetch articles
         const articlesRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/article/`);
         const articlesData = await articlesRes.json();
         
-        // Mock data for exercises and programs (since we don't have APIs yet)
-        const exercisesCount = 45; // Example count
-        const programsCount = 12;  // Example count
+        // Fetch programs
+        const programsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/program/`);
+        const programsData = await programsRes.json();
+        
+        // Fetch videos (exercises)
+        const videosRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/video/`);
+        const videosData = await videosRes.json();
         
         // Sort by creation date (most recent first)
         const sortedUsers = Array.isArray(usersData) ? usersData.sort((a, b) => {
@@ -61,11 +64,10 @@ export default function DashboardAnalytics({ onMenuChange }: { onMenuChange?: (m
           const dateB = new Date(b.createdAt || b._id ? new Date(parseInt(b._id.substring(0, 8), 16) * 1000) : 0);
           return dateB.getTime() - dateA.getTime();
         }).slice(0, 5) : [];
-        
-        setAnalytics({
+          setAnalytics({
           totalUsers: Array.isArray(usersData) ? usersData.length : 0,
-          totalExercises: exercisesCount,
-          totalPrograms: programsCount,
+          totalExercises: Array.isArray(videosData) ? videosData.length : 0,
+          totalPrograms: Array.isArray(programsData) ? programsData.length : 0,
           totalArticles: Array.isArray(articlesData) ? articlesData.length : 0,
           recentUsers: sortedUsers,
           recentArticles: sortedArticles,
