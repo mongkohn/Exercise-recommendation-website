@@ -237,9 +237,9 @@ export default function BmrCalculator() {
 
               {/* TDEE Result */}
               <div className={`text-center p-6 rounded-2xl bg-gradient-to-r ${bgGradient} shadow-xl`}>
-                <div className="text-white text-sm font-medium mb-2">TDEE (แคลอรีต่อวัน)</div>
+                <div className="text-white text-base font-medium mb-2">TDEE (แคลอรีต่อวัน)</div>
                 <div className="text-white text-4xl font-bold">{tdee.toLocaleString()}</div>
-                <div className="text-white/80 text-xs mt-1">แคลอรีที่ต้องการต่อวัน</div>
+                <div className="text-white/80 text-base mt-1">แคลอรีที่ต้องการต่อวัน</div>
               </div>
             </div>
           </div>
