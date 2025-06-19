@@ -205,7 +205,9 @@ function AboutSection() {
               {[
                 "โปรแกรมออกแบบเฉพาะบุคคล",
                 "คำแนะนำจากผู้เชี่ยวชาญ",
-                "ติดตามผลลัพธ์แบบเรียลไทม์"
+                "ติดตามผลลัพธ์แบบเรียลไทม์" ,
+                "ข้อมูลจากกรมอนามัย กระทรวงสาธารณสุข" ,
+                "แหล่งข้อมูลจาก CDC "
               ].map((feature, index) => (
                 <div key={index} className="flex items-center gap-3">
                   <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
