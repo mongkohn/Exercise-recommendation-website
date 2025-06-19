@@ -154,6 +154,12 @@ export default function Footer() {
                   >
                     okm6344@gmail.com
                   </a>
+                  <a 
+                    href="suppachok.thir@bumail.net"
+                    className="block text-blue-200 hover:text-white transition-colors duration-300 text-sm"
+                  >
+                    suppachok.thir@bumail.net
+                  </a>
                 </div>
               </div>
 
@@ -179,6 +185,12 @@ export default function Footer() {
                     className="block text-blue-200 hover:text-white transition-colors duration-300 text-sm"
                   >
                     092-751-1329
+                  </a>
+                  <a 
+                    href="tel:0931047155 "
+                    className="block text-blue-200 hover:text-white transition-colors duration-300 text-sm"
+                  >
+                    093-104-7155 
                   </a>
                 </div>
               </div>
