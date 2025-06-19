@@ -6,11 +6,11 @@ import { Calculator, Activity, Target, Zap } from 'lucide-react';
 
 const activityOptions = [
   { value: '', label: 'เลือกกิจกรรมของคุณ' },
-  { value: '1', label: 'ไม่ออกกำลังกายเลย (1.2x)' },
-  { value: '2', label: 'ออกกำลังกายเบา ๆ (1-3 วัน/สัปดาห์) (1.375x)' },
-  { value: '3', label: 'ออกกำลังกายปานกลาง (3-5 วัน/สัปดาห์) (1.55x)' },
-  { value: '4', label: 'ออกกำลังกายหนัก (6-7 วัน/สัปดาห์) (1.725x)' },
-  { value: '5', label: 'ออกกำลังกายหนักมาก (เช้า-เย็น) (1.9x)' },
+  { value: '1', label: 'ไม่ออกกำลังกายเลย ' },
+  { value: '2', label: 'ออกกำลังกายเบา ๆ (1-3 วัน/สัปดาห์) ' },
+  { value: '3', label: 'ออกกำลังกายปานกลาง (3-5 วัน/สัปดาห์) ' },
+  { value: '4', label: 'ออกกำลังกายหนัก (6-7 วัน/สัปดาห์) ' },
+  { value: '5', label: 'ออกกำลังกายหนักมาก (เช้า-เย็น) ' },
 ];
 
 export default function BmrCalculator() {
