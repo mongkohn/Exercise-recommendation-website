@@ -8,7 +8,7 @@ export default function AdminHeader() {
         <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
           A
         </div>
-        <span>ผู้ดูแลระบบ</span>
+        <span>Admin</span>
       </div>
     </header>
   );
